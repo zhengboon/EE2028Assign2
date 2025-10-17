@@ -1,0 +1,100 @@
+Background
+When the sun slips behind the HDB blocks and the kopiam shuers rale, the old estate turns into a playground of whispers and neon. Chalk lines bloom under corridor lights,
+and a ny “referee” wakes on each table. Your microcontroller, steady as a heartbeat. Two roles step into the ring: the Players, light on their feet. The Enforcers, eyes sharp as cats.
+The night isn’t about speed alone, it’s about composure and good judgment. Who can stay steady when the lights freeze, and who can read the alleyways when the chase begins.
+
+Game 1: Red Light, Green Light:
+The estate holds its breath. Fans hum, lis ding, and a single blink decides fate: dash on green, become a statue on red. The best runners aren’t the fastest, but the calmest. The
+ones who can silence a tremor when the whole block is watching. Your board will sense the slightest movement and call it fairly.
+
+Game 2: Catch & Run:
+The chalk lines turn to back alleys and void decks. Players weave, feint, and double back. Enforcers close in and strike. There’s no final flag tonight, only survival. Outlast the count,
+slip past the sweep, don’t get tagged. Your board will feel the night, and keep the peace with clean, visible signals so the games can go on ll the streetlights yawn.
+
+Two games, two modes. And one ny brain, give it senses. Keep calm, keep running, let the Sotong game begin :)
+Overview
+
+Your board represents the Referee Unit, controlling and monitoring two games:
+Game 1 – Red Light, Green Light
+Game 2 – Catch & Run
+Each game tests different aspects of awareness, precision, and stability. Players are tracked using onboard sensors, and outcomes are indicated through LED paerns and UART
+messages. The user push buon (PB) controls mode transions. Each group can choose to be a Player or an Enforcer.
+Peripherals Used
+User Push Buon (PB): Used to switch modes or confirm game events.
+Temperature, Humidity and Pressure Sensor: Simulate environmental changes in the surroundings (e.g., humidity spike = tension or chase intensity). Used as secondary thresholds.
+Accelerometer & Gyroscope: Detects player movement or lt: crical in Red Light, Green Light for judging if the player moved during “Red Light.”
+Magnetometer: Acts as a proximity detector to the Enforcer during Catch & Run. Stronger readings mean the Enforcer is closer.
+UART Transmission: Sends updates, warnings, and status to the referee unit.
+LED: Visual game indicator based on phase and outcome.
+ 
+Modes of Operaon
+Game 1 – Red Light, Green Light 
+When powered on, the device enters Red Light, Green Light as the default starng mode.
+1. Startup Message via UART:
+"Entering Red Light, Green Light as Player/Enforcer"
+2. Game Overview:
+Every 10 seconds, the game command alternates between "Green" and "Red" light phases (not the LED2 colour).
+During Green Light, players can “move” freely.
+During Red Light, the accelerometer and gyroscope monitor for any movement above a defined threshold of your choice.
+3. Gameplay (Green Light):
+For both PLAYER and ENFORCER:
+ UART
+Sends once:  "Green Light!"
+Environment monitoring: Temperature, Pressure and Humidity sensors readings transmied via UART every 2 seconds.
+LED: Always ON.
+4. Gameplay (Red Light):
+For both PLAYER and ENFORCER:
+ UART:
+Sends once:  "Red Light!"  
+Movement monitoring: Accelerometer and Gyroscope readings transmied via UART every 2 seconds.
+LED: Toggles every 0.5 seconds.
+PLAYER: If the Accelerometer and Gyroscope readings exceed thresholds of your choice
+UART sends once:  "Game Over"
+Game ends
+ENFORCER: If the Accelerometer and Gyroscope readings exceed thresholds of your choice
+UART sends once:  "Player Out!"
+Game connues
+5. Switch Game:
+Double-press user pushbuon: Switch to Catch & Run (Game 2).
+Game 2 – Catch & Run 
+Once switched, the unit enters Catch & Run Mode, a chase simulaon between Player and Enforcer.
+1. Startup Message via UART:
+"Entering Catch And Run as Player/Enforcer"
+2. Game Overview:
+Magnetometer connuously checks the magnec field strength, signifying the proximity between the player and the enforcer.
+The player is trying to run from the enforcer, and the enforcer is trying to catch the player
+Environment Monitoring (for both Player and Enforcer): Temperature, Pressure and Humidity sensors are read every 1 second but only transmied via UART when the
+readings exceed defined thresholds. Transmission stops when the values return to normal. Example:
+"Temperature spike detected! T:35C. Dangerous environment!"
+3. Gameplay (PLAYER):
+When the magnec field exceeds a defined threshold (simulang the Enforcer nearing the Player):
+UART:  "Enforcer nearby! Be careful."
+LED blinks faster as proximity increases. (You may implement your own blinking effect. A minimum of 3 different blinking frequencies should be used).
+If user pushbuon single-press is detected within 3 seconds of threshold violaon of magnetometer
+UART: " Player escaped, good job! "
+Game connues
+If user pushbuon single-press is NOT detected within 3 seconds of threshold violaon of magnetometer
+UART: " Game Over! "
+Game ends
+4. Gameplay (ENFORCER):
+When the magnec field exceeds a defined threshold (simulang the Enforcer nearing the Player):
+UART: " Player is Nearby! Move faster. "
+LED blinks faster as proximity increases. (You may implement your own blinking effect. A minimum of 3 different blinking frequencies should be used).
+If user pushbuon single-press is detected within 3 seconds of threshold violaon of magnetometer
+UART: " Player captured, good job! "
+Game connues
+If user pushbuon single-press is NOT detected within 3 seconds of threshold violaon of magnetometer
+UART: " Player escaped! Keep trying. "
+Game connues
+5. Switch Game:
+Double-press user pushbuon: Switch to Red Light, Green Light (Game 1)
+ 
+General Clarificaons and Hints
+For a project of this nature, it is impossible to have the specificaons cover all possible scenarios. We leave it to your discreon to decide how the system should respond in
+scenarios not covered by the above specificaons. 
+The exact messages/format displayed on the PC is not important. The format and messages are just suggesons. Feel free to make reasonable modificaons.
+While you are free to set the various thresholds based on experimentaon (i.e., empirically), you should be able to explain them in terms of the physical quanes or units
+involved.
+
+https://wiki.seeedstudio.com/Grove-OLED-Display-0.96-SSD1315/
+https://controllerstech.com/oled-display-using-i2c-stm32/
