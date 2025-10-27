@@ -38,8 +38,11 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
- ../Core/Inc/ssd1306.h ../Core/Inc/main.h ../Core/Inc/fonts.h \
- ../Core/Inc/fonts.h ../Core/Src/bitmap.h ../Core/Src/horse_anim.h
+ ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.h \
+ ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.h \
+ ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/hts221/hts221.h \
+ ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/hts221/../Common/hsensor.h \
+ ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/hts221/../Common/tsensor.h
 ../Core/Inc/main.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:
 ../Core/Inc/stm32l4xx_hal_conf.h:
@@ -80,9 +83,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h:
-../Core/Inc/ssd1306.h:
-../Core/Inc/main.h:
-../Core/Inc/fonts.h:
-../Core/Inc/fonts.h:
-../Core/Src/bitmap.h:
-../Core/Src/horse_anim.h:
+../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.h:
+../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.h:
+../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/hts221/hts221.h:
+../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/hts221/../Common/hsensor.h:
+../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/../Components/hts221/../Common/tsensor.h:

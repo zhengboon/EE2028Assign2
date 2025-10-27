@@ -1,0 +1,8 @@
+while status =1 //game 1
+
+do game 1 stuff/partner handle
+check for pb double click
+check for pb triple click
+while status = 2/ game 1
+
+
