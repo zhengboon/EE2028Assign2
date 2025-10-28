@@ -122,11 +122,11 @@ void checkbuttonpress(void){
 				//counter ==1;
 				printf("catch me if you can\n");
 				//printf("%d\n",counter);
+				BSP_MAGNETO_GetXYZ(XYZ);
 				if (counter == 1){
 				//BSP_LED_Toggle(LED2);
 
 					float humidity = BSP_HSENSOR_ReadHumidity();
-					BSP_MAGNETO_GetXYZ(XYZ);
 					temp_data = BSP_TSENSOR_ReadTemp();			// read temperature sensor
 					pressure = BSP_PSENSOR_ReadPressure();
 
@@ -143,11 +143,11 @@ void checkbuttonpress(void){
 							printf("Temperature threshold exceeded!\n");
 							printf("Temperature: %f\n",temp_data);
 						}
-						if (abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet) > magnet_treshhold){
-							printf("Magnetometer threshold exceeded!\n");
-							printf("magnet X : %d;  Y : %d;  Z : %d; \n", XYZ[0], XYZ[1], XYZ[2]);
-							printf("diff magnet: %d\n", abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet));
-						}
+						// if (abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet) > magnet_treshhold){
+						// 	printf("Magnetometer threshold exceeded!\n");
+						// 	printf("magnet X : %d;  Y : %d;  Z : %d; \n", XYZ[0], XYZ[1], XYZ[2]);
+						// 	printf("diff magnet: %d\n", abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet));
+						// }
 						if (humidity > humidity_treshhold){
 							printf("Humidity threshold exceeded!\n");
 							printf("Humidity: %f\n",humidity);
