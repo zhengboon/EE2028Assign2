@@ -27,33 +27,11 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 		printf("\t Blue button is pressed. \n");
 		buttonpress += 1;
+		printf("button press count: %d\n",buttonpress);
+			//debounce delay
 	}
 }
-void checkbuttonpress(void){
-		if (buttonpress == 1 && gamechange ==1){
-			playermode = 1 - playermode; //toggle between player and enforcer
-			if (playermode ==0){
-				printf("You are Player! Avoid being caught by the Enforcer!\n");
-			}
-			else{
-				printf("You are Enforcer! Catch the Player!\n");
-			}
-		}
 
-		if (buttonpress ==2){
-			gamechange = (gamechange + 1) %3;//cycle through 3 games
-			if (gamechange ==0){
-				printf("Game changed to Read light green light!\n");
-			}
-			else if (gamechange ==1){
-				printf("Game changed to catching!\n");
-			}
-			else{
-				printf("Game changed to enchacements\n");
-			}
-		}	
-			buttonpress =0;
-}
 int main(void)
 {
 	initialise_monitor_handles(); // for semi-hosting support (printf)
@@ -71,14 +49,55 @@ int main(void)
 	int playermode = 0; //0 for player, 1 for enforcer
 	int gamechange =0; //0 for catch and run, 1 for other game,2 for another game
 
+void checkbuttonpress(void){
+		if (buttonpress == 3 && gamechange ==1){
+			playermode = 1 - playermode; //toggle between player and enforcer
+			if (playermode ==0){
+				printf("You are Player! Avoid being caught by the Enforcer!\n");
+			}
+			else{
+				printf("You are Enforcer! Catch the Player!\n");
+			}
+		}
 
+		if (buttonpress ==2){
+			gamechange = (gamechange + 1) %2;//cycle through 3 games, i hate the requirements
+			if (gamechange ==0){
+				printf("Game changed to Read light green light!\n");
+			}
+			else if (gamechange ==1){
+				printf("Game changed to catching!\n");
+			}
+			
+		}
+		if (buttonpress ==3&& gamechange ==0){
+			printf("Enhancements Activated!\n");
+			gamechange =2;
+		}
+		buttonpress =0;
+		// if (buttonpress >4){
+		// 	printf("back to red light green light\n");
+		// 	gamechange =0;
+		// }		
+			
+}
 
+	void myowndelay(uint32_t delay){
+		uint32_t tickstart = HAL_GetTick();
+		while ((HAL_GetTick() - tickstart) < delay){
+		}
+	}
 	float temp_data;
+	float temp_treshhold = 28; 
 	float humidity;
+	float humidity_treshhold = 70; //example threshold
 	int16_t XYZ[3];
+	int inital_magnet = 0;
+	int magnet_treshhold = 1000; //example threshold
 	float pressure;
-
-
+	float pressure_treshhold = 63; //example threshold
+	BSP_MAGNETO_GetXYZ(XYZ);
+		inital_magnet = XYZ[0] + XYZ[1] + XYZ[2];
 	while (1)
 	{//while start
 
@@ -86,47 +105,65 @@ int main(void)
 		  uint32_t wait = 1000;
 		  int counter = 1;//my own haldelay
 		  int timeelapsed = 0;
-
 		
 		
 
 		
 			
 		while ((HAL_GetTick() - tickstart) < wait){
-			checkbuttonpress();
 			
+			//myowndelay(300); //check button every 100ms
+			checkbuttonpress();
 			if (gamechange ==0){
 			printf("Red Light Green Light\n");
 		}
 
 			if (gamechange ==1){
+				//counter ==1;
 				printf("catch me if you can\n");
+				//printf("%d\n",counter);
 				if (counter == 1){
 				//BSP_LED_Toggle(LED2);
 
 					float humidity = BSP_HSENSOR_ReadHumidity();
-					printf("Humidity: %f\n",humidity);
-
 					BSP_MAGNETO_GetXYZ(XYZ);
-					printf("magnet X : %d;  Y : %d;  Z : %d; \n", XYZ[0], XYZ[1], XYZ[2]);
-
 					temp_data = BSP_TSENSOR_ReadTemp();			// read temperature sensor
-					printf("Temperature: %f\n",temp_data);
-
 					pressure = BSP_PSENSOR_ReadPressure();
-					printf("Pressure: %f\n",pressure);
 
+					//printf("button press count: %d\n",buttonpress);
+					if (pressure > pressure_treshhold || temp_data > temp_treshhold || abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet) > magnet_treshhold || humidity > humidity_treshhold){
+						printf("=============================\n");
+						if (pressure > pressure_treshhold){
+							printf("Pressure threshold exceeded!\n");
+							printf("Pressure: %f\n",pressure);
 
-					printf("button press count: %d\n",buttonpress);
+						}
+						
+						if (temp_data > temp_treshhold){
+							printf("Temperature threshold exceeded!\n");
+							printf("Temperature: %f\n",temp_data);
+						}
+						if (abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet) > magnet_treshhold){
+							printf("Magnetometer threshold exceeded!\n");
+							printf("magnet X : %d;  Y : %d;  Z : %d; \n", XYZ[0], XYZ[1], XYZ[2]);
+							printf("diff magnet: %d\n", abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet));
+						}
+						if (humidity > humidity_treshhold){
+							printf("Humidity threshold exceeded!\n");
+							printf("Humidity: %f\n",humidity);
 
-					counter = 2;
+						}
+						printf("=============================\n");
+					}
+
+					counter = 0;
 					
 			  }
-				if (counter ==2){
-				   timeelapsed = HAL_GetTick() - tickstart;
-				  printf("time used to run in ms:%d\n",timeelapsed);
-				  counter = 0;
-			  }
+			// 	if (counter ==2){
+			// 	   timeelapsed = HAL_GetTick() - tickstart;
+			// 	  printf("time used to run in ms:%d\n",timeelapsed);
+			// 	  counter = 0;
+			//   }
 			  //if button once, player mode toggle between 1 and 0
 			  //if button twice within 1 second, change to other game
 			  //make my own print function instead of the complicated uart thing
