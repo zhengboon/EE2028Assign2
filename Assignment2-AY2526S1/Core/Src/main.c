@@ -15,14 +15,52 @@
 #include "stdio.h"
 
 extern void initialise_monitor_handles(void);	// for semi-hosting support (printf)
+static void MX_GPIO_Init(void);
+void SystemClock_Config(void);
+int buttonpress =0;
 
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if(GPIO_Pin == BUTTON_EXTI13_Pin)
+	{
+
+		printf("\t Blue button is pressed. \n");
+		buttonpress += 1;
+	}
+}
+void checkbuttonpress(void){
+		if (buttonpress == 1 && gamechange ==1){
+			playermode = 1 - playermode; //toggle between player and enforcer
+			if (playermode ==0){
+				printf("You are Player! Avoid being caught by the Enforcer!\n");
+			}
+			else{
+				printf("You are Enforcer! Catch the Player!\n");
+			}
+		}
+
+		if (buttonpress ==2){
+			gamechange = (gamechange + 1) %3;//cycle through 3 games
+			if (gamechange ==0){
+				printf("Game changed to Read light green light!\n");
+			}
+			else if (gamechange ==1){
+				printf("Game changed to catching!\n");
+			}
+			else{
+				printf("Game changed to enchacements\n");
+			}
+		}	
+			buttonpress =0;
+}
 int main(void)
 {
 	initialise_monitor_handles(); // for semi-hosting support (printf)
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
-
+	MX_GPIO_Init();
 	/* Peripheral initializations using BSP functions */
 	//BSP_ACCELERO_Init();
 	BSP_TSENSOR_Init();
@@ -31,16 +69,10 @@ int main(void)
 	BSP_PSENSOR_Init();
 	BSP_LED_Init(LED2);
 	int playermode = 0; //0 for player, 1 for enforcer
+	int gamechange =0; //0 for catch and run, 1 for other game,2 for another game
 
-	printf("Entering Catch And Run as Player/Enforcer\n");
-	printf("==============================\n");
-	if (playermode ==0){
-		printf("You are Player! Avoid being caught by the Enforcer!\n");
-	}
-	else{
-		printf("You are Enforcer! Catch the Player!\n");
-	}
-	printf("==============================\n");
+
+
 	float temp_data;
 	float humidity;
 	int16_t XYZ[3];
@@ -48,62 +80,82 @@ int main(void)
 
 
 	while (1)
-	{
-		/*
-		float accel_data[3];
-		int16_t accel_data_i16[3] = { 0 };			// array to store the x, y and z readings.
-		BSP_ACCELERO_AccGetXYZ(accel_data_i16);		// read accelerometer
-		// the function above returns 16 bit integers which are acceleration in mg (9.8/1000 m/s^2).
-		// Converting to float to print the actual acceleration.
-		accel_data[0] = (float)accel_data_i16[0] * (9.8/1000.0f);
-		accel_data[1] = (float)accel_data_i16[1] * (9.8/1000.0f);
-		accel_data[2] = (float)accel_data_i16[2] * (9.8/1000.0f);
-
-		float temp_data;
-		temp_data = BSP_TSENSOR_ReadTemp();			// read temperature sensor
-
-		printf("Accel X : %f; Accel Y : %f; Accel Z : %f; Temperature : %f\n", accel_data[0], accel_data[1], accel_data[2], temp_data);
-
-		HAL_Delay(1000);	// read once a ~second.
-		*/
-
-
-
-
+	{//while start
 
 		  uint32_t tickstart = HAL_GetTick();
 		  uint32_t wait = 1000;
-		  int counter = 1;
+		  int counter = 1;//my own haldelay
 		  int timeelapsed = 0;
 
+		
+		
 
-		  while ((HAL_GetTick() - tickstart) < wait)
-		  {
-			  if (counter == 1){
-			  BSP_LED_Toggle(LED2);
-			  		//humidity
-			  		float humidity = BSP_HSENSOR_ReadHumidity();
-			  		printf("Humidity: %f\n",humidity);
-			  		BSP_MAGNETO_GetXYZ(XYZ);
-			  		printf("magnet X : %d;  Y : %d;  Z : %d; \n", XYZ[0], XYZ[1], XYZ[2]);
+		
+			
+		while ((HAL_GetTick() - tickstart) < wait){
+			checkbuttonpress();
+			
+			if (gamechange ==0){
+			printf("Red Light Green Light\n");
+		}
+
+			if (gamechange ==1){
+				printf("catch me if you can\n");
+				if (counter == 1){
+				//BSP_LED_Toggle(LED2);
+
+					float humidity = BSP_HSENSOR_ReadHumidity();
+					printf("Humidity: %f\n",humidity);
+
+					BSP_MAGNETO_GetXYZ(XYZ);
+					printf("magnet X : %d;  Y : %d;  Z : %d; \n", XYZ[0], XYZ[1], XYZ[2]);
+
 					temp_data = BSP_TSENSOR_ReadTemp();			// read temperature sensor
 					printf("Temperature: %f\n",temp_data);
+
 					pressure = BSP_PSENSOR_ReadPressure();
-					printf("Pressure: %f\n",BSP_PSENSOR_ReadPressure());
-			  		counter = 2;
+					printf("Pressure: %f\n",pressure);
+
+
+					printf("button press count: %d\n",buttonpress);
+
+					counter = 2;
 					
 			  }
-			  if (counter ==2){
+				if (counter ==2){
 				   timeelapsed = HAL_GetTick() - tickstart;
 				  printf("time used to run in ms:%d\n",timeelapsed);
 				  counter = 0;
 			  }
-
+			  //if button once, player mode toggle between 1 and 0
+			  //if button twice within 1 second, change to other game
+			  //make my own print function instead of the complicated uart thing
 		  }
+		  	if (gamechange ==2){
+				printf("Enhancements Activated!\n");
+		  	}
+		}//timer end
+
+		  
 
 
-	}
+	}//while end
 
+}//main end
+static void MX_GPIO_Init(void)
+{
+	__HAL_RCC_GPIOC_CLK_ENABLE();	// Enable AHB2 Bus for GPIOC
+
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+	// Configuration of BUTTON_EXTI13_Pin (GPIO-C Pin-13) as AF,
+	GPIO_InitStruct.Pin = BUTTON_EXTI13_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+	// Enable NVIC EXTI line 13
+	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
 
 
