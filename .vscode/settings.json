@@ -57,6 +57,9 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
-    "main.h": "c"
+    "main.h": "c",
+    "stm32l4s5i_iot01_magneto.h": "c",
+    "stm32l4s5i_iot01_tsensor.h": "c",
+    "stm32l4s5i_iot01_accelero.h": "c"
   }
 }

@@ -13,11 +13,16 @@
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.h"
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.h"
 #include "stdio.h"
+#include <stdarg.h>
 
-extern void initialise_monitor_handles(void);	// for semi-hosting support (printf)
+static void UART1_Init(void);
+
+
+extern void initialise_monitor_handles(void);	// for semi-hosting support (printu)
 static void MX_GPIO_Init(void);
 void SystemClock_Config(void);
 int buttonpress =0;
+UART_HandleTypeDef huart1;
 
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -25,20 +30,35 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	if(GPIO_Pin == BUTTON_EXTI13_Pin)
 	{
 
-		printf("\t Blue button is pressed. \n");
+		printu("\t Blue button is pressed. \n");
 		buttonpress += 1;
-		printf("button press count: %d\n",buttonpress);
+		printu("button press count: %d\n",buttonpress);
 			//debounce delay
 	}
 }
 
+void printu(const char *format, ...)
+{
+    char buffer[256];  // Adjust size as needed
+    va_list args;
+    va_start(args, format);
+    int len = vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+
+    if (len > 0)
+    {
+        HAL_UART_Transmit(&huart1, (uint8_t*)buffer, len, HAL_MAX_DELAY);
+    }
+}
 int main(void)
 {
-	initialise_monitor_handles(); // for semi-hosting support (printf)
+	initialise_monitor_handles(); // for semi-hosting support (printu)
 
 	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 	HAL_Init();
 	MX_GPIO_Init();
+	UART1_Init();
+
 	/* Peripheral initializations using BSP functions */
 	//BSP_ACCELERO_Init();
 	BSP_TSENSOR_Init();
@@ -50,54 +70,55 @@ int main(void)
 	int gamechange =0; //0 for catch and run, 1 for other game,2 for another game
 	int magnettresholdflag = 0;
 	int magnettresholdcounter = 0;
-void checkbuttonpress(void){
+	void checkbuttonpress(void){
 		if (buttonpress == 3 && gamechange ==1){
 			playermode = 1 - playermode; //toggle between player and enforcer
 			if (playermode ==0){
-				printf("You are Player! Avoid being caught by the Enforcer!\n");
+				printu("You are Player! Avoid being caught by the Enforcer!\n");
 			}
 			else{
-				printf("You are Enforcer! Catch the Player!\n");
+				printu("You are Enforcer! Catch the Player!\n");
 			}
 		}
 
 		if (buttonpress ==2){
 			gamechange = (gamechange + 1) %2;//cycle through 3 games, i hate the requirements
 			if (gamechange ==0){
-				printf("Game changed to Read light green light!\n");
+				printu("Game changed to Read light green light!\n");
 			}
 			else if (gamechange ==1){
-				printf("Game changed to catching!\n");
+				printu("Game changed to catching!\n");
 			}
 			
 		}
 		if (buttonpress ==3&& gamechange ==0){
-			printf("Enhancements Activated!\n");
+			printu("Enhancements Activated!\n");
 			gamechange =2;
 		}
 		if (magnettresholdflag == 1 && buttonpress ==1 && magnettresholdcounter <3&& gamechange ==1){
 			magnettresholdcounter =0;
 			magnettresholdflag =0;
 			if (playermode == 0){
-				printf("Player escaped, good job!\n");
+				printu("Player escaped, good job!\n");
 			}
 			else{
-				printf("Enforcer caught the player, well done!\n");
+				printu("Enforcer caught the player, well done!\n");
 			}
+		}
 		else if (magnettresholdflag ==1 && magnettresholdcounter >=3 && gamechange ==1){
 			magnettresholdcounter =0;
 			magnettresholdflag =0;
 			if (playermode ==0){
-				printf("Player caught! Better luck next time!\n");
-				while(GPIO_Pin == BUTTON_EXTI13_Pin);
+				printu("Player caught! Better luck next time!\n");
+				while (HAL_GPIO_ReadPin(GPIOC, BUTTON_EXTI13_Pin) == GPIO_PIN_RESET);
 			}
 			else{
-				printf("Enforcer failed to catch the player. Try harder!\n");
+				printu("Enforcer failed to catch the player. Try harder!\n");
 			}
 		}
 		buttonpress =0;
 		// if (buttonpress >4){
-		// 	printf("back to red light green light\n");
+		// 	printu("back to red light green light\n");
 		// 	gamechange =0;
 		// }		
 			
@@ -164,32 +185,32 @@ void checkbuttonpress(void){
 			//myowndelay(300); //check button every 100ms
 			checkbuttonpress();
 			if (gamechange ==0){
-			printf("Red Light Green Light\n");
+			printu("Red Light Green Light\n");
 		}
 
 			if (gamechange ==1){
 				//counter ==1;
-				printf("catch me if you can\n");
-				//printf("%d\n",counter);
+				printu("catch me if you can\n");
+				//printu("%d\n",counter);
 				BSP_MAGNETO_GetXYZ(XYZ);
-				//printf("magnet X : %d;  Y : %d;  Z : %d; \n", XYZ[0], XYZ[1], XYZ[2]);
+				//printu("magnet X : %d;  Y : %d;  Z : %d; \n", XYZ[0], XYZ[1], XYZ[2]);
 				int diffmagnet= abs(XYZ[0]) + abs(XYZ[1]) + abs(XYZ[2]) - inital_magnet;
 				if (diffmagnet <0){
 					diffmagnet = -diffmagnet;
 				}
 				if (diffmagnet > magnet_treshhold[2]){
-					printf("%d",magnet_treshhold[2]);
+					printu("%d",magnet_treshhold[2]);
 					ledblinker(2);
 					magnettresholdflag =1;
 
 				}
 				else if(diffmagnet > magnet_treshhold[1]){
-					printf("%d",magnet_treshhold[1]);
+					printu("%d",magnet_treshhold[1]);
 					ledblinker(1);
 					magnettresholdflag =1;
 				}
 				else if (diffmagnet > magnet_treshhold[0]){
-					printf("%d",magnet_treshhold[0]);
+					printu("%d",magnet_treshhold[0]);
 					ledblinker(0);
 				}
 				
@@ -201,30 +222,30 @@ void checkbuttonpress(void){
 					temp_data = BSP_TSENSOR_ReadTemp();			// read temperature sensor
 					pressure = BSP_PSENSOR_ReadPressure();
 
-					//printf("button press count: %d\n",buttonpress);
+					//printu("button press count: %d\n",buttonpress);
 					if (pressure > pressure_treshhold || temp_data > temp_treshhold /*|| abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet) > magnet_treshhold */|| humidity > humidity_treshhold){
-						printf("=============================\n");
+						printu("=============================\n");
 						if (pressure > pressure_treshhold){
-							printf("Pressure threshold exceeded!\n");
-							printf("Pressure: %f\n",pressure);
+							printu("Pressure threshold exceeded!\n");
+							printu("Pressure: %f\n",pressure);
 
 						}
 						
 						if (temp_data > temp_treshhold){
-							printf("Temperature threshold exceeded!\n");
-							printf("Temperature: %f\n",temp_data);
+							printu("Temperature threshold exceeded!\n");
+							printu("Temperature: %f\n",temp_data);
 						}
 						// if (abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet) > magnet_treshhold){
-						// 	printf("Magnetometer threshold exceeded!\n");
-						// 	printf("magnet X : %d;  Y : %d;  Z : %d; \n", XYZ[0], XYZ[1], XYZ[2]);
-						// 	printf("diff magnet: %d\n", abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet));
+						// 	printu("Magnetometer threshold exceeded!\n");
+						// 	printu("magnet X : %d;  Y : %d;  Z : %d; \n", XYZ[0], XYZ[1], XYZ[2]);
+						// 	printu("diff magnet: %d\n", abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet));
 						// }
 						if (humidity > humidity_treshhold){
-							printf("Humidity threshold exceeded!\n");
-							printf("Humidity: %f\n",humidity);
+							printu("Humidity threshold exceeded!\n");
+							printu("Humidity: %f\n",humidity);
 
 						}
-						printf("=============================\n");
+						printu("=============================\n");
 					}
 					if (magnettresholdflag ==1){
 					
@@ -238,7 +259,7 @@ void checkbuttonpress(void){
 			  }
 			// 	if (counter ==2){
 			// 	   timeelapsed = HAL_GetTick() - tickstart;
-			// 	  printf("time used to run in ms:%d\n",timeelapsed);
+			// 	  printu("time used to run in ms:%d\n",timeelapsed);
 			// 	  counter = 0;
 			//   }
 			  //if button once, player mode toggle between 1 and 0
@@ -246,14 +267,14 @@ void checkbuttonpress(void){
 			  //make my own print function instead of the complicated uart thing
 		  }
 		  	if (gamechange ==2){
-				printf("Enhancements Activated!\n");
+				printu("Enhancements Activated!\n");
 		  	}
-		}//timer end
+		}
 
 		  
 
 
-	}//while end
+	
 
 }//main end
 static void MX_GPIO_Init(void)
@@ -290,9 +311,7 @@ static void MX_GPIO_Init(void)
 // #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.h"
 
 
-// static void UART1_Init(void);
 
-// UART_HandleTypeDef huart1;
 
 // int main(void)
 // {
@@ -315,34 +334,34 @@ static void MX_GPIO_Init(void)
 //         }
 // }
 
-// static void UART1_Init(void)
-// {
-//         /* Pin configuration for UART. BSP_COM_Init() can do this automatically */
-//         __HAL_RCC_GPIOB_CLK_ENABLE();
-//         __HAL_RCC_USART1_CLK_ENABLE();
-//         GPIO_InitTypeDef GPIO_InitStruct = {0};
-//         GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
-//         GPIO_InitStruct.Pin = GPIO_PIN_7|GPIO_PIN_6;
-//         GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-//         GPIO_InitStruct.Pull = GPIO_NOPULL;
-//         GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-//         HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+static void UART1_Init(void)
+{
+        /* Pin configuration for UART. BSP_COM_Init() can do this automatically */
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        __HAL_RCC_USART1_CLK_ENABLE();
+        GPIO_InitTypeDef GPIO_InitStruct = {0};
+        GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
+        GPIO_InitStruct.Pin = GPIO_PIN_7|GPIO_PIN_6;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-//         /* Configuring UART1 */
-//         huart1.Instance = USART1;
-//         huart1.Init.BaudRate = 115200;
-//         huart1.Init.WordLength = UART_WORDLENGTH_8B;
-//         huart1.Init.StopBits = UART_STOPBITS_1;
-//         huart1.Init.Parity = UART_PARITY_NONE;
-//         huart1.Init.Mode = UART_MODE_TX_RX;
-//         huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-//         huart1.Init.OverSampling = UART_OVERSAMPLING_16;
-//         huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-//         huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-//         if (HAL_UART_Init(&huart1) != HAL_OK)
-//         {
-//           while(1);
-//         }
+        /* Configuring UART1 */
+        huart1.Instance = USART1;
+        huart1.Init.BaudRate = 115200;
+        huart1.Init.WordLength = UART_WORDLENGTH_8B;
+        huart1.Init.StopBits = UART_STOPBITS_1;
+        huart1.Init.Parity = UART_PARITY_NONE;
+        huart1.Init.Mode = UART_MODE_TX_RX;
+        huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+        huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+        huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+        huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+        if (HAL_UART_Init(&huart1) != HAL_OK)
+        {
+          while(1);
+        }
 
-// }
+}
 
