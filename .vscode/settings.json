@@ -60,6 +60,10 @@
     "main.h": "c",
     "stm32l4s5i_iot01_magneto.h": "c",
     "stm32l4s5i_iot01_tsensor.h": "c",
-    "stm32l4s5i_iot01_accelero.h": "c"
+    "stm32l4s5i_iot01_accelero.h": "c",
+    "stm32l4s5i_iot01_gyro.h": "c",
+    "stm32l4s5i_iot01_hsensor.h": "c",
+    "stm32l4s5i_iot01_psensor.h": "c",
+    "stm32l4s5i_iot01.h": "c"
   }
 }
