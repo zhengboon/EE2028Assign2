@@ -236,7 +236,7 @@ int main(void)
     g_mag_baseline = abs(m0[0]) + abs(m0[1]) + abs(m0[2]);
 
     while (1)
-    {
+    {//
         uint32_t tickstart = HAL_GetTick();
         const uint32_t wait = 1000U;
 
