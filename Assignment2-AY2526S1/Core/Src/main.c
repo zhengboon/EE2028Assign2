@@ -260,7 +260,7 @@ int main(void)
                         printu("Green Light!\r\n");
                         t_envRLGL = 0; g_gameOver = 0; BSP_LED_On(LED2);
                     }
-                }
+                }//
 
                 if (g_phase == PHASE_GREEN) {
                     BSP_LED_On(LED2);
