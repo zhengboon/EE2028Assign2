@@ -48,7 +48,8 @@ int main(void)
 	BSP_LED_Init(LED2);
 	int playermode = 0; //0 for player, 1 for enforcer
 	int gamechange =0; //0 for catch and run, 1 for other game,2 for another game
-
+	int magnettresholdflag = 0;
+	int magnettresholdcounter = 0;
 void checkbuttonpress(void){
 		if (buttonpress == 3 && gamechange ==1){
 			playermode = 1 - playermode; //toggle between player and enforcer
@@ -74,6 +75,26 @@ void checkbuttonpress(void){
 			printf("Enhancements Activated!\n");
 			gamechange =2;
 		}
+		if (magnettresholdflag == 1 && buttonpress ==1 && magnettresholdcounter <3&& gamechange ==1){
+			magnettresholdcounter =0;
+			magnettresholdflag =0;
+			if (playermode == 0){
+				printf("Player escaped, good job!\n");
+			}
+			else{
+				printf("Enforcer caught the player, well done!\n");
+			}
+		else if (magnettresholdflag ==1 && magnettresholdcounter >=3 && gamechange ==1){
+			magnettresholdcounter =0;
+			magnettresholdflag =0;
+			if (playermode ==0){
+				printf("Player caught! Better luck next time!\n");
+				while(GPIO_Pin == BUTTON_EXTI13_Pin);
+			}
+			else{
+				printf("Enforcer failed to catch the player. Try harder!\n");
+			}
+		}
 		buttonpress =0;
 		// if (buttonpress >4){
 		// 	printf("back to red light green light\n");
@@ -82,22 +103,51 @@ void checkbuttonpress(void){
 			
 }
 
-	void myowndelay(uint32_t delay){
-		uint32_t tickstart = HAL_GetTick();
-		while ((HAL_GetTick() - tickstart) < delay){
-		}
+	// void myowndelay(uint32_t delay){
+	// 	uint32_t tickstart = HAL_GetTick();
+	// 	while ((HAL_GetTick() - tickstart) < delay){
+	// 	}
+	// }
+
+
+	void ledblinker(int threshold){
+		if (threshold ==2)
+			{
+			BSP_LED_On(LED2);
+			HAL_Delay (10);
+			BSP_LED_Off(LED2);
+			HAL_Delay (10);
+			}
+		else if (threshold ==1)
+			{
+			BSP_LED_On(LED2);
+			HAL_Delay (20);
+			BSP_LED_Off(LED2);
+			HAL_Delay (20);
+			}
+		else if (threshold ==0)
+			{
+			BSP_LED_On(LED2);
+			HAL_Delay (40);
+			BSP_LED_Off(LED2);
+			HAL_Delay (40);
+			}
 	}
+	
 	float temp_data;
-	float temp_treshhold = 28; 
+	float temp_treshhold = 30; 
 	float humidity;
 	float humidity_treshhold = 70; //example threshold
 	int16_t XYZ[3];
 	int inital_magnet = 0;
-	int magnet_treshhold = 1000; //example threshold
+	int magnet_treshhold[3] = {500,2000,10000}; //example threshold//500, 2000, 10000
 	float pressure;
 	float pressure_treshhold = 63; //example threshold
 	BSP_MAGNETO_GetXYZ(XYZ);
-		inital_magnet = XYZ[0] + XYZ[1] + XYZ[2];
+		inital_magnet = abs(XYZ[0]) + abs(XYZ[1]) + abs(XYZ[2]);
+	int timer = 0;
+	int initialtime = 0;
+
 	while (1)
 	{//while start
 
@@ -105,8 +155,7 @@ void checkbuttonpress(void){
 		  uint32_t wait = 1000;
 		  int counter = 1;//my own haldelay
 		  int timeelapsed = 0;
-		
-		
+		timer +=1;
 
 		
 			
@@ -123,6 +172,28 @@ void checkbuttonpress(void){
 				printf("catch me if you can\n");
 				//printf("%d\n",counter);
 				BSP_MAGNETO_GetXYZ(XYZ);
+				//printf("magnet X : %d;  Y : %d;  Z : %d; \n", XYZ[0], XYZ[1], XYZ[2]);
+				int diffmagnet= abs(XYZ[0]) + abs(XYZ[1]) + abs(XYZ[2]) - inital_magnet;
+				if (diffmagnet <0){
+					diffmagnet = -diffmagnet;
+				}
+				if (diffmagnet > magnet_treshhold[2]){
+					printf("%d",magnet_treshhold[2]);
+					ledblinker(2);
+					magnettresholdflag =1;
+
+				}
+				else if(diffmagnet > magnet_treshhold[1]){
+					printf("%d",magnet_treshhold[1]);
+					ledblinker(1);
+					magnettresholdflag =1;
+				}
+				else if (diffmagnet > magnet_treshhold[0]){
+					printf("%d",magnet_treshhold[0]);
+					ledblinker(0);
+				}
+				
+
 				if (counter == 1){
 				//BSP_LED_Toggle(LED2);
 
@@ -131,7 +202,7 @@ void checkbuttonpress(void){
 					pressure = BSP_PSENSOR_ReadPressure();
 
 					//printf("button press count: %d\n",buttonpress);
-					if (pressure > pressure_treshhold || temp_data > temp_treshhold || abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet) > magnet_treshhold || humidity > humidity_treshhold){
+					if (pressure > pressure_treshhold || temp_data > temp_treshhold /*|| abs((XYZ[0] + XYZ[1] + XYZ[2]) - inital_magnet) > magnet_treshhold */|| humidity > humidity_treshhold){
 						printf("=============================\n");
 						if (pressure > pressure_treshhold){
 							printf("Pressure threshold exceeded!\n");
@@ -155,6 +226,12 @@ void checkbuttonpress(void){
 						}
 						printf("=============================\n");
 					}
+					if (magnettresholdflag ==1){
+					
+						magnettresholdcounter +=1;}
+									
+					}
+					
 
 					counter = 0;
 					
