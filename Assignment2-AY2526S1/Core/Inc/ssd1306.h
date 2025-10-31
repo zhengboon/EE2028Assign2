@@ -42,6 +42,16 @@ extern C {
 //#define SSD1306_I2C_ADDR       0x7A
 #endif
 
+#ifndef SSD1306_RST_PIN
+#define SSD1306_RST_PIN          GPIO_PIN_2
+#endif
+#ifndef SSD1306_RST_GPIO_PORT
+#define SSD1306_RST_GPIO_PORT    GPIOB
+#endif
+#ifndef SSD1306_RST_GPIO_CLK_ENABLE
+#define SSD1306_RST_GPIO_CLK_ENABLE() __HAL_RCC_GPIOB_CLK_ENABLE()
+#endif
+
 /* SSD1306 settings */
 /* SSD1306 width in pixels */
 #ifndef SSD1306_WIDTH

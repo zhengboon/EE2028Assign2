@@ -637,12 +637,25 @@ void ssd1306_I2C_Init() {
 }
 
 void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count) {
-uint8_t dt[256];
-dt[0] = reg;
-uint8_t i;
-for(i = 0; i < count; i++)
-dt[i+1] = data[i];
-HAL_I2C_Master_Transmit(SSD1306_I2C, address, dt, count+1, 10);
+uint8_t ctrl = (reg == 0x00U) ? 0x80U : 0x40U;
+uint8_t chunk[16];
+chunk[0] = ctrl;
+extern void printu(const char *fmt, ...);
+HAL_StatusTypeDef status = HAL_OK;
+uint16_t offset = 0;
+while (offset < count) {
+    uint16_t remaining = (uint16_t)(count - offset);
+    uint16_t payload = (remaining > 15U) ? 15U : remaining;
+    memcpy(&chunk[1], &data[offset], payload);
+    status = HAL_I2C_Master_Transmit(SSD1306_I2C, address, chunk, payload + 1U, 10);
+    if (status != HAL_OK) {
+        uint32_t err = HAL_I2C_GetError(SSD1306_I2C);
+        printu("SSD1306_I2C_WriteMulti err addr=0x%02X ctrl=0x%02X status=%ld err=0x%08lX\r\n",
+               address >> 1, ctrl, (long)status, (unsigned long)err);
+        break;
+    }
+    offset += payload;
+}
 }
 
 
@@ -650,5 +663,15 @@ void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data) {
 	uint8_t dt[2];
 	dt[0] = reg;
 	dt[1] = data;
-	HAL_I2C_Master_Transmit(SSD1306_I2C, address, dt, 2, 10);
+	uint8_t ctrl = (reg == 0x00U) ? 0x80U : 0x40U;
+	uint8_t packet[2];
+	packet[0] = ctrl;
+	packet[1] = data;
+	HAL_StatusTypeDef status = HAL_I2C_Master_Transmit(SSD1306_I2C, address, packet, 2U, 10);
+	if (status != HAL_OK) {
+        uint32_t err = HAL_I2C_GetError(SSD1306_I2C);
+        extern void printu(const char *fmt, ...);
+        printu("SSD1306_I2C_Write err addr=0x%02X ctrl=0x%02X status=%ld err=0x%08lX\r\n",
+               address >> 1, ctrl, (long)status, (unsigned long)err);
+    }
 }

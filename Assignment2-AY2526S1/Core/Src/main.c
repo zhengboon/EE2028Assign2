@@ -32,7 +32,7 @@ static void I2C_Scan(I2C_HandleTypeDef *hi2c);
 
 I2C_HandleTypeDef hi2c1;
 static HT16K33_HandleTypeDef hmatrix;
-static void printu(const char *fmt, ...)
+void printu(const char *fmt, ...)
 {
     char buf[256];
     va_list ap; va_start(ap, fmt);
@@ -320,8 +320,15 @@ int main(void)
         printu("HT16K33 not detected\r\n");
     }
 
+    HAL_Delay(100U); /* allow OLED power-up */
     if (SSD1306_Init()) {
         printu("SSD1306 initialized on I2C1\r\n");
+        SSD1306_Fill(SSD1306_COLOR_BLACK);
+        SSD1306_UpdateScreen();
+        SSD1306_GotoXY(0, 0);
+        SSD1306_Puts("OLED OK", &Font_7x10, SSD1306_COLOR_WHITE);
+        SSD1306_UpdateScreen();
+        printu("SSD1306 sanity draw done\r\n");
     } else {
         printu("SSD1306 not found on I2C1\r\n");
     }
