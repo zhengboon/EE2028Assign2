@@ -332,7 +332,17 @@ int main(void)
     } else {
         printu("SSD1306 not found on I2C1\r\n");
     }
+      SSD1306_Init();
+  SSD1306_DrawBitmap(0, 0, logo, 128, 64, 1);
+  SSD1306_UpdateScreen(); // update screen
 
+  SSD1306_ScrollRight(0x00, 0x07);    // scroll entire screen (Page0 to Page7) right
+  HAL_Delay (5000);
+  SSD1306_Stopscroll();
+
+  SSD1306_ScrollLeft(0x00, 0x07);    // scroll entire screen (Page0 to Page7) right
+  HAL_Delay (5000);
+  SSD1306_Stopscroll();
     while (1)
     {
         uint32_t tickstart = HAL_GetTick();
