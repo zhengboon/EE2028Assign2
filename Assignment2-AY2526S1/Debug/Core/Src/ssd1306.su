@@ -23,6 +23,6 @@
 ../Core/Src/ssd1306.c:607:6:SSD1306_Clear	8	static
 ../Core/Src/ssd1306.c:612:6:SSD1306_ON	8	static
 ../Core/Src/ssd1306.c:617:6:SSD1306_OFF	8	static
-../Core/Src/ssd1306.c:633:6:ssd1306_I2C_Init	16	static
-../Core/Src/ssd1306.c:645:6:ssd1306_I2C_WriteMulti	296	static
-../Core/Src/ssd1306.c:655:6:ssd1306_I2C_Write	32	static
+../Core/Src/ssd1306.c:633:6:ssd1306_I2C_Init	8	static
+../Core/Src/ssd1306.c:639:6:ssd1306_I2C_WriteMulti	296	static
+../Core/Src/ssd1306.c:649:6:ssd1306_I2C_Write	32	static

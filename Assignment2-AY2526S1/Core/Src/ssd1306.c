@@ -631,15 +631,9 @@ void SSD1306_OFF(void) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void ssd1306_I2C_Init() {
-	//MX_I2C1_Init();
-	uint32_t p = 250000;
-	while(p>0)
-		p--;
-	//HAL_I2C_DeInit(&hi2c1);
-	//p = 250000;
-	//while(p>0)
-	//	p--;
-	//MX_I2C1_Init();
+	if (HAL_I2C_GetState(SSD1306_I2C) == HAL_I2C_STATE_RESET) {
+		MX_I2C1_Init();
+	}
 }
 
 void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count) {
