@@ -1,7 +1,3 @@
-/******************************************************************************
- * @file    : main.c
- * @brief   : Sotong Game (RLGL + Catch & Run) — non-blocking (HAL_GetTick only)
- ******************************************************************************/
 
 #include "main.h"
 #include <stdio.h>
@@ -9,6 +5,8 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>   /* for abs() */
+#include "stm32l4xx_hal.h"
+#include <stdlib.h>
 
 /* BSP drivers */
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.h"
@@ -18,12 +16,14 @@
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.h"
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.h"
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.h"
+#include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.h"
+
 
 /* ========= UART ========= */
 UART_HandleTypeDef huart1;
 static void UART1_Init(void);
 static void MX_GPIO_Init(void);
-
+I2C_HandleTypeDef hi2c1;
 static void printu(const char *fmt, ...)
 {
     char buf[256];
@@ -202,13 +202,35 @@ static void UART1_Init(void)
     if (HAL_UART_Init(&huart1) != HAL_OK) { while (1) {} }
 }
 
+void NFC_Init(void) {
+    if (BSP_NFCTAG_Init(0) == NFCTAG_OK)
+        printf("NFC Tag initialized successfully.\r\n");
+    else
+        printf("NFC Tag initialization failed.\r\n");
+}
+
+void NFC_BlinkIfCard(void) {
+    ST25DV_FIELD_STATUS rf_field;
+
+    if (BSP_NFCTAG_GetRFField_Dyn(0, &rf_field) == NFCTAG_OK) {
+        if (rf_field == ST25DV_FIELD_ON) {
+            BSP_LED_On(LED2);
+            printu(".");
+        } else {
+            BSP_LED_Off(LED2);
+        }
+    }
+}
+
+
+
 /* ========= MAIN ========= */
 int main(void)
 {
     HAL_Init();
     MX_GPIO_Init();
     UART1_Init();
-
+    NFC_Init();
     BSP_LED_Init(LED2);
     BSP_ACCELERO_Init();
     BSP_GYRO_Init();
@@ -216,7 +238,7 @@ int main(void)
     BSP_TSENSOR_Init();
     BSP_HSENSOR_Init();
     BSP_PSENSOR_Init();
-
+    //SSD1306_Init();
     /* Default: RLGL as Player */
     g_role = ROLE_PLAYER;
     g_game = GAME_RLGL;
@@ -235,125 +257,152 @@ int main(void)
     int16_t m0[3]; BSP_MAGNETO_GetXYZ(m0);
     g_mag_baseline = abs(m0[0]) + abs(m0[1]) + abs(m0[2]);
 
-    while (1)
-    {
-        uint32_t tickstart = HAL_GetTick();
-        const uint32_t wait = 1000U;
 
-        while ((HAL_GetTick() - tickstart) < wait)
-        {
-            now = HAL_GetTick();
-
-            process_clicks(now);
-            led_blink_process(now);
-
-            /* ---- Game 1: RLGL ---- */
-            if (g_game == GAME_RLGL) {
-                if ((now - t_phaseSwitch) >= 10000U) {
-                    t_phaseSwitch = now;
-                    if (g_phase == PHASE_GREEN) {
-                        g_phase = PHASE_RED;
-                        printu("Red Light!\r\n");
-                        t_motionRLGL = 0; t_ledHB = 0;
-                    } else {
-                        g_phase = PHASE_GREEN;
-                        printu("Green Light!\r\n");
-                        t_envRLGL = 0; g_gameOver = 0; BSP_LED_On(LED2);
-                    }
-                }//
-
-                if (g_phase == PHASE_GREEN) {
-                    BSP_LED_On(LED2);
-                    if ((now - t_envRLGL) >= 2000U) {
-                        t_envRLGL = now;
-                        float t = BSP_TSENSOR_ReadTemp();
-                        float p = BSP_PSENSOR_ReadPressure();
-                        float h = BSP_HSENSOR_ReadHumidity();
-                        printu("Temp=%.2fC Pressure=%.2fhPa Humidity=%.2f%%\r\n", t, p, h);
-                    }
-                } else {
-                    if ((now - t_ledHB) >= 500U) { t_ledHB = now; BSP_LED_Toggle(LED2); }
-                    if (!g_gameOver && (now - t_motionRLGL) >= 2000U) {
-                        t_motionRLGL = now;
-
-                        int16_t ar[3] = {0}; BSP_ACCELERO_AccGetXYZ(ar);
-                        float ax = ar[0] * (9.8f / 1000.0f);
-                        float ay = ar[1] * (9.8f / 1000.0f);
-                        float az = ar[2] * (9.8f / 1000.0f);
-                        float a_mag = sqrtf(ax*ax + ay*ay + az*az);
-
-                        float g[3] = {0.f, 0.f, 0.f}; BSP_GYRO_GetXYZ(g);
-                        float g_mag = sqrtf(g[0]*g[0] + g[1]*g[1] + g[2]*g[2]);
-
-                        printu("Acceleration[%.2f,%.2f,%.2f] Gyroscope[%.2f,%.2f,%.2f]\r\n",
-                               ax, ay, az, g[0], g[1], g[2]);
-
-                        if ((a_mag > ACCEL_THRESHOLD_MS2) || (g_mag > GYRO_THRESHOLD_DPS)) {
-                            if (g_role == ROLE_PLAYER) { printu("Game Over\r\n"); g_gameOver = 1; BSP_LED_Off(LED2); }
-                            else { printu("Player Out!\r\n"); }
-                        }
-                    }
-                }
-            }
-            /* ---- Game 2: Catch & Run ---- */
-            else {
-                int16_t x[3]; BSP_MAGNETO_GetXYZ(x);
-                int sum = abs(x[0]) + abs(x[1]) + abs(x[2]);
-                int diff = sum - g_mag_baseline; if (diff < 0) diff = -diff;
-
-                int level = -1;
-                if (diff > MAG_THRESH[2])      level = 2;
-                else if (diff > MAG_THRESH[1]) level = 1;
-                else if (diff > MAG_THRESH[0]) level = 0;
-
-                if (level >= 0) {
-                    if (!g_prox_flag) {
-                        g_prox_flag = 1;
-                        g_escape_active = 1; g_escape_start = now;
-                        single_press_event = 0;
-                        if (g_role == ROLE_PLAYER) printu("Enforcer nearby! Be careful.\r\n");
-                        else                       printu("Player is Nearby! Move faster.\r\n");
-                    }
-                    led_set_blink(level);
-                } else {
-                    g_prox_flag = 0; g_escape_active = 0; led_set_blink(-1);
-                }
-
-                if (g_escape_active) {
-                    if (single_press_event) {
-                        single_press_event = 0; g_escape_active = 0; led_set_blink(-1);
-                        if (g_role == ROLE_PLAYER) printu("Player escaped, good job!\r\n");
-                        else                       printu("Player captured, good job!\r\n");
-                    } else if ((now - g_escape_start) >= 3000U) {
-                        g_escape_active = 0; led_set_blink(-1);
-                        if (g_role == ROLE_PLAYER) printu("Game Over!\r\n");
-                        else                       printu("Player escaped! Keep trying.\r\n");
-                    }
-                }
-
-                if ((now - t_envCatch) >= 1000U) {
-                    t_envCatch = now;
-                    float t = BSP_TSENSOR_ReadTemp();
-                    float h = BSP_HSENSOR_ReadHumidity();
-                    float p = BSP_PSENSOR_ReadPressure();
-
-                    uint8_t th = (t > TEMP_THRESH_C);
-                    uint8_t hh = (h > HUMID_THRESH_PCT);
-                    uint8_t ph = (p > PRESS_THRESH_HPA);
-
-                    if (th && !was_temp_high)  printu("Temperature spike detected! T:%.2fC. Dangerous environment!\r\n", t);
-                    if (hh && !was_hum_high)   printu("Humidity spike detected! H:%.2f%%.\r\n", h);
-                    if (ph && !was_press_high) printu("Pressure spike detected! P:%.2fhPa.\r\n", p);
-
-                    if (!th && was_temp_high)  printu("Temperature back to normal: %.2fC\r\n", t);
-                    if (!hh && was_hum_high)   printu("Humidity back to normal: %.2f%%\r\n", h);
-                    if (!ph && was_press_high) printu("Pressure back to normal: %.2fhPa\r\n", p);
-
-                    was_temp_high = th; was_hum_high = hh; was_press_high = ph;
-                }
-            }
+    void I2C_Scan(void) {
+    printu("\r\nStarting I2C scan...\r\n");
+    HAL_StatusTypeDef res;
+    for (uint8_t i = 1; i < 128; i++) {
+        res = HAL_I2C_IsDeviceReady(&hi2c1, (uint16_t)(i << 1), 3, 5);
+        if (res == HAL_OK) {
+            printu("✅ Device found at 0x%02X\r\n", i);
         }
     }
+    printf("Scan complete.\r\n");
+}
+
+
+    while(1){
+        uint8_t found[16];
+int32_t hits = BSP_I2C_AddressSweep(found, sizeof found, 2);
+for (int32_t i = 0; i < hits && i < (int32_t)sizeof found; ++i) {
+    printu("I2C device at 0x%02X\r\n", found[i]);
+}
+if (!SSD1306_Init()) {
+        printu("SSD1306 not found on I2C\r\n");
+        return;
+    }
+HAL_Delay(10000);
+        
+    }
+    // while (1)
+    // {
+    //     uint32_t tickstart = HAL_GetTick();
+    //     const uint32_t wait = 1000U;
+
+    //     while ((HAL_GetTick() - tickstart) < wait)
+    //     {
+    //         now = HAL_GetTick();
+
+    //         process_clicks(now);
+    //         led_blink_process(now);
+
+    //         /* ---- Game 1: RLGL ---- */
+    //         if (g_game == GAME_RLGL) {
+    //             if ((now - t_phaseSwitch) >= 10000U) {
+    //                 t_phaseSwitch = now;
+    //                 if (g_phase == PHASE_GREEN) {
+    //                     g_phase = PHASE_RED;
+    //                     printu("Red Light!\r\n");
+    //                     t_motionRLGL = 0; t_ledHB = 0;
+    //                 } else {
+    //                     g_phase = PHASE_GREEN;
+    //                     printu("Green Light!\r\n");
+    //                     t_envRLGL = 0; g_gameOver = 0; BSP_LED_On(LED2);
+    //                 }
+    //             }//
+
+    //             if (g_phase == PHASE_GREEN) {
+    //                 BSP_LED_On(LED2);
+    //                 if ((now - t_envRLGL) >= 2000U) {
+    //                     t_envRLGL = now;
+    //                     float t = BSP_TSENSOR_ReadTemp();
+    //                     float p = BSP_PSENSOR_ReadPressure();
+    //                     float h = BSP_HSENSOR_ReadHumidity();
+    //                     printu("Temp=%.2fC Pressure=%.2fhPa Humidity=%.2f%%\r\n", t, p, h);
+    //                 }
+    //             } else {
+    //                 if ((now - t_ledHB) >= 500U) { t_ledHB = now; BSP_LED_Toggle(LED2); }
+    //                 if (!g_gameOver && (now - t_motionRLGL) >= 2000U) {
+    //                     t_motionRLGL = now;
+
+    //                     int16_t ar[3] = {0}; BSP_ACCELERO_AccGetXYZ(ar);
+    //                     float ax = ar[0] * (9.8f / 1000.0f);
+    //                     float ay = ar[1] * (9.8f / 1000.0f);
+    //                     float az = ar[2] * (9.8f / 1000.0f);
+    //                     float a_mag = sqrtf(ax*ax + ay*ay + az*az);
+
+    //                     float g[3] = {0.f, 0.f, 0.f}; BSP_GYRO_GetXYZ(g);
+    //                     float g_mag = sqrtf(g[0]*g[0] + g[1]*g[1] + g[2]*g[2]);
+
+    //                     printu("Acceleration[%.2f,%.2f,%.2f] Gyroscope[%.2f,%.2f,%.2f]\r\n",
+    //                            ax, ay, az, g[0], g[1], g[2]);
+
+    //                     if ((a_mag > ACCEL_THRESHOLD_MS2) || (g_mag > GYRO_THRESHOLD_DPS)) {
+    //                         if (g_role == ROLE_PLAYER) { printu("Game Over\r\n"); g_gameOver = 1; BSP_LED_Off(LED2); }
+    //                         else { printu("Player Out!\r\n"); }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         /* ---- Game 2: Catch & Run ---- */
+    //         else {
+    //             int16_t x[3]; BSP_MAGNETO_GetXYZ(x);
+    //             int sum = abs(x[0]) + abs(x[1]) + abs(x[2]);
+    //             int diff = sum - g_mag_baseline; if (diff < 0) diff = -diff;
+
+    //             int level = -1;
+    //             if (diff > MAG_THRESH[2])      level = 2;
+    //             else if (diff > MAG_THRESH[1]) level = 1;
+    //             else if (diff > MAG_THRESH[0]) level = 0;
+
+    //             if (level >= 0) {
+    //                 if (!g_prox_flag) {
+    //                     g_prox_flag = 1;
+    //                     g_escape_active = 1; g_escape_start = now;
+    //                     single_press_event = 0;
+    //                     if (g_role == ROLE_PLAYER) printu("Enforcer nearby! Be careful.\r\n");
+    //                     else                       printu("Player is Nearby! Move faster.\r\n");
+    //                 }
+    //                 led_set_blink(level);
+    //             } else {
+    //                 g_prox_flag = 0; g_escape_active = 0; led_set_blink(-1);
+    //             }
+
+    //             if (g_escape_active) {
+    //                 if (single_press_event) {
+    //                     single_press_event = 0; g_escape_active = 0; led_set_blink(-1);
+    //                     if (g_role == ROLE_PLAYER) printu("Player escaped, good job!\r\n");
+    //                     else                       printu("Player captured, good job!\r\n");
+    //                 } else if ((now - g_escape_start) >= 3000U) {
+    //                     g_escape_active = 0; led_set_blink(-1);
+    //                     if (g_role == ROLE_PLAYER) printu("Game Over!\r\n");
+    //                     else                       printu("Player escaped! Keep trying.\r\n");
+    //                 }
+    //             }
+
+    //             if ((now - t_envCatch) >= 1000U) {
+    //                 t_envCatch = now;
+    //                 float t = BSP_TSENSOR_ReadTemp();
+    //                 float h = BSP_HSENSOR_ReadHumidity();
+    //                 float p = BSP_PSENSOR_ReadPressure();
+
+    //                 uint8_t th = (t > TEMP_THRESH_C);
+    //                 uint8_t hh = (h > HUMID_THRESH_PCT);
+    //                 uint8_t ph = (p > PRESS_THRESH_HPA);
+
+    //                 if (th && !was_temp_high)  printu("Temperature spike detected! T:%.2fC. Dangerous environment!\r\n", t);
+    //                 if (hh && !was_hum_high)   printu("Humidity spike detected! H:%.2f%%.\r\n", h);
+    //                 if (ph && !was_press_high) printu("Pressure spike detected! P:%.2fhPa.\r\n", p);
+
+    //                 if (!th && was_temp_high)  printu("Temperature back to normal: %.2fC\r\n", t);
+    //                 if (!hh && was_hum_high)   printu("Humidity back to normal: %.2f%%\r\n", h);
+    //                 if (!ph && was_press_high) printu("Pressure back to normal: %.2fhPa\r\n", p);
+
+    //                 was_temp_high = th; was_hum_high = hh; was_press_high = ph;
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 

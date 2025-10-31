@@ -623,6 +623,21 @@ void SENSOR_IO_Delay(uint32_t Delay)
 {
   HAL_Delay(Delay);
 }
+int32_t BSP_I2C_AddressSweep(uint8_t *buffer, uint32_t max, uint32_t trials)
+{
+    if (HAL_I2C_GetState(&hI2cHandler) == HAL_I2C_STATE_RESET) {
+        SENSOR_IO_Init();                            /* make sure bus is up */
+    }
+
+    uint32_t count = 0;
+    for (uint8_t addr = 0x08; addr <= 0x77; addr++) { /* 7-bit user range */
+        if (I2Cx_IsDeviceReady(&hI2cHandler, (uint16_t)(addr << 1), trials) == HAL_OK) {
+            if (buffer && count < max) buffer[count] = addr;
+            count++;
+        }
+    }
+    return (int32_t)count;                            /* number of hits */
+}
 
 /******************************** LINK NFC ********************************/
 
