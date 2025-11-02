@@ -1,5 +1,6 @@
 "./Core/Src/buzzer.o"
 "./Core/Src/fonts.o"
+"./Core/Src/grove_5way.o"
 "./Core/Src/ht16k33.o"
 "./Core/Src/main.o"
 "./Core/Src/menu_system.o"

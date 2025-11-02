@@ -1,0 +1,4 @@
+../Core/Src/grove_5way.c:21:6:Grove5Way_Init	32	static
+../Core/Src/grove_5way.c:52:6:Grove5Way_Poll	24	static
+../Core/Src/grove_5way.c:82:13:grove5way_write_cmd	32	static
+../Core/Src/grove_5way.c:95:13:grove5way_read_event	40	static

@@ -55,7 +55,7 @@ static void set_sequence_time(float value) {
 }
 
 /* Initialize menu system */
-void Menu_Init(menu_handle_t *menu, GroveMultiSwitch_t *switch_handle, uint8_t game_id) {
+void Menu_Init(menu_handle_t *menu, Grove5Way_Handle *switch_handle, uint8_t game_id) {
     if (menu == NULL || switch_handle == NULL) return;
     
     menu->state = MENU_CLOSED;
@@ -154,8 +154,15 @@ static param_id_t get_next_param(menu_handle_t *menu, int8_t direction) {
 bool Menu_Process(menu_handle_t *menu) {
     if (menu == NULL || menu->switch_handle == NULL) return false;
     
-    ButtonEvent_t *event = GroveMultiSwitch_GetEvent(menu->switch_handle);
-    if (event == NULL) return (menu->state != MENU_CLOSED);
+    Grove5Way_Event evt;
+    if (!Grove5Way_Poll(menu->switch_handle, &evt)) {
+        return (menu->state != MENU_CLOSED);
+    }
+    
+    uint8_t pressed_edges = evt.pressed & evt.changed;
+    if (pressed_edges == 0U) {
+        return (menu->state != MENU_CLOSED);
+    }
     
     uint32_t now = HAL_GetTick();
     
@@ -164,15 +171,10 @@ bool Menu_Process(menu_handle_t *menu) {
         return (menu->state != MENU_CLOSED);
     }
     
-    // Check for button presses (level changed + currently pressed)
-    bool down_pressed = (event->button[4] & BTN_EV_LEVEL_CHANGED) && 
-                       ((event->button[4] & BTN_EV_RAW_STATUS) == RAW_DIGITAL_BTN_PRESSED);
-    bool up_pressed = (event->button[0] & BTN_EV_LEVEL_CHANGED) && 
-                     ((event->button[0] & BTN_EV_RAW_STATUS) == RAW_DIGITAL_BTN_PRESSED);
-    bool left_pressed = (event->button[2] & BTN_EV_LEVEL_CHANGED) && 
-                       ((event->button[2] & BTN_EV_RAW_STATUS) == RAW_DIGITAL_BTN_PRESSED);
-    bool right_pressed = (event->button[3] & BTN_EV_LEVEL_CHANGED) && 
-                        ((event->button[3] & BTN_EV_RAW_STATUS) == RAW_DIGITAL_BTN_PRESSED);
+    bool down_pressed  = (pressed_edges & GROVE5WAY_BTN_DOWN)   != 0U;
+    bool up_pressed    = (pressed_edges & GROVE5WAY_BTN_UP)     != 0U;
+    bool left_pressed  = (pressed_edges & GROVE5WAY_BTN_LEFT)   != 0U;
+    bool right_pressed = (pressed_edges & GROVE5WAY_BTN_RIGHT)  != 0U;
     
     // State machine
     switch (menu->state) {

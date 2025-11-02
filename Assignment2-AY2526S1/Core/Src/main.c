@@ -27,7 +27,7 @@
 #include "fonts.h"
 #include "bitmap.h"
 #include "horse_anim.h"
-#include "multi_switch.h"
+#include "grove_5way.h"
 #include "menu_system.h"
 /* ========= UART ========= */
 UART_HandleTypeDef huart1;
@@ -100,7 +100,7 @@ static uint32_t      g_catch_event_start = 0;
 static int8_t        g_catch_blink_level = -1;
 
 /* Menu / Grove switch */
-static GroveMultiSwitch_t g_switch;
+static Grove5Way_Handle   g_switch;
 static menu_handle_t      g_menu;
 static uint8_t            g_switch_ready = 0;
 static uint32_t           t_menuPoll = 0;
@@ -513,20 +513,15 @@ int main(void)
 
     I2C_Scan(&hi2c1);
 
-    if (GroveMultiSwitch_Init(&g_switch, &hi2c1, GROVE_MULTI_SWITCH_DEF_I2C_ADDR)) {
+    if (Grove5Way_Init(&g_switch, &hi2c1, GROVE5WAY_DEFAULT_ADDR)) {
         g_switch_ready = 1U;
         Menu_Init(&g_menu, &g_switch, (uint8_t)g_game);
         Menu_SetGame(&g_menu, (uint8_t)g_game);
         t_menuPoll = HAL_GetTick();
-        const char *ver = GroveMultiSwitch_GetDevVer(&g_switch);
-        uint32_t dev_id = GroveMultiSwitch_GetDevID(&g_switch);
-        printu("Grove 5-way switch detected (ID=0x%08lX, buttons=%d)%s%s\r\n",
-               (unsigned long)dev_id,
-               GroveMultiSwitch_GetSwitchCount(&g_switch),
-               (ver != NULL) ? " ver " : "",
-               (ver != NULL) ? ver : "");
+        printu("Grove 5-way switch ready at 0x%02X\r\n", GROVE5WAY_DEFAULT_ADDR);
     } else {
-        printu("Grove 5-way switch not found at 0x%02X\r\n", GROVE_MULTI_SWITCH_DEF_I2C_ADDR);
+        g_switch_ready = 0U;
+        printu("Grove 5-way switch not found at 0x%02X\r\n", GROVE5WAY_DEFAULT_ADDR);
     }
 
     if (HT16K33_Init(&hmatrix, &hi2c1, HT16K33_I2C_ADDR_DEFAULT) == HAL_OK) {

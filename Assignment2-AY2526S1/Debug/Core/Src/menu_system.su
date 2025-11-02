@@ -8,5 +8,5 @@
 ../Core/Src/menu_system.c:104:13:set_param_value	24	static
 ../Core/Src/menu_system.c:138:19:get_next_param	32	static
 ../Core/Src/menu_system.c:154:6:Menu_Process	64	static
-../Core/Src/menu_system.c:273:14:Menu_GetState	16	static
-../Core/Src/menu_system.c:279:6:Menu_GetDisplayString	48	static
+../Core/Src/menu_system.c:275:14:Menu_GetState	16	static
+../Core/Src/menu_system.c:281:6:Menu_GetDisplayString	48	static

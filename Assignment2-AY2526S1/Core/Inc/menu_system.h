@@ -10,7 +10,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "multi_switch.h"
+#include <stddef.h>
+#include "grove_5way.h"
 
 /* Menu States */
 typedef enum {
@@ -51,7 +52,7 @@ typedef struct {
     menu_state_t state;
     param_id_t current_param;
     uint8_t current_game;
-    GroveMultiSwitch_t *switch_handle;
+    Grove5Way_Handle *switch_handle;
     uint32_t last_update_ms;
 } menu_handle_t;
 
@@ -63,7 +64,7 @@ typedef struct {
  * @param switch_handle Pointer to initialized Grove switch handle
  * @param game_id Current game ID (0=RLGL, 1=Catch, 2=Arrow)
  */
-void Menu_Init(menu_handle_t *menu, GroveMultiSwitch_t *switch_handle, uint8_t game_id);
+void Menu_Init(menu_handle_t *menu, Grove5Way_Handle *switch_handle, uint8_t game_id);
 
 /**
  * @brief Process menu input and update state
