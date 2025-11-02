@@ -7,6 +7,10 @@
 #include <stdlib.h>   /* for abs() */
 #include "stm32l4xx_hal.h"
 #include <stdlib.h>
+#include <stdint.h>
+#include "images.h"
+#include "buzzer.h"
+#include "animations.h"
 
 /* BSP drivers */
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.h"
@@ -65,16 +69,6 @@ float gyro_offset_z = 0.0f;
 static volatile game_t g_game = GAME_RLGL;
 static role_t  g_role = ROLE_PLAYER;
 
-/* HT16K33 sample images (row-major, LSB=column0) */
-static const uint64_t HT16K33_IMAGES[] = {
-    0x3c66760606663c00ULL,
-    0x7c667c603c000000ULL,
-    0xd6d6feeec6000000ULL,
-    0x3c067e663c000000ULL,
-    0x0000000000000000ULL
-};
-static const size_t HT16K33_IMAGES_LEN = sizeof(HT16K33_IMAGES) / sizeof(HT16K33_IMAGES[0]);
-
 /* RLGL */
 static rlgl_phase_t g_phase = PHASE_GREEN;
 static uint8_t  g_gameOver = 0;
@@ -85,11 +79,19 @@ static uint32_t t_motionRLGL = 0;
 
 /* Catch & Run */
 static int      g_mag_baseline = 0;
-static uint8_t  g_prox_flag = 0;
-static uint8_t  g_escape_active = 0;
-static uint32_t g_escape_start = 0;
 static uint32_t t_envCatch = 0;
 static uint8_t was_temp_high=0, was_hum_high=0, was_press_high=0;
+
+typedef enum {
+    CATCH_IDLE = 0,
+    CATCH_ALERT,
+    CATCH_LOCKOUT,
+    CATCH_WAIT_RESET
+} catch_state_t;
+
+static catch_state_t g_catch_state = CATCH_IDLE;
+static uint32_t      g_catch_event_start = 0;
+static int8_t        g_catch_blink_level = -1;
 
 /* ========= LED alert blinker (Catch mode) ========= */
 typedef struct {
@@ -102,13 +104,22 @@ static led_blink_t alert_blink = {0, 0, 0};
 
 static void led_set_blink(int level) /* -1 off, 0 slow, 1 med, 2 fast */
 {
-    if (level < 0) { alert_blink.enabled = 0; BSP_LED_Off(LED2); return; }
+    if (level < 0) {
+        g_catch_blink_level = -1;
+        alert_blink.enabled = 0;
+        BSP_LED_Off(LED2);
+        return;
+    }
+    if (alert_blink.enabled && (level == g_catch_blink_level)) {
+        return;
+    }
+    g_catch_blink_level = level;
     alert_blink.enabled = 1;
     alert_blink.last_toggle_ms = HAL_GetTick();
     switch (level) {
-        case 2: alert_blink.period_ms = 20U;  break;
-        case 1: alert_blink.period_ms = 40U;  break;
-        default:alert_blink.period_ms = 80U;  break;
+        case 2: alert_blink.period_ms = 160U;  break; /* fastest blink */
+        case 1: alert_blink.period_ms = 400U;  break; /* medium blink */
+        default:alert_blink.period_ms = 800U;  break; /* slowest blink */
     }
 }
 static void led_blink_process(uint32_t now)
@@ -148,11 +159,13 @@ static void process_clicks(uint32_t now)
                 g_game = GAME_CATCH;
                 printu("Entering Catch And Run as %s\r\n",
                        (g_role == ROLE_PLAYER) ? "Player" : "Enforcer");
-                alert_blink.enabled = 0; BSP_LED_Off(LED2);
+                led_set_blink(-1);
                 int16_t m[3]; BSP_MAGNETO_GetXYZ(m);
                 g_mag_baseline = abs(m[0]) + abs(m[1]) + abs(m[2]);
-                g_prox_flag = 0; g_escape_active = 0;
+                g_catch_state = CATCH_IDLE;
+                g_catch_event_start = 0;
                 t_envCatch = now;
+                single_press_event = 0;
                 was_temp_high=was_hum_high=was_press_high=0;
             } else if (g_game == GAME_CATCH){
                 g_game = GAME_RLGL;
@@ -161,7 +174,10 @@ static void process_clicks(uint32_t now)
                 g_phase = PHASE_GREEN; g_gameOver = 0;
                 t_phaseSwitch = now;
                 t_envRLGL = t_motionRLGL = t_ledHB = 0;
-                alert_blink.enabled = 0; BSP_LED_On(LED2);
+                led_set_blink(-1);
+                g_catch_state = CATCH_IDLE;
+                single_press_event = 0;
+                BSP_LED_On(LED2);
                 printu("Green Light!\r\n");
             }
 		
@@ -177,9 +193,23 @@ static void process_clicks(uint32_t now)
 				}
 			}
 
+
 				
 			
 		}
+        else if (n == 1 && g_game == GAME_RLGL) {
+            /* single press in Catch mode */
+            if (g_role == ROLE_PLAYER) {
+					g_role = ROLE_ENFORCER;
+					printu("Role switched to Enforcer\r\n");
+				} else {
+					g_role = ROLE_PLAYER;
+					printu("Role switched to Player\r\n");
+				}
+
+        }
+            /* single press */
+        
 		
         
 		else {
@@ -243,6 +273,7 @@ static void I2C_Scan(I2C_HandleTypeDef *hi2c)
         if (HAL_I2C_IsDeviceReady(hi2c, (uint16_t)(addr << 1), 3, 5) == HAL_OK) {
             printu("I2C device at 0x%02X\r\n", addr);
         }
+        Buzzer_Service(HAL_GetTick());
     }
     printu("Scan complete.\r\n");
 }
@@ -251,10 +282,12 @@ static void MX_GPIO_Init(void)
 {
     __HAL_RCC_GPIOC_CLK_ENABLE();
     GPIO_InitTypeDef GPIO_InitStruct = {0};
+
     GPIO_InitStruct.Pin  = BUTTON_EXTI13_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
     HAL_NVIC_SetPriority(EXTI15_10_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
@@ -312,6 +345,8 @@ int main(void)
     HAL_Init();
     MX_GPIO_Init();
     UART1_Init();
+    Buzzer_Init();
+
     MX_I2C1_Init();
     NFC_Init();
     BSP_LED_Init(LED2);
@@ -351,15 +386,13 @@ int main(void)
         printu("HT16K33 matrix ready\r\n");
         HT16K33_SetBrightness(&hmatrix, 8U);
         HT16K33_SetBlinkRate(&hmatrix, 0U);
-        for (size_t i = 0; i < HT16K33_IMAGES_LEN; ++i) {
-            
-        uint32_t tickstart3 = HAL_GetTick();
-        const uint32_t wait3 = 1000U;
-
-        while ((HAL_GetTick() - tickstart3) < wait3){
-            HT16K33_DisplayBitmap64(&hmatrix, HT16K33_IMAGES[i]);
-        }
-        }
+        /* Show intro animation once before main loop */
+        HT16K33_DisplayBitmap64(&hmatrix, HT16K33_IMAGES_INTRO[0]);
+        HT16K33_PlayFrames(&hmatrix,
+                           HT16K33_IMAGES_INTRO,
+                           HT16K33_IMAGES_INTRO_LEN,
+                           120U,
+                           1U);
         HT16K33_Clear(&hmatrix);
         HT16K33_Update(&hmatrix);
     } else {
@@ -370,7 +403,7 @@ int main(void)
         const uint32_t wait2 = 100U;
 
         while ((HAL_GetTick() - tickstart2) < wait2){
-
+            Buzzer_Service(HAL_GetTick());
         }
     if (SSD1306_Init()) {
         printu("SSD1306 initialized on I2C1\r\n");
@@ -383,6 +416,10 @@ int main(void)
     } else {
         printu("SSD1306 not found on I2C1\r\n");
     }
+
+    printu("Scheduling buzzer A4->A5 startup sweep...\r\n");
+    //Buzzer_TestPattern();
+
     while (1)
     {//
         uint32_t tickstart = HAL_GetTick();
@@ -395,9 +432,24 @@ int main(void)
             process_clicks(now);
             led_blink_process(now);
             NFC_PrintDetected();
+            Buzzer_Service(now);
 
             /* ---- Game 1: RLGL ---- */
             if (g_game == GAME_RLGL) {
+                /*if (single_press_event) {
+                    if (g_game == GAME_CATCH) {
+                        if (g_role == ROLE_PLAYER) {
+                            g_role = ROLE_ENFORCER;
+                            printu("Role switched to Enforcer\r\n");
+                        } else {
+                            g_role = ROLE_PLAYER;
+                            printu("Role switched to Player\r\n");
+                        }
+                    }
+                    single_press_event = 0;
+                }
+                */
+                
                 if ((now - t_phaseSwitch) >= 10000U) {
                     t_phaseSwitch = now;
                     if (g_phase == PHASE_GREEN) {
@@ -458,46 +510,84 @@ int main(void)
                 else if (diff > MAG_THRESH[1]) level = 1;
                 else if (diff > MAG_THRESH[0]) level = 0;
 
-                if (level >= 0) {
-                    if (!g_prox_flag) {
-                        g_prox_flag = 1;
-                        g_escape_active = 1;
-                        g_escape_start = now;
-                        single_press_event = 0;
-                        if (g_role == ROLE_PLAYER) {
-                            printu("Enforcer nearby! Be careful.\r\n");
+                switch (g_catch_state) {
+                    case CATCH_IDLE:
+                        if (level >= 0) {
+                            g_catch_state = CATCH_ALERT;
+                            g_catch_event_start = now;
+                            single_press_event = 0;
+                            if (g_role == ROLE_PLAYER) {
+                                printu("Enforcer nearby! Be careful.\r\n");
+                            } else {
+                                printu("Player is Nearby! Move faster.\r\n");
+                            }
+                            led_set_blink(level);
                         } else {
-                            printu("Player is Nearby! Move faster.\r\n");
+                            led_set_blink(-1);
                         }
-                    }
-                    led_set_blink(level);
-                } else {
-                    if (g_prox_flag) {
-                        led_set_blink(-1);
-                    }
-                    g_prox_flag = 0;
-                    g_escape_active = 0;
-                }
+                        break;
 
-                if (g_escape_active) {
-                    if (single_press_event) {
-                        single_press_event = 0;
-                        g_escape_active = 0;
-                        led_set_blink(-1);
-                        if (g_role == ROLE_PLAYER) {
-                            printu("Player escaped, good job!\r\n");
-                        } else {
-                            printu("Player captured, good job!\r\n");
+                    case CATCH_ALERT:
+                        if (level >= 0) {
+                            led_set_blink(level);
                         }
-                    } else if ((now - g_escape_start) >= 3000U) {
-                        g_escape_active = 0;
-                        led_set_blink(-1);
-                        if (g_role == ROLE_PLAYER) {
-                            printu("Game Over!\r\n");
-                        } else {
-                            printu("Player escaped! Keep trying.\r\n");
+                        if (single_press_event) {
+                            single_press_event = 0;
+                            g_catch_event_start = 0;
+                            led_set_blink(-1);
+                            if (g_role == ROLE_PLAYER) {
+                                printu("Player escaped, good job!\r\n");
+                            } else {
+                                printu("Player captured, good job!\r\n");
+                            }
+                            g_catch_state = CATCH_LOCKOUT;
+                        } else if ((now - g_catch_event_start) >= 3000U) {
+                            single_press_event = 0;
+                            g_catch_event_start = 0;
+                            led_set_blink(-1);
+                            if (g_role == ROLE_PLAYER) {
+                                printu("Game Over!\r\n");
+                                printu("Press PB once to restart Catch & Run.\r\n");
+                                //Buzzer_PlayNoteAsync(BUZZER_NOTE_E5,200U);
+                                //Buzzer_PlayNoteAsync(BUZZER_NOTE_D5,200U);
+                                //Buzzer_PlayNoteAsync(BUZZER_NOTE_C5,200U);
+                                SSD1306_Clear();
+	                            SSD1306_DrawBitmap(0,0,gameoveranimation,128,64,1);
+                                SSD1306_ScrollLeft(0x00, 0x07);
+	                            SSD1306_UpdateScreen();
+                                HT16K33_PlayFrames(&hmatrix,
+                                                   HT16K33_IMAGES_GAMEOVER,
+                                                   HT16K33_IMAGES_GAMEOVER_LEN,
+                                                   500U,
+                                                   1U);
+                                g_catch_state = CATCH_WAIT_RESET;
+                            } else {
+                                printu("Player escaped! Keep trying.\r\n");
+                                g_catch_state = CATCH_LOCKOUT;
+                            }
                         }
-                    }
+                        break;
+
+                    case CATCH_LOCKOUT:
+                        if (level < 0) {
+                            g_catch_state = CATCH_IDLE;
+                            led_set_blink(-1);
+                        }
+                        break;
+
+                    case CATCH_WAIT_RESET:
+                        led_set_blink(-1);
+                        if (single_press_event) {
+                            single_press_event = 0;
+                            g_catch_state = (level >= 0) ? CATCH_LOCKOUT : CATCH_IDLE;
+                            printu("Catch & Run reset. Stay alert!\r\n");
+                        }
+                        break;
+
+                    default:
+                        g_catch_state = CATCH_IDLE;
+                        led_set_blink(-1);
+                        break;
                 }
 
                 if ((now - t_envCatch) >= 1000U) {
@@ -525,7 +615,9 @@ int main(void)
                 uint32_t tickstart5 = HAL_GetTick();
                  const uint32_t wait5 = 1000U;
 
-            while ((HAL_GetTick() - tickstart5) < wait5){}
+            while ((HAL_GetTick() - tickstart5) < wait5){
+                Buzzer_Service(HAL_GetTick());
+            }
                 printu("Audition:Sotong Edition coming soon!\r\n");
             }
         }
@@ -546,7 +638,13 @@ static void NFC_PrintDetected(void)
                 uint32_t tickstart4 = HAL_GetTick();
                  const uint32_t wait4 = 1000U;
 
-            while ((HAL_GetTick() - tickstart4) < wait4){}
+            while ((HAL_GetTick() - tickstart4) < wait4){
+                Buzzer_Service(HAL_GetTick());
+            }
+                led_set_blink(-1);
+                g_catch_state = CATCH_IDLE;
+                single_press_event = 0;
+                g_catch_event_start = 0;
                 g_game = GAME_ARROW;
                 
             }
@@ -556,7 +654,13 @@ static void NFC_PrintDetected(void)
                 uint32_t tickstart4 = HAL_GetTick();
                  const uint32_t wait4 = 1000U;
 
-            while ((HAL_GetTick() - tickstart4) < wait4){}
+            while ((HAL_GetTick() - tickstart4) < wait4){
+                Buzzer_Service(HAL_GetTick());
+            }
+                led_set_blink(-1);
+                g_catch_state = CATCH_IDLE;
+                single_press_event = 0;
+                g_catch_event_start = 0;
                 g_game = GAME_RLGL;
             }
         }
@@ -565,9 +669,6 @@ static void NFC_PrintDetected(void)
         was_on = 0;
     }
 }
-
-
-
 
 void Error_Handler(void)
 {

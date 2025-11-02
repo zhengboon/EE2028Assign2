@@ -19,9 +19,10 @@
 ../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:600:6:SENSOR_IO_WriteMultiple	24	static
 ../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:612:19:SENSOR_IO_IsDeviceReady	0	static
 ../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:622:6:SENSOR_IO_Delay	0	static
-../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:634:10:NFC_IO_Init	40	static
-../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:678:10:NFC_IO_DeInit	8	static
-../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:690:10:NFC_IO_IsDeviceReady	24	static
-../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:724:9:NFC_IO_WriteReg16	24	static
-../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:757:10:NFC_IO_ReadReg16	24	static
-../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:787:10:NFC_IO_Tick	0	static
+../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:626:9:BSP_I2C_AddressSweep	32	static
+../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:649:10:NFC_IO_Init	40	static
+../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:693:10:NFC_IO_DeInit	8	static
+../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:705:10:NFC_IO_IsDeviceReady	24	static
+../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:739:9:NFC_IO_WriteReg16	24	static
+../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:772:10:NFC_IO_ReadReg16	24	static
+../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c:802:10:NFC_IO_Tick	0	static
