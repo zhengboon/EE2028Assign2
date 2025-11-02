@@ -64,6 +64,8 @@
     "stm32l4s5i_iot01_gyro.h": "c",
     "stm32l4s5i_iot01_hsensor.h": "c",
     "stm32l4s5i_iot01_psensor.h": "c",
-    "stm32l4s5i_iot01.h": "c"
+    "stm32l4s5i_iot01.h": "c",
+    "stm32l4s5i_iot01_nfctag.h": "c",
+    "ssd1306.h": "c"
   }
 }
