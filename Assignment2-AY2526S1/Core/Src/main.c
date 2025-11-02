@@ -9,6 +9,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include "images.h"
+#include "buzzer.h"
+#include "animations.h"
 
 /* BSP drivers */
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.h"
@@ -271,6 +273,7 @@ static void I2C_Scan(I2C_HandleTypeDef *hi2c)
         if (HAL_I2C_IsDeviceReady(hi2c, (uint16_t)(addr << 1), 3, 5) == HAL_OK) {
             printu("I2C device at 0x%02X\r\n", addr);
         }
+        Buzzer_Service(HAL_GetTick());
     }
     printu("Scan complete.\r\n");
 }
@@ -279,10 +282,12 @@ static void MX_GPIO_Init(void)
 {
     __HAL_RCC_GPIOC_CLK_ENABLE();
     GPIO_InitTypeDef GPIO_InitStruct = {0};
+
     GPIO_InitStruct.Pin  = BUTTON_EXTI13_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
     HAL_NVIC_SetPriority(EXTI15_10_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
@@ -340,6 +345,8 @@ int main(void)
     HAL_Init();
     MX_GPIO_Init();
     UART1_Init();
+    Buzzer_Init();
+
     MX_I2C1_Init();
     NFC_Init();
     BSP_LED_Init(LED2);
@@ -396,7 +403,7 @@ int main(void)
         const uint32_t wait2 = 100U;
 
         while ((HAL_GetTick() - tickstart2) < wait2){
-
+            Buzzer_Service(HAL_GetTick());
         }
     if (SSD1306_Init()) {
         printu("SSD1306 initialized on I2C1\r\n");
@@ -409,6 +416,10 @@ int main(void)
     } else {
         printu("SSD1306 not found on I2C1\r\n");
     }
+
+    printu("Scheduling buzzer A4->A5 startup sweep...\r\n");
+    //Buzzer_TestPattern();
+
     while (1)
     {//
         uint32_t tickstart = HAL_GetTick();
@@ -421,6 +432,7 @@ int main(void)
             process_clicks(now);
             led_blink_process(now);
             NFC_PrintDetected();
+            Buzzer_Service(now);
 
             /* ---- Game 1: RLGL ---- */
             if (g_game == GAME_RLGL) {
@@ -536,6 +548,13 @@ int main(void)
                             if (g_role == ROLE_PLAYER) {
                                 printu("Game Over!\r\n");
                                 printu("Press PB once to restart Catch & Run.\r\n");
+                                //Buzzer_PlayNoteAsync(BUZZER_NOTE_E5,200U);
+                                //Buzzer_PlayNoteAsync(BUZZER_NOTE_D5,200U);
+                                //Buzzer_PlayNoteAsync(BUZZER_NOTE_C5,200U);
+                                SSD1306_Clear();
+	                            SSD1306_DrawBitmap(0,0,gameoveranimation,128,64,1);
+                                SSD1306_ScrollLeft(0x00, 0x07);
+	                            SSD1306_UpdateScreen();
                                 HT16K33_PlayFrames(&hmatrix,
                                                    HT16K33_IMAGES_GAMEOVER,
                                                    HT16K33_IMAGES_GAMEOVER_LEN,
@@ -596,7 +615,9 @@ int main(void)
                 uint32_t tickstart5 = HAL_GetTick();
                  const uint32_t wait5 = 1000U;
 
-            while ((HAL_GetTick() - tickstart5) < wait5){}
+            while ((HAL_GetTick() - tickstart5) < wait5){
+                Buzzer_Service(HAL_GetTick());
+            }
                 printu("Audition:Sotong Edition coming soon!\r\n");
             }
         }
@@ -617,7 +638,9 @@ static void NFC_PrintDetected(void)
                 uint32_t tickstart4 = HAL_GetTick();
                  const uint32_t wait4 = 1000U;
 
-            while ((HAL_GetTick() - tickstart4) < wait4){}
+            while ((HAL_GetTick() - tickstart4) < wait4){
+                Buzzer_Service(HAL_GetTick());
+            }
                 led_set_blink(-1);
                 g_catch_state = CATCH_IDLE;
                 single_press_event = 0;
@@ -631,7 +654,9 @@ static void NFC_PrintDetected(void)
                 uint32_t tickstart4 = HAL_GetTick();
                  const uint32_t wait4 = 1000U;
 
-            while ((HAL_GetTick() - tickstart4) < wait4){}
+            while ((HAL_GetTick() - tickstart4) < wait4){
+                Buzzer_Service(HAL_GetTick());
+            }
                 led_set_blink(-1);
                 g_catch_state = CATCH_IDLE;
                 single_press_event = 0;
@@ -644,9 +669,6 @@ static void NFC_PrintDetected(void)
         was_on = 0;
     }
 }
-
-
-
 
 void Error_Handler(void)
 {

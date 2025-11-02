@@ -1,0 +1,15 @@
+../Core/Inc/buzzer_scale.h:94:24:buzzer_compute_toggle_ticks	24	static
+../Core/Inc/buzzer_scale.h:107:21:buzzer_note_frequency	16	static
+../Core/Src/buzzer.c:43:6:Buzzer_Init	32	static
+../Core/Src/buzzer.c:66:6:Buzzer_PlayToneAsync	16	static
+../Core/Src/buzzer.c:73:6:Buzzer_PlayNoteAsync	16	static
+../Core/Src/buzzer.c:81:6:Buzzer_Service	24	static
+../Core/Src/buzzer.c:104:6:Buzzer_TestPattern	24	static
+../Core/Src/buzzer.c:137:6:Buzzer_IRQHandler	8	static
+../Core/Src/buzzer.c:142:6:HAL_TIM_PeriodElapsedCallback	16	static
+../Core/Src/buzzer.c:151:13:Buzzer_TIM_Init	40	static
+../Core/Src/buzzer.c:178:13:Buzzer_Set	16	static
+../Core/Src/buzzer.c:184:13:Buzzer_Stop	8	static
+../Core/Src/buzzer.c:194:13:Buzzer_PlayToneInternal	32	static
+../Core/Src/buzzer.c:227:13:Buzzer_SequenceAdvance	24	static
+../Core/Src/buzzer.c:245:13:Buzzer_SequenceStart	24	static
