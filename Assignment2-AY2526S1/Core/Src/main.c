@@ -109,6 +109,9 @@ static uint8_t            g_oled_ready = 0;
 static uint8_t            g_matrix_ready = 0;
 static uint8_t            g_game_reset_pending = 0;
 static game_t             g_reset_target = GAME_RLGL;
+static uint8_t            g_menu_display_active = 0;
+static char               g_menu_line1[32] = {0};
+static char               g_menu_line2[32] = {0};
 
 /* ========= LED alert blinker (Catch mode) ========= */
 typedef struct {
@@ -579,9 +582,25 @@ int main(void)
             led_blink_process(now);
             NFC_PrintDetected();
             Buzzer_Service(now);
-            if (g_switch_ready && (now - t_menuPoll) >= 50U) {
-                t_menuPoll = now;
-                Menu_Process(&g_menu);
+
+            bool menu_active = false;
+            if (g_switch_ready) {
+                if ((now - t_menuPoll) >= 50U) {
+                    t_menuPoll = now;
+                    Menu_Process(&g_menu);
+                }
+                menu_active = (Menu_GetState(&g_menu) != MENU_CLOSED);
+            }
+
+            if (menu_active) {
+                g_menu_display_active = 1U;
+                continue;
+            } else if (g_menu_display_active) {
+                if (g_oled_ready) {
+                    SSD1306_Fill(SSD1306_COLOR_BLACK);
+                    SSD1306_UpdateScreen();
+                }
+                g_menu_display_active = 0U;
             }
 
             /* ---- Game 1: RLGL ---- */
@@ -815,4 +834,21 @@ void Error_Handler(void)
     while (1)
     {
     }
+}
+void Menu_RenderStatus(const char *line1, const char *line2)
+{
+    if (!g_oled_ready) return;
+    if (line1 == NULL) line1 = "";
+    if (line2 == NULL) line2 = "";
+    strncpy(g_menu_line1, line1, sizeof(g_menu_line1) - 1);
+    g_menu_line1[sizeof(g_menu_line1) - 1] = '\0';
+    strncpy(g_menu_line2, line2, sizeof(g_menu_line2) - 1);
+    g_menu_line2[sizeof(g_menu_line2) - 1] = '\0';
+
+    SSD1306_Fill(SSD1306_COLOR_BLACK);
+    SSD1306_GotoXY(0, 0);
+    SSD1306_Puts(g_menu_line1, &Font_7x10, SSD1306_COLOR_WHITE);
+    SSD1306_GotoXY(0, 12);
+    SSD1306_Puts(g_menu_line2, &Font_7x10, SSD1306_COLOR_WHITE);
+    SSD1306_UpdateScreen();
 }

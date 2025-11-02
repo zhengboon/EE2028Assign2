@@ -7,6 +7,6 @@
 ../Core/Src/menu_system.c:84:14:get_param_value	7
 ../Core/Src/menu_system.c:104:13:set_param_value	9
 ../Core/Src/menu_system.c:138:19:get_next_param	3
-../Core/Src/menu_system.c:154:6:Menu_Process	20
-../Core/Src/menu_system.c:275:14:Menu_GetState	2
-../Core/Src/menu_system.c:281:6:Menu_GetDisplayString	6
+../Core/Src/menu_system.c:154:6:Menu_Process	26
+../Core/Src/menu_system.c:338:14:Menu_GetState	2
+../Core/Src/menu_system.c:344:6:Menu_GetDisplayString	6

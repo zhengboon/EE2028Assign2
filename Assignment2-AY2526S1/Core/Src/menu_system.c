@@ -8,6 +8,7 @@
 #include <string.h>
 
 extern void printu(const char *fmt, ...);
+extern void Menu_RenderStatus(const char *line1, const char *line2);
 
 /* External variable references - these should match your main.c */
 extern float ACCEL_THRESHOLD_MS2;
@@ -18,16 +19,19 @@ extern uint32_t SEQUENCE_TIME_MS;  // Add this to your main.c for game 3
 /* Parameter definitions array */
 static param_def_t params[PARAM_COUNT] = {
     // Game 1: RLGL
-    {"Accel Thresh", &ACCEL_THRESHOLD_MS2, 5.0f, 50.0f, 1.0f, 0},
-    {"Gyro Thresh", &GYRO_THRESHOLD_DPS, 50.0f, 500.0f, 10.0f, 0},
+    {"Accel Thresh", &ACCEL_THRESHOLD_MS2, 5.0f, 50.0f, 1.0f, 0.2f, 0},
+    {"Gyro Thresh", &GYRO_THRESHOLD_DPS, 50.0f, 500.0f, 10.0f, 2.0f, 0},
     
     // Game 2: Catch & Run (using float pointers to int array)
-    {"Mag Low", NULL, 100.0f, 2000.0f, 50.0f, 1},
-    {"Mag Med", NULL, 500.0f, 5000.0f, 100.0f, 1},
-    {"Mag High", NULL, 2000.0f, 20000.0f, 500.0f, 1},
+    {"Mag Low", NULL, 100.0f, 2000.0f, 50.0f, 10.0f, 1},
+    {"Mag Med", NULL, 500.0f, 5000.0f, 100.0f, 20.0f, 1},
+    {"Mag High", NULL, 2000.0f, 20000.0f, 500.0f, 100.0f, 1},
     
     // Game 3: Arrow
-    {"Seq Time(ms)", NULL, 500.0f, 10000.0f, 100.0f, 2}
+    {"Seq Time(ms)", NULL, 500.0f, 10000.0f, 100.0f, 20.0f, 2},
+    
+    // Exit option (available for all games)
+    {"Exit Menu", NULL, 0.0f, 0.0f, 0.0f, 0.0f, 255}
 };
 
 /* Helper function to get float value for mag thresholds */
@@ -142,12 +146,61 @@ static param_id_t get_next_param(menu_handle_t *menu, int8_t direction) {
     // Search in the specified direction
     for (int i = 0; i < PARAM_COUNT; i++) {
         next = (param_id_t)((next + direction + PARAM_COUNT) % PARAM_COUNT);
-        if (params[next].game_id == menu->current_game) {
+        if ((params[next].game_id == menu->current_game) ||
+            (params[next].game_id == 255U)) {
             return next;
         }
     }
     
     return current;  // Stay at current if no other param found
+}
+
+static void menu_render_selected(menu_handle_t *menu)
+{
+    char line1[32];
+    char line2[32];
+    snprintf(line1, sizeof(line1), "Selected:");
+
+    if (menu->current_param == PARAM_EXIT) {
+        printu("Selected: Exit Menu\r\n");
+        snprintf(line2, sizeof(line2), "Exit Menu");
+    } else {
+        float value = get_param_value(menu->current_param);
+        printu("Selected: %s = %.1f\r\n",
+               params[menu->current_param].name,
+               value);
+        snprintf(line2, sizeof(line2), "%s = %.1f",
+                 params[menu->current_param].name,
+                 value);
+    }
+
+    Menu_RenderStatus(line1, line2);
+}
+
+static void menu_render_adjust(menu_handle_t *menu, const char *header)
+{
+    if (menu->current_param == PARAM_EXIT) {
+        menu_render_selected(menu);
+        return;
+    }
+
+    if (header == NULL) {
+        header = "Adjusting:";
+    }
+
+    float value = get_param_value(menu->current_param);
+    printu("%s %s = %.1f\r\n",
+           header,
+           params[menu->current_param].name,
+           value);
+
+    char line1[32];
+    char line2[32];
+    snprintf(line1, sizeof(line1), "%s", header);
+    snprintf(line2, sizeof(line2), "%s = %.1f",
+             params[menu->current_param].name,
+             value);
+    Menu_RenderStatus(line1, line2);
 }
 
 /* Process menu input and update state */
@@ -171,6 +224,18 @@ bool Menu_Process(menu_handle_t *menu) {
         return (menu->state != MENU_CLOSED);
     }
     
+    if (pressed_edges != 0U) {
+        char msg[64];
+        size_t off = 0;
+        off += snprintf(msg + off, sizeof(msg) - off, "5-way pressed:");
+        if (pressed_edges & GROVE5WAY_BTN_UP)     off += snprintf(msg + off, sizeof(msg) - off, " UP");
+        if (pressed_edges & GROVE5WAY_BTN_DOWN)   off += snprintf(msg + off, sizeof(msg) - off, " DOWN");
+        if (pressed_edges & GROVE5WAY_BTN_LEFT)   off += snprintf(msg + off, sizeof(msg) - off, " LEFT");
+        if (pressed_edges & GROVE5WAY_BTN_RIGHT)  off += snprintf(msg + off, sizeof(msg) - off, " RIGHT");
+        if (pressed_edges & GROVE5WAY_BTN_CENTER) off += snprintf(msg + off, sizeof(msg) - off, " CENTER");
+        printu("%s\r\n", msg);
+    }
+    
     bool down_pressed  = (pressed_edges & GROVE5WAY_BTN_DOWN)   != 0U;
     bool up_pressed    = (pressed_edges & GROVE5WAY_BTN_UP)     != 0U;
     bool left_pressed  = (pressed_edges & GROVE5WAY_BTN_LEFT)   != 0U;
@@ -178,94 +243,82 @@ bool Menu_Process(menu_handle_t *menu) {
     
     // State machine
     switch (menu->state) {
-        case MENU_CLOSED:
+        case MENU_CLOSED: {
             // DOWN button opens menu
             if (down_pressed) {
                 menu->state = MENU_VARIABLE_SELECT;
                 menu->last_update_ms = now;
                 printu("\r\n=== MENU OPENED ===\r\n");
-                printu("Use LEFT/RIGHT to select parameter\r\n");
-                printu("Press DOWN to adjust value\r\n");
-                printu("Current: %s = %.1f\r\n", 
-                       params[menu->current_param].name,
-                       get_param_value(menu->current_param));
+                printu("Use LEFT/RIGHT to browse\r\n");
+                printu("Press CENTER to adjust\r\n");
+                menu_render_selected(menu);
             }
             break;
+        }
             
-        case MENU_VARIABLE_SELECT:
-            if (left_pressed) {
-                // Navigate to previous parameter
-                menu->current_param = get_next_param(menu, -1);
-                menu->last_update_ms = now;
-                printu("Selected: %s = %.1f\r\n", 
-                       params[menu->current_param].name,
-                       get_param_value(menu->current_param));
-            }
-            else if (right_pressed) {
-                // Check if this is the last parameter for current game
-                param_id_t next = get_next_param(menu, 1);
-                if (next == menu->current_param) {
-                    // Exit menu (we're at the last parameter)
+        case MENU_VARIABLE_SELECT: {
+            if (center_pressed) {
+                if (menu->current_param == PARAM_EXIT) {
                     menu->state = MENU_CLOSED;
                     menu->last_update_ms = now;
                     printu("=== MENU CLOSED ===\r\n\r\n");
+                    Menu_RenderStatus("MENU CLOSED", "");
+                    Menu_SetGame(menu, menu->current_game);
                 } else {
-                    // Navigate to next parameter
-                    menu->current_param = next;
+                    menu->state = MENU_VALUE_ADJUST;
                     menu->last_update_ms = now;
-                    printu("Selected: %s = %.1f\r\n", 
-                           params[menu->current_param].name,
-                           get_param_value(menu->current_param));
+                    printu(">>> Adjusting: %s\r\n", params[menu->current_param].name);
+                    printu("UP/DOWN coarse, LEFT/RIGHT fine\r\n");
+                    menu_render_adjust(menu, "Adjusting:");
                 }
-            }
-            else if (down_pressed) {
-                // Enter value adjustment mode
-                menu->state = MENU_VALUE_ADJUST;
+            } else if (left_pressed) {
+                menu->current_param = get_next_param(menu, -1);
                 menu->last_update_ms = now;
-                printu(">>> Adjusting: %s\r\n", params[menu->current_param].name);
-                printu("Use UP/DOWN to change value\r\n");
-                printu("Press DOWN (center) to confirm\r\n");
+                menu_render_selected(menu);
+            } else if (right_pressed) {
+                menu->current_param = get_next_param(menu, 1);
+                menu->last_update_ms = now;
+                menu_render_selected(menu);
             }
             break;
+        }
             
-        case MENU_VALUE_ADJUST:
-            if (up_pressed) {
-                // Increase value
-                float current = get_param_value(menu->current_param);
-                float step = params[menu->current_param].step;
-                set_param_value(menu->current_param, current + step);
-                menu->last_update_ms = now;
-                printu("%s = %.1f\r\n", 
-                       params[menu->current_param].name,
-                       get_param_value(menu->current_param));
-            }
-            else if (down_pressed) {
-                // Decrease value (we use down for both decrease and confirm)
-                float current = get_param_value(menu->current_param);
-                float step = params[menu->current_param].step;
-                float new_val = current - step;
-                
-                // If we're at minimum, treat as confirm instead
-                if (new_val < params[menu->current_param].min_value) {
-                    menu->state = MENU_VARIABLE_SELECT;
-                    menu->last_update_ms = now;
-                    printu(">>> Value confirmed: %.1f\r\n", current);
-                    printu("Use LEFT/RIGHT to select parameter\r\n");
-                } else {
-                    set_param_value(menu->current_param, new_val);
-                    menu->last_update_ms = now;
-                    printu("%s = %.1f\r\n", 
-                           params[menu->current_param].name,
-                           get_param_value(menu->current_param));
-                }
-            }
-            else if (left_pressed || right_pressed) {
-                // Cancel adjustment and go back
+        case MENU_VALUE_ADJUST: {
+            if (menu->current_param == PARAM_EXIT) {
                 menu->state = MENU_VARIABLE_SELECT;
                 menu->last_update_ms = now;
-                printu(">>> Value adjustment cancelled\r\n");
+                menu_render_selected(menu);
+                break;
+            }
+
+            if (center_pressed) {
+                menu->state = MENU_VARIABLE_SELECT;
+                menu->last_update_ms = now;
+                menu_render_selected(menu);
+                break;
+            }
+
+            float current = get_param_value(menu->current_param);
+            float coarse = params[menu->current_param].coarse_step;
+            float fine   = params[menu->current_param].fine_step;
+            bool updated = false;
+
+            if (coarse > 0.0f) {
+                if (up_pressed)   { current += coarse; updated = true; }
+                if (down_pressed) { current -= coarse; updated = true; }
+            }
+            if (fine > 0.0f) {
+                if (right_pressed) { current += fine; updated = true; }
+                if (left_pressed)  { current -= fine; updated = true; }
+            }
+
+            if (updated) {
+                set_param_value(menu->current_param, current);
+                menu->last_update_ms = now;
+                menu_render_adjust(menu, "Adjusting:");
             }
             break;
+        }
     }
     
     return (menu->state != MENU_CLOSED);
@@ -287,6 +340,14 @@ void Menu_GetDisplayString(menu_handle_t *menu, char *buffer, size_t buffer_size
     }
     
     param_def_t *param = &params[menu->current_param];
+    if (menu->current_param == PARAM_EXIT) {
+        if (menu->state == MENU_VARIABLE_SELECT) {
+            snprintf(buffer, buffer_size, "[SEL] Exit Menu");
+        } else {
+            snprintf(buffer, buffer_size, "[ADJ] Exit Menu");
+        }
+        return;
+    }
     float value = get_param_value(menu->current_param);
     
     if (menu->state == MENU_VARIABLE_SELECT) {

@@ -18,6 +18,14 @@
 static bool grove5way_write_cmd(Grove5Way_Handle *handle, uint8_t cmd);
 static bool grove5way_read_event(Grove5Way_Handle *handle, uint8_t *button_bytes);
 
+static const Grove5Way_ButtonMask g_button_map[GROVE5WAY_BUTTON_COUNT] = {
+    GROVE5WAY_BTN_RIGHT,   /* raw index 0 */
+    GROVE5WAY_BTN_UP,      /* raw index 1 */
+    GROVE5WAY_BTN_LEFT,    /* raw index 2 */
+    GROVE5WAY_BTN_DOWN,    /* raw index 3 */
+    GROVE5WAY_BTN_CENTER   /* raw index 4 */
+};
+
 bool Grove5Way_Init(Grove5Way_Handle *handle, I2C_HandleTypeDef *hi2c, uint8_t address)
 {
     if (handle == NULL || hi2c == NULL) {
@@ -41,7 +49,7 @@ bool Grove5Way_Init(Grove5Way_Handle *handle, I2C_HandleTypeDef *hi2c, uint8_t a
     for (uint8_t i = 0U; i < GROVE5WAY_BUTTON_COUNT; ++i) {
         uint8_t raw = buttons[i] & 0x01U;
         if (raw == 0U) {
-            pressed_mask |= (1U << i);
+            pressed_mask |= g_button_map[i];
         }
     }
     handle->last_pressed = pressed_mask;
@@ -68,7 +76,7 @@ bool Grove5Way_Poll(Grove5Way_Handle *handle, Grove5Way_Event *event)
     for (uint8_t i = 0U; i < GROVE5WAY_BUTTON_COUNT; ++i) {
         uint8_t raw = buttons[i] & 0x01U;
         if (raw == 0U) {
-            pressed_mask |= (1U << i);
+            pressed_mask |= g_button_map[i];
         }
     }
 

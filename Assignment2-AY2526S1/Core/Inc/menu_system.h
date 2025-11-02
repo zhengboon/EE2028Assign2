@@ -34,6 +34,9 @@ typedef enum {
     // Game 3: Arrow game parameter
     PARAM_SEQUENCE_TIME,
     
+    // Exit option
+    PARAM_EXIT,
+    
     PARAM_COUNT  // Total number of parameters
 } param_id_t;
 
@@ -43,7 +46,8 @@ typedef struct {
     float *value_ptr;          // Pointer to actual variable
     float min_value;           // Minimum allowed value
     float max_value;           // Maximum allowed value
-    float step;                // Increment/decrement step
+    float coarse_step;         // Coarse increment (UP/DOWN)
+    float fine_step;           // Fine increment (LEFT/RIGHT in adjust)
     uint8_t game_id;           // Which game this belongs to (0=RLGL, 1=Catch, 2=Arrow)
 } param_def_t;
 
