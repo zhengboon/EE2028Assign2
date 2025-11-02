@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
+extern void printu(const char *fmt, ...);
+
 /* External variable references - these should match your main.c */
 extern float ACCEL_THRESHOLD_MS2;
 extern float GYRO_THRESHOLD_DPS;
@@ -164,13 +166,13 @@ bool Menu_Process(menu_handle_t *menu) {
     
     // Check for button presses (level changed + currently pressed)
     bool down_pressed = (event->button[4] & BTN_EV_LEVEL_CHANGED) && 
-                       (event->button[4] & BTN_EV_RAW_STATUS);
+                       ((event->button[4] & BTN_EV_RAW_STATUS) == RAW_DIGITAL_BTN_PRESSED);
     bool up_pressed = (event->button[0] & BTN_EV_LEVEL_CHANGED) && 
-                     (event->button[0] & BTN_EV_RAW_STATUS);
+                     ((event->button[0] & BTN_EV_RAW_STATUS) == RAW_DIGITAL_BTN_PRESSED);
     bool left_pressed = (event->button[2] & BTN_EV_LEVEL_CHANGED) && 
-                       (event->button[2] & BTN_EV_RAW_STATUS);
+                       ((event->button[2] & BTN_EV_RAW_STATUS) == RAW_DIGITAL_BTN_PRESSED);
     bool right_pressed = (event->button[3] & BTN_EV_LEVEL_CHANGED) && 
-                        (event->button[3] & BTN_EV_RAW_STATUS);
+                        ((event->button[3] & BTN_EV_RAW_STATUS) == RAW_DIGITAL_BTN_PRESSED);
     
     // State machine
     switch (menu->state) {
@@ -179,10 +181,10 @@ bool Menu_Process(menu_handle_t *menu) {
             if (down_pressed) {
                 menu->state = MENU_VARIABLE_SELECT;
                 menu->last_update_ms = now;
-                printf("\r\n=== MENU OPENED ===\r\n");
-                printf("Use LEFT/RIGHT to select parameter\r\n");
-                printf("Press DOWN to adjust value\r\n");
-                printf("Current: %s = %.1f\r\n", 
+                printu("\r\n=== MENU OPENED ===\r\n");
+                printu("Use LEFT/RIGHT to select parameter\r\n");
+                printu("Press DOWN to adjust value\r\n");
+                printu("Current: %s = %.1f\r\n", 
                        params[menu->current_param].name,
                        get_param_value(menu->current_param));
             }
@@ -193,7 +195,7 @@ bool Menu_Process(menu_handle_t *menu) {
                 // Navigate to previous parameter
                 menu->current_param = get_next_param(menu, -1);
                 menu->last_update_ms = now;
-                printf("Selected: %s = %.1f\r\n", 
+                printu("Selected: %s = %.1f\r\n", 
                        params[menu->current_param].name,
                        get_param_value(menu->current_param));
             }
@@ -204,12 +206,12 @@ bool Menu_Process(menu_handle_t *menu) {
                     // Exit menu (we're at the last parameter)
                     menu->state = MENU_CLOSED;
                     menu->last_update_ms = now;
-                    printf("=== MENU CLOSED ===\r\n\r\n");
+                    printu("=== MENU CLOSED ===\r\n\r\n");
                 } else {
                     // Navigate to next parameter
                     menu->current_param = next;
                     menu->last_update_ms = now;
-                    printf("Selected: %s = %.1f\r\n", 
+                    printu("Selected: %s = %.1f\r\n", 
                            params[menu->current_param].name,
                            get_param_value(menu->current_param));
                 }
@@ -218,9 +220,9 @@ bool Menu_Process(menu_handle_t *menu) {
                 // Enter value adjustment mode
                 menu->state = MENU_VALUE_ADJUST;
                 menu->last_update_ms = now;
-                printf(">>> Adjusting: %s\r\n", params[menu->current_param].name);
-                printf("Use UP/DOWN to change value\r\n");
-                printf("Press DOWN (center) to confirm\r\n");
+                printu(">>> Adjusting: %s\r\n", params[menu->current_param].name);
+                printu("Use UP/DOWN to change value\r\n");
+                printu("Press DOWN (center) to confirm\r\n");
             }
             break;
             
@@ -231,7 +233,7 @@ bool Menu_Process(menu_handle_t *menu) {
                 float step = params[menu->current_param].step;
                 set_param_value(menu->current_param, current + step);
                 menu->last_update_ms = now;
-                printf("%s = %.1f\r\n", 
+                printu("%s = %.1f\r\n", 
                        params[menu->current_param].name,
                        get_param_value(menu->current_param));
             }
@@ -245,12 +247,12 @@ bool Menu_Process(menu_handle_t *menu) {
                 if (new_val < params[menu->current_param].min_value) {
                     menu->state = MENU_VARIABLE_SELECT;
                     menu->last_update_ms = now;
-                    printf(">>> Value confirmed: %.1f\r\n", current);
-                    printf("Use LEFT/RIGHT to select parameter\r\n");
+                    printu(">>> Value confirmed: %.1f\r\n", current);
+                    printu("Use LEFT/RIGHT to select parameter\r\n");
                 } else {
                     set_param_value(menu->current_param, new_val);
                     menu->last_update_ms = now;
-                    printf("%s = %.1f\r\n", 
+                    printu("%s = %.1f\r\n", 
                            params[menu->current_param].name,
                            get_param_value(menu->current_param));
                 }
@@ -259,7 +261,7 @@ bool Menu_Process(menu_handle_t *menu) {
                 // Cancel adjustment and go back
                 menu->state = MENU_VARIABLE_SELECT;
                 menu->last_update_ms = now;
-                printf(">>> Value adjustment cancelled\r\n");
+                printu(">>> Value adjustment cancelled\r\n");
             }
             break;
     }

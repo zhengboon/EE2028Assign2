@@ -27,6 +27,8 @@
 #include "fonts.h"
 #include "bitmap.h"
 #include "horse_anim.h"
+#include "multi_switch.h"
+#include "menu_system.h"
 /* ========= UART ========= */
 UART_HandleTypeDef huart1;
 static void UART1_Init(void);
@@ -52,13 +54,14 @@ typedef enum { ROLE_PLAYER = 1, ROLE_ENFORCER = 2 } role_t;
 typedef enum { PHASE_GREEN = 0, PHASE_RED = 1 } rlgl_phase_t;
 
 /* Thresholds */
-#define ACCEL_THRESHOLD_MS2   15.0f
-#define GYRO_THRESHOLD_DPS    150.0f
-#define TEMP_THRESH_C         30.0f
-#define HUMID_THRESH_PCT      70.0f
-#define PRESS_THRESH_HPA      63.0f
+float ACCEL_THRESHOLD_MS2   = 15.0f;
+float GYRO_THRESHOLD_DPS    = 150.0f;
+float TEMP_THRESH_C         = 30.0f;
+float HUMID_THRESH_PCT      = 70.0f;
+float PRESS_THRESH_HPA      = 1013.0f;
 
-static int MAG_THRESH[3] = { 500, 2000, 10000 };
+int MAG_THRESH[3] = { 500, 2000, 10000 };
+uint32_t SEQUENCE_TIME_MS = 1000U;
 
 /* ================= Calibration Variables ================= */
 float gyro_offset_x = 0.0f;
@@ -92,6 +95,12 @@ typedef enum {
 static catch_state_t g_catch_state = CATCH_IDLE;
 static uint32_t      g_catch_event_start = 0;
 static int8_t        g_catch_blink_level = -1;
+
+/* Menu / Grove switch */
+static GroveMultiSwitch_t g_switch;
+static menu_handle_t      g_menu;
+static uint8_t            g_switch_ready = 0;
+static uint32_t           t_menuPoll = 0;
 
 /* ========= LED alert blinker (Catch mode) ========= */
 typedef struct {
@@ -157,6 +166,7 @@ static void process_clicks(uint32_t now)
      	 if (n == 2) {
             if (g_game == GAME_RLGL) {
                 g_game = GAME_CATCH;
+                if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
                 printu("Entering Catch And Run as %s\r\n",
                        (g_role == ROLE_PLAYER) ? "Player" : "Enforcer");
                 led_set_blink(-1);
@@ -169,6 +179,7 @@ static void process_clicks(uint32_t now)
                 was_temp_high=was_hum_high=was_press_high=0;
             } else if (g_game == GAME_CATCH){
                 g_game = GAME_RLGL;
+                if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
                 printu("Entering Red Light, Green Light as %s\r\n",
                        (g_role == ROLE_PLAYER) ? "Player" : "Enforcer");
                 g_phase = PHASE_GREEN; g_gameOver = 0;
@@ -319,9 +330,9 @@ static void UART1_Init(void)
 
 void NFC_Init(void) {
     if (BSP_NFCTAG_Init(0) == NFCTAG_OK)
-        printf("NFC Tag initialized successfully.\r\n");
+        printu("NFC Tag initialized successfully.\r\n");
     else
-        printf("NFC Tag initialization failed.\r\n");
+        printu("NFC Tag initialization failed.\r\n");
 }
 
 void NFC_BlinkIfCard(void) {
@@ -382,6 +393,22 @@ int main(void)
 
     I2C_Scan(&hi2c1);
 
+    if (GroveMultiSwitch_Init(&g_switch, &hi2c1, GROVE_MULTI_SWITCH_DEF_I2C_ADDR)) {
+        g_switch_ready = 1U;
+        Menu_Init(&g_menu, &g_switch, (uint8_t)g_game);
+        Menu_SetGame(&g_menu, (uint8_t)g_game);
+        t_menuPoll = HAL_GetTick();
+        const char *ver = GroveMultiSwitch_GetDevVer(&g_switch);
+        uint32_t dev_id = GroveMultiSwitch_GetDevID(&g_switch);
+        printu("Grove 5-way switch detected (ID=0x%08lX, buttons=%d)%s%s\r\n",
+               (unsigned long)dev_id,
+               GroveMultiSwitch_GetSwitchCount(&g_switch),
+               (ver != NULL) ? " ver " : "",
+               (ver != NULL) ? ver : "");
+    } else {
+        printu("Grove 5-way switch not found at 0x%02X\r\n", GROVE_MULTI_SWITCH_DEF_I2C_ADDR);
+    }
+
     if (HT16K33_Init(&hmatrix, &hi2c1, HT16K33_I2C_ADDR_DEFAULT) == HAL_OK) {
         printu("HT16K33 matrix ready\r\n");
         HT16K33_SetBrightness(&hmatrix, 8U);
@@ -410,7 +437,7 @@ int main(void)
         SSD1306_Fill(SSD1306_COLOR_BLACK);
         SSD1306_UpdateScreen();
         SSD1306_GotoXY(0, 0);
-        SSD1306_Puts("OLED OK", &Font_7x10, SSD1306_COLOR_WHITE);
+        SSD1306_Puts("OLED OK", &Font_16x26, SSD1306_COLOR_WHITE);
         SSD1306_UpdateScreen();
         printu("SSD1306 sanity draw done\r\n");
     } else {
@@ -418,7 +445,7 @@ int main(void)
     }
 
     printu("Scheduling buzzer A4->A5 startup sweep...\r\n");
-    //Buzzer_TestPattern();
+    Buzzer_TestPattern();
 
     while (1)
     {//
@@ -433,6 +460,10 @@ int main(void)
             led_blink_process(now);
             NFC_PrintDetected();
             Buzzer_Service(now);
+            if (g_switch_ready && (now - t_menuPoll) >= 50U) {
+                t_menuPoll = now;
+                Menu_Process(&g_menu);
+            }
 
             /* ---- Game 1: RLGL ---- */
             if (g_game == GAME_RLGL) {
@@ -467,7 +498,7 @@ int main(void)
                     BSP_LED_On(LED2);
                     if ((now - t_envRLGL) >= 2000U) {
                         t_envRLGL = now;
-                        g_gameOver = 0
+                        g_gameOver = 0;
                         float t = BSP_TSENSOR_ReadTemp();
                         float p = BSP_PSENSOR_ReadPressure();
                         float h = BSP_HSENSOR_ReadHumidity();
@@ -484,13 +515,15 @@ int main(void)
                         float az = ar[2] * (9.8f / 1000.0f);
                         float a_mag = sqrtf(ax*ax + ay*ay + az*az);
 
-                        float g[3] = {0.f, 0.f, 0.f}; 
+                        float g[3] = {0.f, 0.f, 0.f};
                         BSP_GYRO_GetXYZ(g);
-                        float gx = g[0]-gyro_offset_x, gy = g[1]-gyro_offset_y, gz = g[2]-gyro_offset_z;
-                        float g_mag = sqrtf(g[0]*g[0] + g[1]*g[1] + g[2]*g[2]);
+                        float gx = g[0] - gyro_offset_x;
+                        float gy = g[1] - gyro_offset_y;
+                        float gz = g[2] - gyro_offset_z;
+                        float g_mag = sqrtf(gx*gx + gy*gy + gz*gz);
 
-                        printu("Acceleration[%.2f,%.2f,%.2f] Gyroscope[%.2f,%.2f,%.2f]\r\n",
-                               ax, ay, az, g[0], g[1], g[2]);
+                        printu("Acceleration[%.2f,%.2f,%.2f] GyroscopeRaw[%.2f,%.2f,%.2f] GyroscopeAdj[%.2f,%.2f,%.2f]\r\n",
+                               ax, ay, az, g[0], g[1], g[2], gx, gy, gz);
 
                         if ((a_mag > ACCEL_THRESHOLD_MS2) || (g_mag > GYRO_THRESHOLD_DPS)) {
                             if (g_role == ROLE_PLAYER) { printu("Game Over\r\n"); g_gameOver = 1; BSP_LED_Off(LED2); }
@@ -636,32 +669,42 @@ static void NFC_PrintDetected(void)
             if (g_game != GAME_ARROW){
                 printu("NFC detected! Switching to Audition:Sotong Edition!\r\n");
                 uint32_t tickstart4 = HAL_GetTick();
-                 const uint32_t wait4 = 1000U;
+                const uint32_t wait4 = 1000U;
 
-            while ((HAL_GetTick() - tickstart4) < wait4){
-                Buzzer_Service(HAL_GetTick());
-            }
+                while ((HAL_GetTick() - tickstart4) < wait4) {
+                    Buzzer_Service(HAL_GetTick());
+                }
                 led_set_blink(-1);
                 g_catch_state = CATCH_IDLE;
                 single_press_event = 0;
                 g_catch_event_start = 0;
                 g_game = GAME_ARROW;
+                if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
                 
             }
             else
             {
                 printu("NFC detected! Switching to RLGL!\r\n");
                 uint32_t tickstart4 = HAL_GetTick();
-                 const uint32_t wait4 = 1000U;
+                const uint32_t wait4 = 1000U;
 
-            while ((HAL_GetTick() - tickstart4) < wait4){
-                Buzzer_Service(HAL_GetTick());
-            }
+                while ((HAL_GetTick() - tickstart4) < wait4) {
+                    Buzzer_Service(HAL_GetTick());
+                }
                 led_set_blink(-1);
                 g_catch_state = CATCH_IDLE;
                 single_press_event = 0;
                 g_catch_event_start = 0;
                 g_game = GAME_RLGL;
+                if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
+                g_phase = PHASE_GREEN;
+                g_gameOver = 0;
+                t_phaseSwitch = HAL_GetTick();
+                t_envRLGL = 0;
+                t_motionRLGL = 0;
+                t_ledHB = 0;
+                BSP_LED_On(LED2);
+                printu("Green Light!\r\n");
             }
         }
         was_on = 1;
