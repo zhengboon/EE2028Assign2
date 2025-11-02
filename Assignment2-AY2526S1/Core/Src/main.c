@@ -510,6 +510,7 @@ int main(void)
                                 //Buzzer_PlayNoteAsync(BUZZER_NOTE_C5,200U);
                                 SSD1306_Clear();
 	                            SSD1306_DrawBitmap(0,0,gameoveranimation,128,64,1);
+                                SSD1306_ScrollLeft(0x00, 0x07);
 	                            SSD1306_UpdateScreen();
                                 HT16K33_PlayFrames(&hmatrix,
                                                    HT16K33_IMAGES_GAMEOVER,
