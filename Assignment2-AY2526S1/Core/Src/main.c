@@ -58,6 +58,11 @@ typedef enum { PHASE_GREEN = 0, PHASE_RED = 1 } rlgl_phase_t;
 
 static int MAG_THRESH[3] = { 500, 2000, 10000 };
 
+/* ================= Calibration Variables ================= */
+float gyro_offset_x = 0.0f;
+float gyro_offset_y = 0.0f;
+float gyro_offset_z = 0.0f;
+
 /* ========= Global state ========= */
 static volatile game_t g_game = GAME_RLGL;
 static role_t  g_role = ROLE_PLAYER;
@@ -211,6 +216,37 @@ static void process_clicks(uint32_t now)
     }
 }
 
+/* ========= Gyroscope Calibration ========= */
+void CalibrateGyroscope(void)
+{
+    const int NUM_SAMPLES = 2000;
+    float sum_x = 0.0f, sum_y = 0.0f, sum_z = 0.0f;
+
+    printu("\r\n========================================\r\n");
+    printu("     GYROSCOPE CALIBRATION\r\n");
+    printu("========================================\r\n\r\n");
+    printu("IMPORTANT: Keep board COMPLETELY STILL!\r\n");
+    printu("Starting calibration in 3 seconds...\r\n\r\n");
+    HAL_Delay(3000);
+
+    for (int i = 0; i < NUM_SAMPLES; i++)
+    {
+        float gyro_raw[3];
+        BSP_GYRO_GetXYZ(gyro_raw);
+        sum_x += gyro_raw[0];
+        sum_y += gyro_raw[1];
+        sum_z += gyro_raw[2];
+        HAL_Delay(2);
+    }
+
+    gyro_offset_x = sum_x / NUM_SAMPLES;
+    gyro_offset_y = sum_y / NUM_SAMPLES;
+    gyro_offset_z = sum_z / NUM_SAMPLES;
+
+    printu("Calibration Complete!\r\nOffsets: X=%.2f Y=%.2f Z=%.2f\r\n",
+           gyro_offset_x, gyro_offset_y, gyro_offset_z);
+}
+
 /* ========= Init ========= */
 void MX_I2C1_Init(void)
 {
@@ -313,6 +349,10 @@ int main(void)
     BSP_TSENSOR_Init();
     BSP_HSENSOR_Init();
     BSP_PSENSOR_Init();
+
+    /* Gyro calibration before starting game */
+    CalibrateGyroscope();
+
     //SSD1306_Init();
     //Default: RLGL as Player
     g_role = ROLE_PLAYER;
@@ -432,7 +472,9 @@ int main(void)
                         float az = ar[2] * (9.8f / 1000.0f);
                         float a_mag = sqrtf(ax*ax + ay*ay + az*az);
 
-                        float g[3] = {0.f, 0.f, 0.f}; BSP_GYRO_GetXYZ(g);
+                        float g[3] = {0.f, 0.f, 0.f}; 
+                        BSP_GYRO_GetXYZ(g);
+                        float gx = g[0]-gyro_offset_x, gy = g[1]-gyro_offset_y, gz = g[2]-gyro_offset_z;
                         float g_mag = sqrtf(g[0]*g[0] + g[1]*g[1] + g[2]*g[2]);
 
                         printu("Acceleration[%.2f,%.2f,%.2f] Gyroscope[%.2f,%.2f,%.2f]\r\n",
