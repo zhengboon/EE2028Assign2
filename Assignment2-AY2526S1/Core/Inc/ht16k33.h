@@ -2,6 +2,7 @@
 #define HT16K33_H
 
 #include "main.h"
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,6 +25,11 @@ void HT16K33_Clear(HT16K33_HandleTypeDef *h);
 void HT16K33_SetRow(HT16K33_HandleTypeDef *h, uint8_t row, uint8_t pattern);
 void HT16K33_DrawBitmap64(HT16K33_HandleTypeDef *h, uint64_t bitmap);
 HAL_StatusTypeDef HT16K33_DisplayBitmap64(HT16K33_HandleTypeDef *h, uint64_t bitmap);
+HAL_StatusTypeDef HT16K33_PlayFrames(HT16K33_HandleTypeDef *h,
+                                     const uint64_t *frames,
+                                     size_t frame_count,
+                                     uint32_t frame_duration_ms,
+                                     uint32_t repeat);
 
 #ifdef __cplusplus
 }
