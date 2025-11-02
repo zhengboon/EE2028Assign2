@@ -1,14 +1,12 @@
-/******************************************************************************
- * @file    : main.c
- * @brief   : Sotong Game (RLGL + Catch & Run) — non-blocking (HAL_GetTick only)
- ******************************************************************************/
-
+﻿
 #include "main.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>   /* for abs() */
+#include "stm32l4xx_hal.h"
+#include <stdlib.h>
 
 /* BSP drivers */
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.h"
@@ -18,13 +16,24 @@
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.h"
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.h"
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.h"
+#include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.h"
+#include "ssd1306.h"
+#include "ht16k33.h"
 
+#include "fonts.h"
+#include "bitmap.h"
+#include "horse_anim.h"
 /* ========= UART ========= */
 UART_HandleTypeDef huart1;
 static void UART1_Init(void);
 static void MX_GPIO_Init(void);
+void MX_I2C1_Init(void);
+static void I2C_Scan(I2C_HandleTypeDef *hi2c);
+static void NFC_PrintDetected(void);
 
-static void printu(const char *fmt, ...)
+I2C_HandleTypeDef hi2c1;
+static HT16K33_HandleTypeDef hmatrix;
+void printu(const char *fmt, ...)
 {
     char buf[256];
     va_list ap; va_start(ap, fmt);
@@ -34,7 +43,7 @@ static void printu(const char *fmt, ...)
 }
 
 /* ========= Game / Role defs ========= */
-typedef enum { GAME_RLGL = 0, GAME_CATCH = 1 } game_t;
+typedef enum { GAME_RLGL = 0, GAME_CATCH = 1, GAME_ARROW = 2} game_t;
 typedef enum { ROLE_PLAYER = 1, ROLE_ENFORCER = 2 } role_t;
 typedef enum { PHASE_GREEN = 0, PHASE_RED = 1 } rlgl_phase_t;
 
@@ -50,6 +59,16 @@ static int MAG_THRESH[3] = { 500, 2000, 10000 };
 /* ========= Global state ========= */
 static volatile game_t g_game = GAME_RLGL;
 static role_t  g_role = ROLE_PLAYER;
+
+/* HT16K33 sample images (row-major, LSB=column0) */
+static const uint64_t HT16K33_IMAGES[] = {
+    0x3c66760606663c00ULL,
+    0x7c667c603c000000ULL,
+    0xd6d6feeec6000000ULL,
+    0x3c067e663c000000ULL,
+    0x0000000000000000ULL
+};
+static const size_t HT16K33_IMAGES_LEN = sizeof(HT16K33_IMAGES) / sizeof(HT16K33_IMAGES[0]);
 
 /* RLGL */
 static rlgl_phase_t g_phase = PHASE_GREEN;
@@ -165,6 +184,33 @@ static void process_clicks(uint32_t now)
 }
 
 /* ========= Init ========= */
+void MX_I2C1_Init(void)
+{
+    hi2c1.Instance             = I2C1;
+    hi2c1.Init.Timing          = 0x00702681; /* ~100 kHz with 80 MHz sysclk */
+    hi2c1.Init.OwnAddress1     = 0;
+    hi2c1.Init.AddressingMode  = I2C_ADDRESSINGMODE_7BIT;
+    hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+    hi2c1.Init.OwnAddress2     = 0;
+    hi2c1.Init.OwnAddress2Masks= I2C_OA2_NOMASK;
+    hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+    hi2c1.Init.NoStretchMode   = I2C_NOSTRETCH_DISABLE;
+    if (HAL_I2C_Init(&hi2c1) != HAL_OK) { Error_Handler(); }
+    if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK) { Error_Handler(); }
+    if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK) { Error_Handler(); }
+}
+
+static void I2C_Scan(I2C_HandleTypeDef *hi2c)
+{
+    printu("\r\nStarting I2C scan...\r\n");
+    for (uint8_t addr = 1; addr < 128; ++addr) {
+        if (HAL_I2C_IsDeviceReady(hi2c, (uint16_t)(addr << 1), 3, 5) == HAL_OK) {
+            printu("I2C device at 0x%02X\r\n", addr);
+        }
+    }
+    printu("Scan complete.\r\n");
+}
+
 static void MX_GPIO_Init(void)
 {
     __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -202,13 +248,36 @@ static void UART1_Init(void)
     if (HAL_UART_Init(&huart1) != HAL_OK) { while (1) {} }
 }
 
+void NFC_Init(void) {
+    if (BSP_NFCTAG_Init(0) == NFCTAG_OK)
+        printf("NFC Tag initialized successfully.\r\n");
+    else
+        printf("NFC Tag initialization failed.\r\n");
+}
+
+void NFC_BlinkIfCard(void) {
+    ST25DV_FIELD_STATUS rf_field;
+
+    if (BSP_NFCTAG_GetRFField_Dyn(0, &rf_field) == NFCTAG_OK) {
+        if (rf_field == ST25DV_FIELD_ON) {
+            BSP_LED_On(LED2);
+            printu(".");
+        } else {
+            BSP_LED_Off(LED2);
+        }
+    }
+}
+
+
+
 /* ========= MAIN ========= */
 int main(void)
 {
     HAL_Init();
     MX_GPIO_Init();
     UART1_Init();
-
+    MX_I2C1_Init();
+    NFC_Init();
     BSP_LED_Init(LED2);
     BSP_ACCELERO_Init();
     BSP_GYRO_Init();
@@ -216,8 +285,8 @@ int main(void)
     BSP_TSENSOR_Init();
     BSP_HSENSOR_Init();
     BSP_PSENSOR_Init();
-
-    /* Default: RLGL as Player */
+    //SSD1306_Init();
+    //Default: RLGL as Player
     g_role = ROLE_PLAYER;
     g_game = GAME_RLGL;
     g_phase = PHASE_GREEN;
@@ -235,6 +304,45 @@ int main(void)
     int16_t m0[3]; BSP_MAGNETO_GetXYZ(m0);
     g_mag_baseline = abs(m0[0]) + abs(m0[1]) + abs(m0[2]);
 
+
+    I2C_Scan(&hi2c1);
+
+    if (HT16K33_Init(&hmatrix, &hi2c1, HT16K33_I2C_ADDR_DEFAULT) == HAL_OK) {
+        printu("HT16K33 matrix ready\r\n");
+        HT16K33_SetBrightness(&hmatrix, 8U);
+        HT16K33_SetBlinkRate(&hmatrix, 0U);
+        for (size_t i = 0; i < HT16K33_IMAGES_LEN; ++i) {
+            
+        uint32_t tickstart3 = HAL_GetTick();
+        const uint32_t wait3 = 1000U;
+
+        while ((HAL_GetTick() - tickstart3) < wait3){
+            HT16K33_DisplayBitmap64(&hmatrix, HT16K33_IMAGES[i]);
+        }
+        }
+        HT16K33_Clear(&hmatrix);
+        HT16K33_Update(&hmatrix);
+    } else {
+        printu("HT16K33 not detected\r\n");
+    }
+
+        uint32_t tickstart2 = HAL_GetTick();
+        const uint32_t wait2 = 100U;
+
+        while ((HAL_GetTick() - tickstart2) < wait2){
+
+        }
+    if (SSD1306_Init()) {
+        printu("SSD1306 initialized on I2C1\r\n");
+        SSD1306_Fill(SSD1306_COLOR_BLACK);
+        SSD1306_UpdateScreen();
+        SSD1306_GotoXY(0, 0);
+        SSD1306_Puts("OLED OK", &Font_7x10, SSD1306_COLOR_WHITE);
+        SSD1306_UpdateScreen();
+        printu("SSD1306 sanity draw done\r\n");
+    } else {
+        printu("SSD1306 not found on I2C1\r\n");
+    }
     while (1)
     {//
         uint32_t tickstart = HAL_GetTick();
@@ -246,6 +354,7 @@ int main(void)
 
             process_clicks(now);
             led_blink_process(now);
+            NFC_PrintDetected();
 
             /* ---- Game 1: RLGL ---- */
             if (g_game == GAME_RLGL) {
@@ -260,7 +369,7 @@ int main(void)
                         printu("Green Light!\r\n");
                         t_envRLGL = 0; g_gameOver = 0; BSP_LED_On(LED2);
                     }
-                }
+                }//
 
                 if (g_phase == PHASE_GREEN) {
                     BSP_LED_On(LED2);
@@ -296,9 +405,9 @@ int main(void)
                 }
             }
             /* ---- Game 2: Catch & Run ---- */
-            else {
-                int16_t x[3]; BSP_MAGNETO_GetXYZ(x);
-                int sum = abs(x[0]) + abs(x[1]) + abs(x[2]);
+            else if (g_game == GAME_CATCH) {
+                int16_t mag_raw[3]; BSP_MAGNETO_GetXYZ(mag_raw);
+                int sum = abs(mag_raw[0]) + abs(mag_raw[1]) + abs(mag_raw[2]);
                 int diff = sum - g_mag_baseline; if (diff < 0) diff = -diff;
 
                 int level = -1;
@@ -309,25 +418,42 @@ int main(void)
                 if (level >= 0) {
                     if (!g_prox_flag) {
                         g_prox_flag = 1;
-                        g_escape_active = 1; g_escape_start = now;
+                        g_escape_active = 1;
+                        g_escape_start = now;
                         single_press_event = 0;
-                        if (g_role == ROLE_PLAYER) printu("Enforcer nearby! Be careful.\r\n");
-                        else                       printu("Player is Nearby! Move faster.\r\n");
+                        if (g_role == ROLE_PLAYER) {
+                            printu("Enforcer nearby! Be careful.\r\n");
+                        } else {
+                            printu("Player is Nearby! Move faster.\r\n");
+                        }
                     }
                     led_set_blink(level);
                 } else {
-                    g_prox_flag = 0; g_escape_active = 0; led_set_blink(-1);
+                    if (g_prox_flag) {
+                        led_set_blink(-1);
+                    }
+                    g_prox_flag = 0;
+                    g_escape_active = 0;
                 }
 
                 if (g_escape_active) {
                     if (single_press_event) {
-                        single_press_event = 0; g_escape_active = 0; led_set_blink(-1);
-                        if (g_role == ROLE_PLAYER) printu("Player escaped, good job!\r\n");
-                        else                       printu("Player captured, good job!\r\n");
+                        single_press_event = 0;
+                        g_escape_active = 0;
+                        led_set_blink(-1);
+                        if (g_role == ROLE_PLAYER) {
+                            printu("Player escaped, good job!\r\n");
+                        } else {
+                            printu("Player captured, good job!\r\n");
+                        }
                     } else if ((now - g_escape_start) >= 3000U) {
-                        g_escape_active = 0; led_set_blink(-1);
-                        if (g_role == ROLE_PLAYER) printu("Game Over!\r\n");
-                        else                       printu("Player escaped! Keep trying.\r\n");
+                        g_escape_active = 0;
+                        led_set_blink(-1);
+                        if (g_role == ROLE_PLAYER) {
+                            printu("Game Over!\r\n");
+                        } else {
+                            printu("Player escaped! Keep trying.\r\n");
+                        }
                     }
                 }
 
@@ -352,8 +478,58 @@ int main(void)
                     was_temp_high = th; was_hum_high = hh; was_press_high = ph;
                 }
             }
+            else if(g_game == GAME_ARROW){
+                uint32_t tickstart5 = HAL_GetTick();
+                 const uint32_t wait5 = 1000U;
+
+            while ((HAL_GetTick() - tickstart5) < wait5){}
+                printu("Audition:Sotong Edition coming soon!\r\n");
+            }
         }
     }
 }
 
+static void NFC_PrintDetected(void)
+{
+    static uint8_t was_on = 0;
+    ST25DV_FIELD_STATUS rf_field;
+    if (BSP_NFCTAG_GetRFField_Dyn(0, &rf_field) != NFCTAG_OK) {
+        return;
+    }
+    if (rf_field == ST25DV_FIELD_ON) {
+        if (!was_on) {
+            if (g_game != GAME_ARROW){
+                printu("NFC detected! Switching to Audition:Sotong Edition!\r\n");
+                uint32_t tickstart4 = HAL_GetTick();
+                 const uint32_t wait4 = 1000U;
 
+            while ((HAL_GetTick() - tickstart4) < wait4){}
+                g_game = GAME_ARROW;
+                
+            }
+            else
+            {
+                printu("NFC detected! Switching to RLGL!\r\n");
+                uint32_t tickstart4 = HAL_GetTick();
+                 const uint32_t wait4 = 1000U;
+
+            while ((HAL_GetTick() - tickstart4) < wait4){}
+                g_game = GAME_RLGL;
+            }
+        }
+        was_on = 1;
+    } else {
+        was_on = 0;
+    }
+}
+
+
+
+
+void Error_Handler(void)
+{
+    __disable_irq();
+    while (1)
+    {
+    }
+}

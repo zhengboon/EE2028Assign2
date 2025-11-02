@@ -29,17 +29,14 @@ extern C {
 #endif
 
 #include "main.h"
-
 #include "fonts.h"
+#include <stdlib.h>
+#include <string.h>
 
-#include "stdlib.h"
-#include "string.h"
-
-
-/* I2C address */
+/* I2C address (8-bit) */
 #ifndef SSD1306_I2C_ADDR
-#define SSD1306_I2C_ADDR         0x78
-//#define SSD1306_I2C_ADDR       0x7A
+#define SSD1306_I2C_ADDR         0x78U    /* 0x3C << 1 */
+//#define SSD1306_I2C_ADDR       0x7AU
 #endif
 
 /* SSD1306 settings */
