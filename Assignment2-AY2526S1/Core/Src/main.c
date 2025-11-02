@@ -8,6 +8,7 @@
 #include "stm32l4xx_hal.h"
 #include <stdlib.h>
 #include <stdint.h>
+#include "images.h"
 
 /* BSP drivers */
 #include "../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.h"
@@ -60,16 +61,6 @@ static int MAG_THRESH[3] = { 500, 2000, 10000 };
 /* ========= Global state ========= */
 static volatile game_t g_game = GAME_RLGL;
 static role_t  g_role = ROLE_PLAYER;
-
-/* HT16K33 sample images (row-major, LSB=column0) */
-static const uint64_t HT16K33_IMAGES[] = {
-    0x3c66760606663c00ULL,
-    0x7c667c603c000000ULL,
-    0xd6d6feeec6000000ULL,
-    0x3c067e663c000000ULL,
-    0x0000000000000000ULL
-};
-static const size_t HT16K33_IMAGES_LEN = sizeof(HT16K33_IMAGES) / sizeof(HT16K33_IMAGES[0]);
 
 /* RLGL */
 static rlgl_phase_t g_phase = PHASE_GREEN;
@@ -195,9 +186,23 @@ static void process_clicks(uint32_t now)
 				}
 			}
 
+
 				
 			
 		}
+        else if (n == 1 && g_game == GAME_RLGL) {
+            /* single press in Catch mode */
+            if (g_role == ROLE_PLAYER) {
+					g_role = ROLE_ENFORCER;
+					printu("Role switched to Enforcer\r\n");
+				} else {
+					g_role = ROLE_PLAYER;
+					printu("Role switched to Player\r\n");
+				}
+
+        }
+            /* single press */
+        
 		
         
 		else {
@@ -334,15 +339,13 @@ int main(void)
         printu("HT16K33 matrix ready\r\n");
         HT16K33_SetBrightness(&hmatrix, 8U);
         HT16K33_SetBlinkRate(&hmatrix, 0U);
-        for (size_t i = 0; i < HT16K33_IMAGES_LEN; ++i) {
-            
-        uint32_t tickstart3 = HAL_GetTick();
-        const uint32_t wait3 = 1000U;
-
-        while ((HAL_GetTick() - tickstart3) < wait3){
-            HT16K33_DisplayBitmap64(&hmatrix, HT16K33_IMAGES[i]);
-        }
-        }
+        /* Show intro animation once before main loop */
+        HT16K33_DisplayBitmap64(&hmatrix, HT16K33_IMAGES_INTRO[0]);
+        HT16K33_PlayFrames(&hmatrix,
+                           HT16K33_IMAGES_INTRO,
+                           HT16K33_IMAGES_INTRO_LEN,
+                           120U,
+                           1U);
         HT16K33_Clear(&hmatrix);
         HT16K33_Update(&hmatrix);
     } else {
@@ -381,6 +384,20 @@ int main(void)
 
             /* ---- Game 1: RLGL ---- */
             if (g_game == GAME_RLGL) {
+                /*if (single_press_event) {
+                    if (g_game == GAME_CATCH) {
+                        if (g_role == ROLE_PLAYER) {
+                            g_role = ROLE_ENFORCER;
+                            printu("Role switched to Enforcer\r\n");
+                        } else {
+                            g_role = ROLE_PLAYER;
+                            printu("Role switched to Player\r\n");
+                        }
+                    }
+                    single_press_event = 0;
+                }
+                */
+                
                 if ((now - t_phaseSwitch) >= 10000U) {
                     t_phaseSwitch = now;
                     if (g_phase == PHASE_GREEN) {
@@ -476,6 +493,11 @@ int main(void)
                             if (g_role == ROLE_PLAYER) {
                                 printu("Game Over!\r\n");
                                 printu("Press PB once to restart Catch & Run.\r\n");
+                                HT16K33_PlayFrames(&hmatrix,
+                                                   HT16K33_IMAGES_GAMEOVER,
+                                                   HT16K33_IMAGES_GAMEOVER_LEN,
+                                                   500U,
+                                                   1U);
                                 g_catch_state = CATCH_WAIT_RESET;
                             } else {
                                 printu("Player escaped! Keep trying.\r\n");
