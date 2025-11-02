@@ -38,7 +38,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
- ../Core/Inc/images.h \
+ ../Core/Inc/images.h ../Core/Inc/buzzer.h ../Core/Inc/buzzer_scale.h \
+ ../Core/Src/animations.h \
  ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.h \
  ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.h \
  ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.h \
@@ -105,6 +106,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h:
 ../Core/Inc/images.h:
+../Core/Inc/buzzer.h:
+../Core/Inc/buzzer_scale.h:
+../Core/Src/animations.h:
 ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.h:
 ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.h:
 ../Core/Src/../../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.h:
