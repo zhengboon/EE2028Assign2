@@ -48,8 +48,8 @@ typedef enum { ROLE_PLAYER = 1, ROLE_ENFORCER = 2 } role_t;
 typedef enum { PHASE_GREEN = 0, PHASE_RED = 1 } rlgl_phase_t;
 
 /* Thresholds */
-#define ACCEL_THRESHOLD_MS2   2.0f
-#define GYRO_THRESHOLD_DPS    50.0f
+#define ACCEL_THRESHOLD_MS2   15.0f
+#define GYRO_THRESHOLD_DPS    150.0f
 #define TEMP_THRESH_C         30.0f
 #define HUMID_THRESH_PCT      70.0f
 #define PRESS_THRESH_HPA      63.0f
@@ -375,6 +375,7 @@ int main(void)
                     BSP_LED_On(LED2);
                     if ((now - t_envRLGL) >= 2000U) {
                         t_envRLGL = now;
+                        g_gameOver = 0
                         float t = BSP_TSENSOR_ReadTemp();
                         float p = BSP_PSENSOR_ReadPressure();
                         float h = BSP_HSENSOR_ReadHumidity();
