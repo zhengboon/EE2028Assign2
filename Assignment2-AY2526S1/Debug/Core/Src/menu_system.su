@@ -1,0 +1,12 @@
+../Core/Src/menu_system.c:34:14:get_mag_value	16	static
+../Core/Src/menu_system.c:40:13:set_mag_value	16	static
+../Core/Src/menu_system.c:46:14:get_sequence_time	4	static
+../Core/Src/menu_system.c:52:13:set_sequence_time	16	static
+../Core/Src/menu_system.c:58:6:Menu_Init	24	static
+../Core/Src/menu_system.c:69:6:Menu_SetGame	24	static
+../Core/Src/menu_system.c:84:14:get_param_value	24	static
+../Core/Src/menu_system.c:104:13:set_param_value	24	static
+../Core/Src/menu_system.c:138:19:get_next_param	32	static
+../Core/Src/menu_system.c:154:6:Menu_Process	64	static
+../Core/Src/menu_system.c:273:14:Menu_GetState	16	static
+../Core/Src/menu_system.c:279:6:Menu_GetDisplayString	48	static

@@ -10,5 +10,6 @@ void Buzzer_PlayNoteAsync(buzzer_note_t note, uint32_t duration_ms);
 void Buzzer_Service(uint32_t now_ms);
 void Buzzer_TestPattern(void);
 void Buzzer_IRQHandler(void);
+void Buzzer_PlayFailureTune(void);
 
 #endif /* BUZZER_H */

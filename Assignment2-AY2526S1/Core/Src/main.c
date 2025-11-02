@@ -53,6 +53,9 @@ typedef enum { GAME_RLGL = 0, GAME_CATCH = 1, GAME_ARROW = 2} game_t;
 typedef enum { ROLE_PLAYER = 1, ROLE_ENFORCER = 2 } role_t;
 typedef enum { PHASE_GREEN = 0, PHASE_RED = 1 } rlgl_phase_t;
 
+static void GameOver_Trigger(game_t game, const char *message);
+static uint8_t GameReset_Attempt(game_t game, uint32_t now, int catch_level);
+
 /* Thresholds */
 float ACCEL_THRESHOLD_MS2   = 15.0f;
 float GYRO_THRESHOLD_DPS    = 150.0f;
@@ -101,6 +104,11 @@ static GroveMultiSwitch_t g_switch;
 static menu_handle_t      g_menu;
 static uint8_t            g_switch_ready = 0;
 static uint32_t           t_menuPoll = 0;
+
+static uint8_t            g_oled_ready = 0;
+static uint8_t            g_matrix_ready = 0;
+static uint8_t            g_game_reset_pending = 0;
+static game_t             g_reset_target = GAME_RLGL;
 
 /* ========= LED alert blinker (Catch mode) ========= */
 typedef struct {
@@ -163,9 +171,15 @@ static void process_clicks(uint32_t now)
         click_window_active = 0; click_count = 0;
 		
 
+        if (g_game_reset_pending) {
+            single_press_event = 1;
+            return;
+        }
+
      	 if (n == 2) {
             if (g_game == GAME_RLGL) {
                 g_game = GAME_CATCH;
+                g_game_reset_pending = 0U;
                 if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
                 printu("Entering Catch And Run as %s\r\n",
                        (g_role == ROLE_PLAYER) ? "Player" : "Enforcer");
@@ -179,6 +193,7 @@ static void process_clicks(uint32_t now)
                 was_temp_high=was_hum_high=was_press_high=0;
             } else if (g_game == GAME_CATCH){
                 g_game = GAME_RLGL;
+                g_game_reset_pending = 0U;
                 if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
                 printu("Entering Red Light, Green Light as %s\r\n",
                        (g_role == ROLE_PLAYER) ? "Player" : "Enforcer");
@@ -208,7 +223,7 @@ static void process_clicks(uint32_t now)
 				
 			
 		}
-        else if (n == 1 && g_game == GAME_RLGL) {
+        else if ((n == 1) && (g_game == GAME_RLGL) && !g_game_reset_pending && !g_gameOver) {
             /* single press in Catch mode */
             if (g_role == ROLE_PLAYER) {
 					g_role = ROLE_ENFORCER;
@@ -229,6 +244,111 @@ static void process_clicks(uint32_t now)
     }
 }
 
+static void GameOver_Trigger(game_t game, const char *message)
+{
+    if (g_game_reset_pending && (g_reset_target == game)) {
+        return;
+    }
+
+    if (message != NULL && message[0] != '\0') {
+        printu("%s\r\n", message);
+    }
+
+    switch (game) {
+        case GAME_RLGL:
+            printu("Press PB once to restart Red Light, Green Light.\r\n");
+            break;
+        case GAME_CATCH:
+            printu("Press PB once to restart Catch & Run.\r\n");
+            break;
+        case GAME_ARROW:
+            printu("Press PB once to restart Audition: Sotong Edition.\r\n");
+            break;
+        default:
+            break;
+    }
+    Buzzer_PlayFailureTune();
+
+    if (g_oled_ready) {
+        SSD1306_Clear();
+        SSD1306_DrawBitmap(0, 0, gameoveranimation, 128, 64, 1);
+        SSD1306_ScrollLeft(0x00, 0x07);
+        SSD1306_UpdateScreen();
+    }
+
+    if (g_matrix_ready) {
+        HT16K33_PlayFrames(&hmatrix,
+                           HT16K33_IMAGES_GAMEOVER,
+                           HT16K33_IMAGES_GAMEOVER_LEN,
+                           200U,
+                           1U);
+    }
+
+    
+
+    g_game_reset_pending = 1U;
+    g_reset_target = game;
+    single_press_event = 0;
+    click_window_active = 0;
+    click_count = 0;
+
+    switch (game) {
+        case GAME_RLGL:
+            g_gameOver = 1;
+            BSP_LED_Off(LED2);
+            break;
+        case GAME_CATCH:
+            g_catch_state = CATCH_WAIT_RESET;
+            g_catch_event_start = 0;
+            led_set_blink(-1);
+            break;
+        case GAME_ARROW:
+            break;
+        default:
+            break;
+    }
+}
+
+static uint8_t GameReset_Attempt(game_t game, uint32_t now, int catch_level)
+{
+    if (!g_game_reset_pending || (g_reset_target != game) || !single_press_event) {
+        return 0U;
+    }
+
+    single_press_event = 0;
+    g_game_reset_pending = 0;
+
+    switch (game) {
+        case GAME_RLGL:
+            g_phase = PHASE_GREEN;
+            g_gameOver = 0;
+            t_phaseSwitch = now;
+            t_envRLGL = 0;
+            t_motionRLGL = 0;
+            t_ledHB = 0;
+            BSP_LED_On(LED2);
+            printu("RLGL reset. Green Light!\r\n");
+            break;
+        case GAME_CATCH:
+            if (catch_level >= 0) {
+                g_catch_state = CATCH_LOCKOUT;
+            } else {
+                g_catch_state = CATCH_IDLE;
+            }
+            g_catch_event_start = now;
+            led_set_blink(-1);
+            printu("Catch & Run reset. Stay alert!\r\n");
+            break;
+        case GAME_ARROW:
+            printu("Arrow game reset. Ready up!\r\n");
+            break;
+        default:
+            break;
+    }
+
+    return 1U;
+}
+
 /* ========= Gyroscope Calibration ========= */
 void CalibrateGyroscope(void)
 {
@@ -239,8 +359,8 @@ void CalibrateGyroscope(void)
     printu("     GYROSCOPE CALIBRATION\r\n");
     printu("========================================\r\n\r\n");
     printu("IMPORTANT: Keep board COMPLETELY STILL!\r\n");
-    printu("Starting calibration in 3 seconds...\r\n\r\n");
-    HAL_Delay(3000);
+    printu("Starting calibration in 1 seconds...\r\n\r\n");
+    HAL_Delay(1000);
 
     for (int i = 0; i < NUM_SAMPLES; i++)
     {
@@ -410,6 +530,7 @@ int main(void)
     }
 
     if (HT16K33_Init(&hmatrix, &hi2c1, HT16K33_I2C_ADDR_DEFAULT) == HAL_OK) {
+        g_matrix_ready = 1U;
         printu("HT16K33 matrix ready\r\n");
         HT16K33_SetBrightness(&hmatrix, 8U);
         HT16K33_SetBlinkRate(&hmatrix, 0U);
@@ -423,6 +544,7 @@ int main(void)
         HT16K33_Clear(&hmatrix);
         HT16K33_Update(&hmatrix);
     } else {
+        g_matrix_ready = 0U;
         printu("HT16K33 not detected\r\n");
     }
 
@@ -433,6 +555,7 @@ int main(void)
             Buzzer_Service(HAL_GetTick());
         }
     if (SSD1306_Init()) {
+        g_oled_ready = 1U;
         printu("SSD1306 initialized on I2C1\r\n");
         SSD1306_Fill(SSD1306_COLOR_BLACK);
         SSD1306_UpdateScreen();
@@ -441,6 +564,7 @@ int main(void)
         SSD1306_UpdateScreen();
         printu("SSD1306 sanity draw done\r\n");
     } else {
+        g_oled_ready = 0U;
         printu("SSD1306 not found on I2C1\r\n");
     }
 
@@ -467,69 +591,62 @@ int main(void)
 
             /* ---- Game 1: RLGL ---- */
             if (g_game == GAME_RLGL) {
-                /*if (single_press_event) {
-                    if (g_game == GAME_CATCH) {
-                        if (g_role == ROLE_PLAYER) {
-                            g_role = ROLE_ENFORCER;
-                            printu("Role switched to Enforcer\r\n");
+                GameReset_Attempt(GAME_RLGL, now, -1);
+                if (!g_gameOver) {
+                    if ((now - t_phaseSwitch) >= 10000U) {
+                        t_phaseSwitch = now;
+                        if (g_phase == PHASE_GREEN) {
+                            g_phase = PHASE_RED;
+                            printu("Red Light!\r\n");
+                            t_motionRLGL = 0; t_ledHB = 0;
                         } else {
-                            g_role = ROLE_PLAYER;
-                            printu("Role switched to Player\r\n");
+                            g_phase = PHASE_GREEN;
+                            printu("Green Light!\r\n");
+                            t_envRLGL = 0; g_gameOver = 0; BSP_LED_On(LED2);
                         }
                     }
-                    single_press_event = 0;
-                }
-                */
-                
-                if ((now - t_phaseSwitch) >= 10000U) {
-                    t_phaseSwitch = now;
-                    if (g_phase == PHASE_GREEN) {
-                        g_phase = PHASE_RED;
-                        printu("Red Light!\r\n");
-                        t_motionRLGL = 0; t_ledHB = 0;
-                    } else {
-                        g_phase = PHASE_GREEN;
-                        printu("Green Light!\r\n");
-                        t_envRLGL = 0; g_gameOver = 0; BSP_LED_On(LED2);
-                    }
-                }//
 
-                if (g_phase == PHASE_GREEN) {
-                    BSP_LED_On(LED2);
-                    if ((now - t_envRLGL) >= 2000U) {
-                        t_envRLGL = now;
-                        g_gameOver = 0;
-                        float t = BSP_TSENSOR_ReadTemp();
-                        float p = BSP_PSENSOR_ReadPressure();
-                        float h = BSP_HSENSOR_ReadHumidity();
-                        printu("Temp=%.2fC Pressure=%.2fhPa Humidity=%.2f%%\r\n", t, p, h);
+                    if (g_phase == PHASE_GREEN) {
+                        BSP_LED_On(LED2);
+                        if ((now - t_envRLGL) >= 2000U) {
+                            t_envRLGL = now;
+                            float t = BSP_TSENSOR_ReadTemp();
+                            float p = BSP_PSENSOR_ReadPressure();
+                            float h = BSP_HSENSOR_ReadHumidity();
+                            printu("Temp=%.2fC Pressure=%.2fhPa Humidity=%.2f%%\r\n", t, p, h);
+                        }
+                    } else {
+                        if ((now - t_ledHB) >= 500U) { t_ledHB = now; BSP_LED_Toggle(LED2); }
+                        if ((now - t_motionRLGL) >= 2000U) {
+                            t_motionRLGL = now;
+
+                            int16_t ar[3] = {0}; BSP_ACCELERO_AccGetXYZ(ar);
+                            float ax = ar[0] * (9.8f / 1000.0f);
+                            float ay = ar[1] * (9.8f / 1000.0f);
+                            float az = ar[2] * (9.8f / 1000.0f);
+                            float a_mag = sqrtf(ax*ax + ay*ay + az*az);
+
+                            float g[3] = {0.f, 0.f, 0.f};
+                            BSP_GYRO_GetXYZ(g);
+                            float gx = g[0] - gyro_offset_x;
+                            float gy = g[1] - gyro_offset_y;
+                            float gz = g[2] - gyro_offset_z;
+                            float g_mag = sqrtf(gx*gx + gy*gy + gz*gz);
+
+                            printu("Acceleration[%.2f,%.2f,%.2f] GyroscopeRaw[%.2f,%.2f,%.2f] GyroscopeAdj[%.2f,%.2f,%.2f]\r\n",
+                                   ax, ay, az, g[0], g[1], g[2], gx, gy, gz);
+
+                            if ((a_mag > ACCEL_THRESHOLD_MS2) || (g_mag > GYRO_THRESHOLD_DPS)) {
+                                if (g_role == ROLE_PLAYER) {
+                                    GameOver_Trigger(GAME_RLGL, "Game Over!");
+                                } else {
+                                    printu("Player Out!\r\n");
+                                }
+                            }
+                        }
                     }
                 } else {
-                    if ((now - t_ledHB) >= 500U) { t_ledHB = now; BSP_LED_Toggle(LED2); }
-                    if (!g_gameOver && (now - t_motionRLGL) >= 2000U) {
-                        t_motionRLGL = now;
-
-                        int16_t ar[3] = {0}; BSP_ACCELERO_AccGetXYZ(ar);
-                        float ax = ar[0] * (9.8f / 1000.0f);
-                        float ay = ar[1] * (9.8f / 1000.0f);
-                        float az = ar[2] * (9.8f / 1000.0f);
-                        float a_mag = sqrtf(ax*ax + ay*ay + az*az);
-
-                        float g[3] = {0.f, 0.f, 0.f};
-                        BSP_GYRO_GetXYZ(g);
-                        float gx = g[0] - gyro_offset_x;
-                        float gy = g[1] - gyro_offset_y;
-                        float gz = g[2] - gyro_offset_z;
-                        float g_mag = sqrtf(gx*gx + gy*gy + gz*gz);
-
-                        printu("Acceleration[%.2f,%.2f,%.2f] GyroscopeRaw[%.2f,%.2f,%.2f] GyroscopeAdj[%.2f,%.2f,%.2f]\r\n",
-                               ax, ay, az, g[0], g[1], g[2], gx, gy, gz);
-
-                        if ((a_mag > ACCEL_THRESHOLD_MS2) || (g_mag > GYRO_THRESHOLD_DPS)) {
-                            if (g_role == ROLE_PLAYER) { printu("Game Over\r\n"); g_gameOver = 1; BSP_LED_Off(LED2); }
-                            else { printu("Player Out!\r\n"); }
-                        }
-                    }
+                    BSP_LED_Off(LED2);
                 }
             }
             /* ---- Game 2: Catch & Run ---- */
@@ -542,6 +659,8 @@ int main(void)
                 if (diff > MAG_THRESH[2])      level = 2;
                 else if (diff > MAG_THRESH[1]) level = 1;
                 else if (diff > MAG_THRESH[0]) level = 0;
+
+                GameReset_Attempt(GAME_CATCH, now, level);
 
                 switch (g_catch_state) {
                     case CATCH_IDLE:
@@ -576,24 +695,8 @@ int main(void)
                             g_catch_state = CATCH_LOCKOUT;
                         } else if ((now - g_catch_event_start) >= 3000U) {
                             single_press_event = 0;
-                            g_catch_event_start = 0;
-                            led_set_blink(-1);
                             if (g_role == ROLE_PLAYER) {
-                                printu("Game Over!\r\n");
-                                printu("Press PB once to restart Catch & Run.\r\n");
-                                //Buzzer_PlayNoteAsync(BUZZER_NOTE_E5,200U);
-                                //Buzzer_PlayNoteAsync(BUZZER_NOTE_D5,200U);
-                                //Buzzer_PlayNoteAsync(BUZZER_NOTE_C5,200U);
-                                SSD1306_Clear();
-	                            SSD1306_DrawBitmap(0,0,gameoveranimation,128,64,1);
-                                SSD1306_ScrollLeft(0x00, 0x07);
-	                            SSD1306_UpdateScreen();
-                                HT16K33_PlayFrames(&hmatrix,
-                                                   HT16K33_IMAGES_GAMEOVER,
-                                                   HT16K33_IMAGES_GAMEOVER_LEN,
-                                                   500U,
-                                                   1U);
-                                g_catch_state = CATCH_WAIT_RESET;
+                                GameOver_Trigger(GAME_CATCH, "Game Over!");
                             } else {
                                 printu("Player escaped! Keep trying.\r\n");
                                 g_catch_state = CATCH_LOCKOUT;
@@ -610,11 +713,6 @@ int main(void)
 
                     case CATCH_WAIT_RESET:
                         led_set_blink(-1);
-                        if (single_press_event) {
-                            single_press_event = 0;
-                            g_catch_state = (level >= 0) ? CATCH_LOCKOUT : CATCH_IDLE;
-                            printu("Catch & Run reset. Stay alert!\r\n");
-                        }
                         break;
 
                     default:
@@ -645,6 +743,7 @@ int main(void)
                 }
             }
             else if(g_game == GAME_ARROW){
+                GameReset_Attempt(GAME_ARROW, now, -1);
                 uint32_t tickstart5 = HAL_GetTick();
                  const uint32_t wait5 = 1000U;
 
@@ -680,6 +779,7 @@ static void NFC_PrintDetected(void)
                 g_catch_event_start = 0;
                 g_game = GAME_ARROW;
                 if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
+                g_game_reset_pending = 0U;
                 
             }
             else
@@ -697,6 +797,7 @@ static void NFC_PrintDetected(void)
                 g_catch_event_start = 0;
                 g_game = GAME_RLGL;
                 if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
+                g_game_reset_pending = 0U;
                 g_phase = PHASE_GREEN;
                 g_gameOver = 0;
                 t_phaseSwitch = HAL_GetTick();

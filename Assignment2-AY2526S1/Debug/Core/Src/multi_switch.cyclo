@@ -1,0 +1,12 @@
+../Core/Src/multi_switch.c:20:12:readDev	5
+../Core/Src/multi_switch.c:43:12:writeDev	5
+../Core/Src/multi_switch.c:66:12:readReg	5
+../Core/Src/multi_switch.c:87:6:GroveMultiSwitch_Init	5
+../Core/Src/multi_switch.c:120:10:GroveMultiSwitch_ProbeDevID	5
+../Core/Src/multi_switch.c:152:10:GroveMultiSwitch_GetDevID	2
+../Core/Src/multi_switch.c:162:13:GroveMultiSwitch_GetDevVer	6
+../Core/Src/multi_switch.c:186:6:GroveMultiSwitch_SetDevAddr	3
+../Core/Src/multi_switch.c:204:5:GroveMultiSwitch_GetSwitchCount	5
+../Core/Src/multi_switch.c:225:16:GroveMultiSwitch_GetEvent	8
+../Core/Src/multi_switch.c:267:6:GroveMultiSwitch_SetEventMode	4
+../Core/Src/multi_switch.c:285:6:GroveMultiSwitch_SetAutoSleep	4
