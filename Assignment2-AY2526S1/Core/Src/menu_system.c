@@ -15,6 +15,9 @@ extern void Menu_RenderStatus(const char *line1, const char *line2);
 extern float ACCEL_THRESHOLD_MS2;
 extern float GYRO_THRESHOLD_DPS;
 extern int MAG_THRESH[3];
+extern float TEMP_THRESH_C;
+extern float HUMID_THRESH_PCT;
+extern float PRESS_THRESH_HPA;
 extern uint8_t g_arrow_length_setting;
 extern uint32_t g_arrow_time_setting_ms;
 
@@ -28,6 +31,9 @@ static param_def_t params[PARAM_COUNT] = {
     {"Mag Low", NULL, 100.0f, 2000.0f, 50.0f, 10.0f, 1},
     {"Mag Med", NULL, 500.0f, 5000.0f, 100.0f, 20.0f, 1},
     {"Mag High", NULL, 2000.0f, 20000.0f, 500.0f, 100.0f, 1},
+    {"Temp Limit", &TEMP_THRESH_C, 10.0f, 60.0f, 1.0f, 0.2f, 1},
+    {"Humid Limit", &HUMID_THRESH_PCT, 20.0f, 100.0f, 2.0f, 1.0f, 1},
+    {"Press Limit", &PRESS_THRESH_HPA, 800.0f, 1100.0f, 5.0f, 1.0f, 1},
     
     // Game 3: Arrow
     {"Arrow Count", NULL, 1.0f, 32.0f, 1.0f, 0.0f, 2},

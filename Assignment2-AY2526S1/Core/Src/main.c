@@ -142,6 +142,22 @@ static uint32_t           g_arrow_time_limit_ms = 0U;
 
 static const char ARROW_SYMBOLS[4] = { '^', 'v', '<', '>' };
 
+typedef struct {
+    uint8_t  active;
+    uint32_t expiry_tick;
+    char line1[32];
+    char line2[32];
+} oled_message_t;
+
+static oled_message_t g_oled_temp_message = {0U, 0U, "", ""};
+static char g_oled_status_line1[32] = "";
+static char g_oled_status_line2[32] = "";
+
+static void OLED_RenderLines(const char *line1, const char *line2);
+static void OLED_SetTemporaryMessage(const char *line1, const char *line2, uint32_t duration_ms);
+static void OLED_ResetStatus(void);
+static void OLED_UpdateGameplayDisplay(uint32_t now);
+
 /* ========= LED alert blinker (Catch mode) ========= */
 typedef struct {
     uint8_t enabled;
@@ -217,6 +233,7 @@ static void process_clicks(uint32_t now)
      	 if (n == 2) {
             if (g_game == GAME_RLGL) {
                 g_game = GAME_CATCH;
+                OLED_ResetStatus();
                 g_game_reset_pending = 0U;
                 if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
                 printu("Entering Catch And Run as %s\r\n",
@@ -231,6 +248,7 @@ static void process_clicks(uint32_t now)
                 was_temp_high=was_hum_high=was_press_high=0;
             } else if (g_game == GAME_CATCH){
                 g_game = GAME_RLGL;
+                OLED_ResetStatus();
                 g_game_reset_pending = 0U;
                 if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
                 printu("Entering Red Light, Green Light as %s\r\n",
@@ -713,6 +731,7 @@ int main(void)
                 } else {
                     BSP_LED_Off(LED2);
                 }
+                OLED_UpdateGameplayDisplay(now);
             }
             /* ---- Game 2: Catch & Run ---- */
             else if (g_game == GAME_CATCH) {
@@ -754,8 +773,10 @@ int main(void)
                             led_set_blink(-1);
                             if (g_role == ROLE_PLAYER) {
                                 printu("Player escaped, good job!\r\n");
+                                OLED_SetTemporaryMessage("Player escaped", "Good job!", 1000U);
                             } else {
                                 printu("Player captured, good job!\r\n");
+                                OLED_SetTemporaryMessage("Player captured", "Good job!", 1000U);
                             }
                             g_catch_state = CATCH_LOCKOUT;
                         } else if ((now - g_catch_event_start) >= 3000U) {
@@ -764,6 +785,7 @@ int main(void)
                                 GameOver_Trigger(GAME_CATCH, "Game Over!");
                             } else {
                                 printu("Player escaped! Keep trying.\r\n");
+                                OLED_SetTemporaryMessage("Player escaped!", "Keep trying!", 1000U);
                                 g_catch_state = CATCH_LOCKOUT;
                             }
                         }
@@ -806,6 +828,7 @@ int main(void)
 
                     was_temp_high = th; was_hum_high = hh; was_press_high = ph;
                 }
+                OLED_UpdateGameplayDisplay(now);
             }
             else if(g_game == GAME_ARROW){
                 GameReset_Attempt(GAME_ARROW, now, -1);
@@ -941,6 +964,7 @@ static void Arrow_StartGame(void)
         return;
     }
 
+    OLED_ResetStatus();
     Arrow_InitDigits();
 
     uint8_t length = g_arrow_length_setting;
@@ -1107,6 +1131,7 @@ static void NFC_PrintDetected(void)
                 single_press_event = 0;
                 g_catch_event_start = 0;
                 g_game = GAME_ARROW;
+                OLED_ResetStatus();
                 if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
                 g_game_reset_pending = 0U;
                 Arrow_StartGame();
@@ -1126,6 +1151,7 @@ static void NFC_PrintDetected(void)
                 g_catch_event_start = 0;
                 Arrow_Stop();
                 g_game = GAME_RLGL;
+                OLED_ResetStatus();
                 if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
                 g_game_reset_pending = 0U;
                 g_phase = PHASE_GREEN;
@@ -1192,7 +1218,152 @@ void Menu_RenderStatus(const char *line1, const char *line2)
             x = 0;
         }
         SSD1306_GotoXY(x, y_positions[i]);
-        SSD1306_Puts(text, font, SSD1306_COLOR_WHITE);
+    SSD1306_Puts(text, font, SSD1306_COLOR_WHITE);
     }
     SSD1306_UpdateScreen();
+}
+
+static void OLED_ResetStatus(void)
+{
+    g_oled_status_line1[0] = '\0';
+    g_oled_status_line2[0] = '\0';
+    g_oled_temp_message.active = 0U;
+    g_oled_temp_message.expiry_tick = 0U;
+    g_oled_temp_message.line1[0] = '\0';
+    g_oled_temp_message.line2[0] = '\0';
+}
+
+static void OLED_RenderLines(const char *line1, const char *line2)
+{
+    if (!g_oled_ready) {
+        return;
+    }
+    if (g_game_reset_pending) {
+        return;
+    }
+    if (g_game == GAME_ARROW) {
+        return;
+    }
+    if (Menu_GetState(&g_menu) != MENU_CLOSED) {
+        return;
+    }
+
+    const char *l1 = (line1 != NULL) ? line1 : "";
+    const char *l2 = (line2 != NULL) ? line2 : "";
+
+    if ((strcmp(l1, g_oled_status_line1) == 0) &&
+        (strcmp(l2, g_oled_status_line2) == 0)) {
+        return;
+    }
+
+    SSD1306_Stopscroll();
+    SSD1306_Fill(SSD1306_COLOR_BLACK);
+
+    const char *lines[2] = { l1, l2 };
+    const uint8_t y_positions[2] = { 6U, 32U };
+
+    for (uint8_t i = 0U; i < 2U; ++i) {
+        char buffer[32];
+        strncpy(buffer, lines[i], sizeof(buffer) - 1U);
+        buffer[sizeof(buffer) - 1U] = '\0';
+        size_t len = strlen(buffer);
+        if (len == 0U) {
+            continue;
+        }
+        FontDef_t *font = &Font_11x18;
+        if ((len * (size_t)font->FontWidth) > 128U) {
+            font = &Font_7x10;
+        }
+        size_t width = len * (size_t)font->FontWidth;
+        if (width > 128U) {
+            width = 128U;
+        }
+        int16_t x = (int16_t)((128U - width) / 2U);
+        if (x < 0) {
+            x = 0;
+        }
+        SSD1306_GotoXY(x, y_positions[i]);
+        SSD1306_Puts(buffer, font, SSD1306_COLOR_WHITE);
+    }
+    SSD1306_UpdateScreen();
+
+    strncpy(g_oled_status_line1, l1, sizeof(g_oled_status_line1) - 1U);
+    g_oled_status_line1[sizeof(g_oled_status_line1) - 1U] = '\0';
+    strncpy(g_oled_status_line2, l2, sizeof(g_oled_status_line2) - 1U);
+    g_oled_status_line2[sizeof(g_oled_status_line2) - 1U] = '\0';
+}
+
+static void OLED_SetTemporaryMessage(const char *line1, const char *line2, uint32_t duration_ms)
+{
+    if (!g_oled_ready) {
+        return;
+    }
+    uint32_t now = HAL_GetTick();
+    g_oled_temp_message.active = 1U;
+    g_oled_temp_message.expiry_tick = now + duration_ms;
+    strncpy(g_oled_temp_message.line1,
+            (line1 != NULL) ? line1 : "",
+            sizeof(g_oled_temp_message.line1) - 1U);
+    g_oled_temp_message.line1[sizeof(g_oled_temp_message.line1) - 1U] = '\0';
+    strncpy(g_oled_temp_message.line2,
+            (line2 != NULL) ? line2 : "",
+            sizeof(g_oled_temp_message.line2) - 1U);
+    g_oled_temp_message.line2[sizeof(g_oled_temp_message.line2) - 1U] = '\0';
+
+    g_oled_status_line1[0] = '\0';
+    g_oled_status_line2[0] = '\0';
+    OLED_RenderLines(g_oled_temp_message.line1, g_oled_temp_message.line2);
+}
+
+static void OLED_UpdateGameplayDisplay(uint32_t now)
+{
+    if (!g_oled_ready) {
+        return;
+    }
+    if (g_game_reset_pending) {
+        return;
+    }
+    if (Menu_GetState(&g_menu) != MENU_CLOSED) {
+        return;
+    }
+    if (g_game == GAME_ARROW) {
+        return;
+    }
+
+    if (g_oled_temp_message.active) {
+        if ((int32_t)(g_oled_temp_message.expiry_tick - now) <= 0) {
+            OLED_ResetStatus();
+        } else {
+            OLED_RenderLines(g_oled_temp_message.line1, g_oled_temp_message.line2);
+            return;
+        }
+    }
+
+    if (g_game == GAME_RLGL) {
+        const char *mode_line = (g_role == ROLE_PLAYER) ? "Mode: Player" : "Mode: Enforcer";
+        const char *status_line = (g_phase == PHASE_GREEN) ? "Green Light!" : "Red Light!";
+        OLED_RenderLines(mode_line, status_line);
+    } else if (g_game == GAME_CATCH) {
+        const char *mode_line = (g_role == ROLE_PLAYER) ? "Mode: Player" : "Mode: Enforcer";
+        if (g_catch_state == CATCH_ALERT) {
+            const char *alert_line = (g_role == ROLE_PLAYER) ? "!!Enforcer Nearby!!" : "!!Player Nearby!!";
+            uint32_t elapsed = (g_catch_event_start == 0U) ? 0U : (now - g_catch_event_start);
+            char countdown_line[32];
+            if (elapsed >= 3000U) {
+                snprintf(countdown_line, sizeof(countdown_line), "Countdown: 0");
+            } else {
+                uint32_t remaining = 3U - (elapsed / 1000U);
+                if (remaining > 3U) {
+                    remaining = 3U;
+                }
+                if (remaining == 0U) {
+                    remaining = 1U;
+                }
+                snprintf(countdown_line, sizeof(countdown_line), "Countdown: %u", (unsigned)remaining);
+            }
+            OLED_RenderLines(alert_line, countdown_line);
+        } else {
+            OLED_RenderLines(mode_line, "Be Alert");
+        }
+    }
 }

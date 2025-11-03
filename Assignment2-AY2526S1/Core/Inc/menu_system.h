@@ -30,6 +30,9 @@ typedef enum {
     PARAM_MAG_THRESH_LOW,
     PARAM_MAG_THRESH_MED,
     PARAM_MAG_THRESH_HIGH,
+    PARAM_TEMP_THRESHOLD,
+    PARAM_HUMID_THRESHOLD,
+    PARAM_PRESS_THRESHOLD,
     
     // Game 3: Arrow game parameters
     PARAM_ARROW_COUNT,
