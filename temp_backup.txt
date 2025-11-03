@@ -1,4 +1,4 @@
-﻿
+
 #include "main.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -57,26 +57,8 @@ static void GameOver_Trigger(game_t game, const char *message);
 static uint8_t GameReset_Attempt(game_t game, uint32_t now, int catch_level);
 #define ARROW_MAX_SEQUENCE 32U
 
-static void Arrow_ShowDigit(uint8_t digit);
 static void Arrow_InitDigits(void);
 static void Arrow_StartGame(void);
-
-static void Arrow_ShowDigit(uint8_t digit)
-{
-    if (!g_matrix_ready) {
-        return;
-    }
-    if (digit > 9U) {
-        digit = 9U;
-    }
-    uint64_t bitmap = g_digit_bitmaps[digit];
-    for (uint8_t row = 0U; row < 8U; ++row) {
-        uint8_t pattern = (uint8_t)((bitmap >> (row * 8U)) & 0xFFU);
-        HT16K33_SetRow(&hmatrix, row, pattern);
-    }
-    HT16K33_Update(&hmatrix);
-}
-
 static void Arrow_Stop(void);
 static void Arrow_RenderSequence(void);
 static void Arrow_UpdateMatrix(uint32_t now);
@@ -152,7 +134,6 @@ static uint8_t            g_arrow_game_running = 0U;
 static uint32_t           g_arrow_start_tick = 0U;
 static uint32_t           g_arrow_last_matrix_update = 0U;
 static uint8_t            g_arrow_last_remaining = 0xFFU;
-static uint32_t           g_arrow_time_limit_ms = 0U;
 
 /* ========= LED alert blinker (Catch mode) ========= */
 typedef struct {
@@ -386,6 +367,7 @@ static uint8_t GameReset_Attempt(game_t game, uint32_t now, int catch_level)
             break;
         case GAME_ARROW:
             Arrow_StartGame();
+            printu("Audition reset. Ready up!\r\n");
             break;
         default:
             break;
@@ -535,7 +517,6 @@ int main(void)
 
     /* Gyro calibration before starting game */
     CalibrateGyroscope();
-    srand((unsigned int)HAL_GetTick());
 
     //SSD1306_Init();
     //Default: RLGL as Player
@@ -589,7 +570,6 @@ int main(void)
         printu("HT16K33 not detected\r\n");
     }
 
-
         uint32_t tickstart2 = HAL_GetTick();
         const uint32_t wait2 = 100U;
 
@@ -631,17 +611,7 @@ int main(void)
             if (g_switch_ready) {
                 if ((now - t_menuPoll) >= 50U) {
                     t_menuPoll = now;
-                    if ((Menu_GetState(&g_menu) != MENU_CLOSED) || (g_game != GAME_ARROW)) {
-                        Menu_Process(&g_menu);
-                    } else {
-                        Grove5Way_Event evt;
-                        if (Grove5Way_Poll(&g_switch, &evt)) {
-                            uint8_t edges = (uint8_t)(evt.pressed & evt.changed);
-                            if (edges != 0U) {
-                                Arrow_HandleInput(edges);
-                            }
-                        }
-                    }
+                    Menu_Process(&g_menu);
                 }
                 menu_active = (Menu_GetState(&g_menu) != MENU_CLOSED);
             }
@@ -651,12 +621,8 @@ int main(void)
                 continue;
             } else if (g_menu_display_active) {
                 if (g_oled_ready) {
-                    if ((g_game == GAME_ARROW) && g_arrow_game_running && !g_game_reset_pending) {
-                        Arrow_RenderSequence();
-                    } else {
-                        SSD1306_Fill(SSD1306_COLOR_BLACK);
-                        SSD1306_UpdateScreen();
-                    }
+                    SSD1306_Fill(SSD1306_COLOR_BLACK);
+                    SSD1306_UpdateScreen();
                 }
                 g_menu_display_active = 0U;
             }
@@ -816,251 +782,15 @@ int main(void)
             }
             else if(g_game == GAME_ARROW){
                 GameReset_Attempt(GAME_ARROW, now, -1);
-                if (!g_game_reset_pending && !g_arrow_game_running) {
-                    Arrow_StartGame();
-                }
-                if (!g_game_reset_pending) {
-                    Arrow_UpdateMatrix(now);
-                }
+                uint32_t tickstart5 = HAL_GetTick();
+                 const uint32_t wait5 = 1000U;
+
+            while ((HAL_GetTick() - tickstart5) < wait5){
+                Buzzer_Service(HAL_GetTick());
+            }
+                printu("Audition:Sotong Edition coming soon!\r\n");
             }
         }
-    }
-}
-
-static uint8_t Arrow_ReverseByte(uint8_t value)
-{
-    value = (uint8_t)(((value & 0xF0U) >> 4) | ((value & 0x0FU) << 4));
-    value = (uint8_t)(((value & 0xCCU) >> 2) | ((value & 0x33U) << 2));
-    value = (uint8_t)(((value & 0xAAU) >> 1) | ((value & 0x55U) << 1));
-    return value;
-}
-
-static uint64_t Arrow_FlipBitmap64(uint64_t raw)
-{
-    uint64_t flipped = 0U;
-    for (uint8_t row = 0U; row < 8U; ++row) {
-        uint8_t row_byte = (uint8_t)((raw >> (row * 8U)) & 0xFFU);
-        row_byte = Arrow_ReverseByte(row_byte);
-        flipped |= ((uint64_t)row_byte << (row * 8U));
-    }
-    return flipped;
-}
-
-static void Arrow_InitDigits(void)
-{
-    if (g_digit_initialized) {
-        return;
-    }
-
-    uint8_t frames = (uint8_t)HT16K33_IMAGES_GAMEOVER_LEN;
-    if (frames == 0U) {
-        g_digit_initialized = 1U;
-        return;
-    }
-
-    for (uint8_t i = 0U; i < 10U; ++i) {
-        uint64_t frame = HT16K33_IMAGES_GAMEOVER[i % frames];
-        g_digit_bitmaps[i] = Arrow_FlipBitmap64(frame);
-    }
-    g_digit_initialized = 1U;
-}
-
-static void Arrow_Stop(void)
-{
-    g_arrow_game_running = 0U;
-    g_arrow_length_active = 0U;
-    g_arrow_index = 0U;
-    g_arrow_last_remaining = 0xFFU;
-    g_arrow_last_matrix_update = 0U;
-
-    if (g_matrix_ready) {
-        HT16K33_Clear(&hmatrix);
-        HT16K33_Update(&hmatrix);
-    }
-}
-
-static void Arrow_RenderSequence(void)
-{
-    if (!g_oled_ready) {
-        return;
-    }
-
-    SSD1306_Fill(SSD1306_COLOR_BLACK);
-    const char arrow_chars[4] = {'^', 'v', '<', '>'};
-    const int16_t base_x = 10;
-    const int16_t base_y = 10;
-    const int16_t step_x = 20;
-
-    if (g_arrow_index < g_arrow_length_active) {
-        uint8_t remaining = (uint8_t)(g_arrow_length_active - g_arrow_index);
-        uint8_t visible = remaining;
-        if (visible > 6U) {
-            visible = 6U;
-        }
-        for (uint8_t i = 0U; i < visible; ++i) {
-            uint8_t dir = g_arrow_sequence[g_arrow_index + i];
-            if (dir > 3U) {
-                dir = 0U;
-            }
-            char glyph[2] = { arrow_chars[dir], '\0' };
-            SSD1306_GotoXY((int16_t)(base_x + (int16_t)(i * step_x)), base_y);
-            SSD1306_Puts(glyph, &Font_11x18, SSD1306_COLOR_WHITE);
-        }
-        char info[20];
-        snprintf(info, sizeof(info), "Left:%u",
-                 (unsigned)(g_arrow_length_active - g_arrow_index));
-        SSD1306_GotoXY(base_x, (int16_t)(base_y + 24));
-        SSD1306_Puts(info, &Font_7x10, SSD1306_COLOR_WHITE);
-    } else {
-        SSD1306_GotoXY(base_x, base_y + 10);
-        SSD1306_Puts("Ready!", &Font_11x18, SSD1306_COLOR_WHITE);
-    }
-
-    SSD1306_UpdateScreen();
-}
-
-static void Arrow_StartGame(void)
-{
-    if (g_game != GAME_ARROW) {
-        return;
-    }
-
-    Arrow_InitDigits();
-
-    uint8_t length = g_arrow_length_setting;
-    if (length < 1U) length = 1U;
-    if (length > ARROW_MAX_SEQUENCE) length = ARROW_MAX_SEQUENCE;
-    g_arrow_length_active = length;
-
-    for (uint8_t i = 0U; i < g_arrow_length_active; ++i) {
-        g_arrow_sequence[i] = (uint8_t)(rand() % 4);
-    }
-
-    g_arrow_index = 0U;
-    g_arrow_time_limit_ms = g_arrow_time_setting_ms;
-    if (g_arrow_time_limit_ms < 1000U) {
-        g_arrow_time_limit_ms = 1000U;
-    }
-
-    g_arrow_start_tick = HAL_GetTick();
-    g_arrow_last_matrix_update = 0U;
-    g_arrow_last_remaining = 0xFFU;
-    g_arrow_game_running = 1U;
-
-    printu("Audition start: %u arrows, %lus timer.\r\n",
-           (unsigned)g_arrow_length_active,
-           (unsigned long)(g_arrow_time_limit_ms / 1000U));
-
-    Arrow_RenderSequence();
-    Arrow_UpdateMatrix(g_arrow_start_tick);
-}
-
-static void Arrow_UpdateMatrix(uint32_t now)
-{
-    if (!g_arrow_game_running || g_game_reset_pending) {
-        return;
-    }
-    Arrow_InitDigits();
-    if (!g_matrix_ready) {
-        return;
-    }
-
-    if (now < g_arrow_start_tick) {
-        g_arrow_start_tick = now;
-    }
-
-    uint32_t elapsed = now - g_arrow_start_tick;
-    if (elapsed >= g_arrow_time_limit_ms) {
-        Arrow_Fail("Time's up!");
-        return;
-    }
-
-    uint32_t remaining_ms = g_arrow_time_limit_ms - elapsed;
-    uint8_t remaining_s = (uint8_t)(remaining_ms / 1000U);
-    if (remaining_s > 9U) {
-        remaining_s = 9U;
-    }
-
-    if ((remaining_s != g_arrow_last_remaining) ||
-        ((now - g_arrow_last_matrix_update) >= 200U)) {
-        HT16K33_DisplayBitmap64(&hmatrix, g_digit_bitmaps[remaining_s]);
-        g_arrow_last_remaining = remaining_s;
-        g_arrow_last_matrix_update = now;
-    }
-}
-
-static void Arrow_Fail(const char *message)
-{
-    if (!g_arrow_game_running) {
-        return;
-    }
-    Arrow_Stop();
-    GameOver_Trigger(GAME_ARROW, message);
-}
-
-static void Arrow_Success(void)
-{
-    if (!g_arrow_game_running) {
-        return;
-    }
-
-    uint8_t total = g_arrow_length_active;
-    Arrow_Stop();
-
-    if (g_oled_ready) {
-        SSD1306_Fill(SSD1306_COLOR_BLACK);
-        SSD1306_GotoXY(0, 8);
-        SSD1306_Puts("AUDITION", &Font_11x18, SSD1306_COLOR_WHITE);
-        SSD1306_GotoXY(0, 32);
-        SSD1306_Puts("CLEAR!", &Font_16x26, SSD1306_COLOR_WHITE);
-        SSD1306_UpdateScreen();
-    }
-
-    Buzzer_PlaySuccessTune();
-    printu("Audition cleared! Sequence length %u.\r\n", (unsigned)total);
-
-    g_game_reset_pending = 1U;
-    g_reset_target = GAME_ARROW;
-    single_press_event = 0;
-    click_window_active = 0;
-    click_count = 0;
-}
-
-static void Arrow_HandleInput(uint8_t edges)
-{
-    if (!g_arrow_game_running || g_game_reset_pending) {
-        return;
-    }
-    if (g_arrow_index >= g_arrow_length_active) {
-        return;
-    }
-
-    const uint8_t directional_mask =
-        GROVE5WAY_BTN_UP | GROVE5WAY_BTN_DOWN |
-        GROVE5WAY_BTN_LEFT | GROVE5WAY_BTN_RIGHT;
-
-    uint8_t expected_mask;
-    switch (g_arrow_sequence[g_arrow_index]) {
-        case 0: expected_mask = GROVE5WAY_BTN_UP; break;
-        case 1: expected_mask = GROVE5WAY_BTN_DOWN; break;
-        case 2: expected_mask = GROVE5WAY_BTN_LEFT; break;
-        default: expected_mask = GROVE5WAY_BTN_RIGHT; break;
-    }
-
-    if ((edges & expected_mask) != 0U) {
-        if (edges & ((directional_mask | GROVE5WAY_BTN_CENTER) & (uint8_t)~expected_mask)) {
-            Arrow_Fail("Wrong direction!");
-            return;
-        }
-
-        g_arrow_index++;
-        if (g_arrow_index >= g_arrow_length_active) {
-            Arrow_Success();
-        } else {
-            Arrow_RenderSequence();
-        }
-    } else if (edges & (directional_mask | GROVE5WAY_BTN_CENTER)) {
-        Arrow_Fail("Wrong direction!");
     }
 }
 
@@ -1088,7 +818,7 @@ static void NFC_PrintDetected(void)
                 g_game = GAME_ARROW;
                 if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
                 g_game_reset_pending = 0U;
-                Arrow_StartGame();
+                
             }
             else
             {
@@ -1103,7 +833,6 @@ static void NFC_PrintDetected(void)
                 g_catch_state = CATCH_IDLE;
                 single_press_event = 0;
                 g_catch_event_start = 0;
-                Arrow_Stop();
                 g_game = GAME_RLGL;
                 if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
                 g_game_reset_pending = 0U;

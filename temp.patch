@@ -1,0 +1,21 @@
+*** Update File: Assignment2-AY2526S1/Core/Src/main.c
+@@
+                 led_set_blink(-1);
+                 g_catch_state = CATCH_IDLE;
+                 single_press_event = 0;
+                 g_catch_event_start = 0;
+                 g_game = GAME_ARROW;
+                 if (g_switch_ready) { Menu_SetGame(&g_menu, (uint8_t)g_game); }
+                 g_game_reset_pending = 0U;
+-                
++                Arrow_StartGame();
++                
+@@
+                 led_set_blink(-1);
+                 g_catch_state = CATCH_IDLE;
+                 single_press_event = 0;
+                 g_catch_event_start = 0;
+-                g_game = GAME_RLGL;
++                Arrow_Stop();
++                g_game = GAME_RLGL;
+*** End Patch

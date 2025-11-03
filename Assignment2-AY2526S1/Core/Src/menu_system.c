@@ -6,6 +6,7 @@
 #include "menu_system.h"
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 extern void printu(const char *fmt, ...);
 extern void Menu_RenderStatus(const char *line1, const char *line2);
@@ -14,7 +15,8 @@ extern void Menu_RenderStatus(const char *line1, const char *line2);
 extern float ACCEL_THRESHOLD_MS2;
 extern float GYRO_THRESHOLD_DPS;
 extern int MAG_THRESH[3];
-extern uint32_t SEQUENCE_TIME_MS;  // Add this to your main.c for game 3
+extern uint8_t g_arrow_length_setting;
+extern uint32_t g_arrow_time_setting_ms;
 
 /* Parameter definitions array */
 static param_def_t params[PARAM_COUNT] = {
@@ -28,7 +30,8 @@ static param_def_t params[PARAM_COUNT] = {
     {"Mag High", NULL, 2000.0f, 20000.0f, 500.0f, 100.0f, 1},
     
     // Game 3: Arrow
-    {"Seq Time(ms)", NULL, 500.0f, 10000.0f, 100.0f, 20.0f, 2},
+    {"Arrow Count", NULL, 1.0f, 32.0f, 1.0f, 0.0f, 2},
+    {"Seq Time(s)", NULL, 1.0f, 9.0f, 1.0f, 0.0f, 2},
     
     // Exit option (available for all games)
     {"Exit Menu", NULL, 0.0f, 0.0f, 0.0f, 0.0f, 255}
@@ -46,16 +49,32 @@ static void set_mag_value(int index, float value) {
     MAG_THRESH[index] = (int)value;
 }
 
+static float get_arrow_count(void) {
+    extern uint8_t g_arrow_length_setting;
+    return (float)g_arrow_length_setting;
+}
+
+static void set_arrow_count(float value) {
+    extern uint8_t g_arrow_length_setting;
+    if (value < 1.0f) value = 1.0f;
+    if (value > 32.0f) value = 32.0f;
+    g_arrow_length_setting = (uint8_t)(value + 0.5f);
+    if (g_arrow_length_setting < 1U) g_arrow_length_setting = 1U;
+}
+
 /* Helper function to get sequence time */
 static float get_sequence_time(void) {
-    extern uint32_t SEQUENCE_TIME_MS;
-    return (float)SEQUENCE_TIME_MS;
+    extern uint32_t g_arrow_time_setting_ms;
+    return ((float)g_arrow_time_setting_ms) / 1000.0f;
 }
 
 /* Helper function to set sequence time */
 static void set_sequence_time(float value) {
-    extern uint32_t SEQUENCE_TIME_MS;
-    SEQUENCE_TIME_MS = (uint32_t)value;
+    extern uint32_t g_arrow_time_setting_ms;
+    if (value < 1.0f) value = 1.0f;
+    if (value > 9.0f) value = 9.0f;
+    value = roundf(value);
+    g_arrow_time_setting_ms = (uint32_t)(value * 1000.0f);
 }
 
 /* Initialize menu system */
@@ -94,6 +113,7 @@ static float get_param_value(param_id_t param_id) {
     if (param_id == PARAM_MAG_THRESH_LOW) return get_mag_value(0);
     if (param_id == PARAM_MAG_THRESH_MED) return get_mag_value(1);
     if (param_id == PARAM_MAG_THRESH_HIGH) return get_mag_value(2);
+    if (param_id == PARAM_ARROW_COUNT) return get_arrow_count();
     if (param_id == PARAM_SEQUENCE_TIME) return get_sequence_time();
     
     // Normal float parameter
@@ -125,6 +145,10 @@ static void set_param_value(param_id_t param_id, float value) {
     }
     if (param_id == PARAM_MAG_THRESH_HIGH) {
         set_mag_value(2, value);
+        return;
+    }
+    if (param_id == PARAM_ARROW_COUNT) {
+        set_arrow_count(value);
         return;
     }
     if (param_id == PARAM_SEQUENCE_TIME) {
@@ -166,12 +190,15 @@ static void menu_render_selected(menu_handle_t *menu)
         snprintf(line2, sizeof(line2), "Exit Menu");
     } else {
         float value = get_param_value(menu->current_param);
-        printu("Selected: %s = %.1f\r\n",
-               params[menu->current_param].name,
-               value);
-        snprintf(line2, sizeof(line2), "%s = %.1f",
-                 params[menu->current_param].name,
-                 value);
+        const char *name = params[menu->current_param].name;
+        if ((menu->current_param == PARAM_ARROW_COUNT) ||
+            (menu->current_param == PARAM_SEQUENCE_TIME)) {
+            printu("Selected: %s = %.0f\r\n", name, value);
+            snprintf(line2, sizeof(line2), "%s = %.0f", name, value);
+        } else {
+            printu("Selected: %s = %.1f\r\n", name, value);
+            snprintf(line2, sizeof(line2), "%s = %.1f", name, value);
+        }
     }
 
     Menu_RenderStatus(line1, line2);
@@ -189,17 +216,21 @@ static void menu_render_adjust(menu_handle_t *menu, const char *header)
     }
 
     float value = get_param_value(menu->current_param);
-    printu("%s %s = %.1f\r\n",
-           header,
-           params[menu->current_param].name,
-           value);
+    const char *name = params[menu->current_param].name;
+    if ((menu->current_param == PARAM_ARROW_COUNT) || (menu->current_param == PARAM_SEQUENCE_TIME)) {
+        printu("%s %s = %.0f\r\n", header, name, value);
+    } else {
+        printu("%s %s = %.1f\r\n", header, name, value);
+    }
 
     char line1[32];
     char line2[32];
     snprintf(line1, sizeof(line1), "%s", header);
-    snprintf(line2, sizeof(line2), "%s = %.1f",
-             params[menu->current_param].name,
-             value);
+    if ((menu->current_param == PARAM_ARROW_COUNT) || (menu->current_param == PARAM_SEQUENCE_TIME)) {
+        snprintf(line2, sizeof(line2), "%s = %.0f", name, value);
+    } else {
+        snprintf(line2, sizeof(line2), "%s = %.1f", name, value);
+    }
     Menu_RenderStatus(line1, line2);
 }
 
@@ -240,12 +271,13 @@ bool Menu_Process(menu_handle_t *menu) {
     bool up_pressed    = (pressed_edges & GROVE5WAY_BTN_UP)     != 0U;
     bool left_pressed  = (pressed_edges & GROVE5WAY_BTN_LEFT)   != 0U;
     bool right_pressed = (pressed_edges & GROVE5WAY_BTN_RIGHT)  != 0U;
+    bool center_pressed = (pressed_edges & GROVE5WAY_BTN_CENTER) != 0U;
     
     // State machine
     switch (menu->state) {
         case MENU_CLOSED: {
-            // DOWN button opens menu
-            if (down_pressed) {
+            // CENTER button opens menu
+            if (center_pressed) {
                 menu->state = MENU_VARIABLE_SELECT;
                 menu->last_update_ms = now;
                 printu("\r\n=== MENU OPENED ===\r\n");
@@ -335,7 +367,7 @@ void Menu_GetDisplayString(menu_handle_t *menu, char *buffer, size_t buffer_size
     if (menu == NULL || buffer == NULL || buffer_size == 0) return;
     
     if (menu->state == MENU_CLOSED) {
-        snprintf(buffer, buffer_size, "Press DOWN for menu");
+        snprintf(buffer, buffer_size, "Press CENTER for menu");
         return;
     }
     
@@ -350,9 +382,17 @@ void Menu_GetDisplayString(menu_handle_t *menu, char *buffer, size_t buffer_size
     }
     float value = get_param_value(menu->current_param);
     
-    if (menu->state == MENU_VARIABLE_SELECT) {
-        snprintf(buffer, buffer_size, "[SEL] %s: %.1f", param->name, value);
+    if (menu->current_param == PARAM_ARROW_COUNT || menu->current_param == PARAM_SEQUENCE_TIME) {
+        if (menu->state == MENU_VARIABLE_SELECT) {
+            snprintf(buffer, buffer_size, "[SEL] %s: %.0f", param->name, value);
+        } else {
+            snprintf(buffer, buffer_size, "[ADJ] %s: %.0f", param->name, value);
+        }
     } else {
-        snprintf(buffer, buffer_size, "[ADJ] %s: %.1f", param->name, value);
+        if (menu->state == MENU_VARIABLE_SELECT) {
+            snprintf(buffer, buffer_size, "[SEL] %s: %.1f", param->name, value);
+        } else {
+            snprintf(buffer, buffer_size, "[ADJ] %s: %.1f", param->name, value);
+        }
     }
 }

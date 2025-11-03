@@ -14,3 +14,4 @@
 ../Core/Src/buzzer.c:227:13:Buzzer_SequenceAdvance	3
 ../Core/Src/buzzer.c:245:13:Buzzer_SequenceStart	3
 ../Core/Src/buzzer.c:264:6:Buzzer_PlayFailureTune	2
+../Core/Src/buzzer.c:283:6:Buzzer_PlaySuccessTune	2

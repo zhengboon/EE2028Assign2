@@ -31,7 +31,8 @@ typedef enum {
     PARAM_MAG_THRESH_MED,
     PARAM_MAG_THRESH_HIGH,
     
-    // Game 3: Arrow game parameter
+    // Game 3: Arrow game parameters
+    PARAM_ARROW_COUNT,
     PARAM_SEQUENCE_TIME,
     
     // Exit option

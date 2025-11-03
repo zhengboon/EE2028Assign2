@@ -11,5 +11,6 @@ void Buzzer_Service(uint32_t now_ms);
 void Buzzer_TestPattern(void);
 void Buzzer_IRQHandler(void);
 void Buzzer_PlayFailureTune(void);
+void Buzzer_PlaySuccessTune(void);
 
 #endif /* BUZZER_H */

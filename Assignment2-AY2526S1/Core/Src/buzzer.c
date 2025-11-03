@@ -279,3 +279,22 @@ void Buzzer_PlayFailureTune(void)
 
     Buzzer_SequenceStart(tune, (uint8_t)(sizeof(tune) / sizeof(tune[0])));
 }
+
+void Buzzer_PlaySuccessTune(void)
+{
+    static buzzer_step_t tune[] = {
+        { 0.0f, 180U, 20U },
+        { 0.0f, 180U, 20U },
+        { 0.0f, 260U, 0U  },
+    };
+    static uint8_t initialized = 0U;
+
+    if (!initialized) {
+        tune[0].frequency_hz = buzzer_note_frequency(BUZZER_NOTE_C5);
+        tune[1].frequency_hz = buzzer_note_frequency(BUZZER_NOTE_E5);
+        tune[2].frequency_hz = buzzer_note_frequency(BUZZER_NOTE_G5);
+        initialized = 1U;
+    }
+
+    Buzzer_SequenceStart(tune, (uint8_t)(sizeof(tune) / sizeof(tune[0])));
+}

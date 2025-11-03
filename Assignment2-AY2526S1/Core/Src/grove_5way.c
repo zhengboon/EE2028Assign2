@@ -19,11 +19,11 @@ static bool grove5way_write_cmd(Grove5Way_Handle *handle, uint8_t cmd);
 static bool grove5way_read_event(Grove5Way_Handle *handle, uint8_t *button_bytes);
 
 static const Grove5Way_ButtonMask g_button_map[GROVE5WAY_BUTTON_COUNT] = {
-    GROVE5WAY_BTN_RIGHT,   /* raw index 0 */
-    GROVE5WAY_BTN_UP,      /* raw index 1 */
-    GROVE5WAY_BTN_LEFT,    /* raw index 2 */
-    GROVE5WAY_BTN_DOWN,    /* raw index 3 */
-    GROVE5WAY_BTN_CENTER   /* raw index 4 */
+    GROVE5WAY_BTN_DOWN,    /* raw index 0 -> physical DOWN */
+    GROVE5WAY_BTN_RIGHT,   /* raw index 1 -> physical RIGHT */
+    GROVE5WAY_BTN_LEFT,    /* raw index 2 -> physical LEFT */
+    GROVE5WAY_BTN_CENTER,  /* raw index 3 -> physical CENTRE */
+    GROVE5WAY_BTN_UP       /* raw index 4 -> physical UP */
 };
 
 bool Grove5Way_Init(Grove5Way_Handle *handle, I2C_HandleTypeDef *hi2c, uint8_t address)
