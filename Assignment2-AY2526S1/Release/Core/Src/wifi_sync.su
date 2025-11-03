@@ -1,0 +1,14 @@
+../Core/Src/wifi_sync.c:120:13:wifi_sync_print_device_count.part.0	0	static
+../Core/Src/wifi_sync.c:61:13:wifi_sync_set_error.part.0	8	static
+../Core/Src/wifi_sync.c:193:16:wifi_sync_send_common	104	static
+../Core/Src/wifi_sync.c:274:13:wifi_sync_peer_scan	72	static
+../Core/Src/wifi_sync.c:355:16:wifi_sync_attempt_connect.isra	40	static
+../Core/Src/wifi_sync.c:401:9:WifiSync_Init	80	static
+../Core/Src/wifi_sync.c:430:9:WifiSync_IsReady	0	static
+../Core/Src/wifi_sync.c:435:13:WifiSync_GetLastError	0	static
+../Core/Src/wifi_sync.c:440:9:WifiSync_IsConnected	0	static
+../Core/Src/wifi_sync.c:445:9:WifiSync_GetDeviceCount	8	static
+../Core/Src/wifi_sync.c:459:6:WifiSync_Process	128	static
+../Core/Src/wifi_sync.c:507:9:WifiSync_PopEvent	0	static
+../Core/Src/wifi_sync.c:520:9:WifiSync_SendGameOver	0	static
+../Core/Src/wifi_sync.c:525:9:WifiSync_SendReset	0	static

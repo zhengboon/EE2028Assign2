@@ -5,6 +5,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
+../Drivers/BSP/B-L4S5I-IOT01/es_wifi_io.c \
 ../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c \
 ../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.c \
 ../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.c \
@@ -15,6 +16,7 @@ C_SRCS += \
 ../Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.c 
 
 OBJS += \
+./Drivers/BSP/B-L4S5I-IOT01/es_wifi_io.o \
 ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.o \
 ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.o \
 ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.o \
@@ -25,6 +27,7 @@ OBJS += \
 ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.o 
 
 C_DEPS += \
+./Drivers/BSP/B-L4S5I-IOT01/es_wifi_io.d \
 ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.d \
 ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.d \
 ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.d \
@@ -42,7 +45,7 @@ Drivers/BSP/B-L4S5I-IOT01/%.o Drivers/BSP/B-L4S5I-IOT01/%.su Drivers/BSP/B-L4S5I
 clean: clean-Drivers-2f-BSP-2f-B-2d-L4S5I-2d-IOT01
 
 clean-Drivers-2f-BSP-2f-B-2d-L4S5I-2d-IOT01:
-	-$(RM) ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.su
+	-$(RM) ./Drivers/BSP/B-L4S5I-IOT01/es_wifi_io.cyclo ./Drivers/BSP/B-L4S5I-IOT01/es_wifi_io.d ./Drivers/BSP/B-L4S5I-IOT01/es_wifi_io.o ./Drivers/BSP/B-L4S5I-IOT01/es_wifi_io.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.su ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.cyclo ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.d ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.o ./Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.su
 
 .PHONY: clean-Drivers-2f-BSP-2f-B-2d-L4S5I-2d-IOT01
 

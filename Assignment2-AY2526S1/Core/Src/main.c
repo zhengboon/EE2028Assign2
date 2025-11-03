@@ -55,6 +55,9 @@ typedef enum { PHASE_GREEN = 0, PHASE_RED = 1 } rlgl_phase_t;
 
 static void GameOver_Trigger(game_t game, const char *message);
 static uint8_t GameReset_Attempt(game_t game, uint32_t now, int catch_level);
+static void GameReset_Force(game_t game, uint32_t now, int catch_level);
+static void Sync_HandleGameOver(uint8_t game);
+static void Sync_HandleReset(uint8_t game);
 #define ARROW_MAX_SEQUENCE 32U
 
 static void Arrow_ShowDigit(uint8_t digit);
@@ -135,6 +138,8 @@ static uint32_t           g_arrow_start_tick = 0U;
 static uint32_t           g_arrow_last_matrix_update = 0U;
 static uint8_t            g_arrow_last_remaining = 0xFFU;
 static uint32_t           g_arrow_time_limit_ms = 0U;
+static uint8_t            g_sync_silent = 0U;
+static uint8_t            g_wifi_ready = 0U;
 
 #define ARROW_MAX_VISIBLE   4U
 #define ARROW_SYMBOL_SPACING  2
@@ -196,6 +201,53 @@ static void led_blink_process(uint32_t now)
     }
 }
 
+typedef struct {
+    uint8_t active;
+    uint8_t index;
+    uint32_t last_step_ms;
+} led_dash_pattern_t;
+
+static led_dash_pattern_t g_dash_pattern = {0U, 0U, 0U};
+static const uint8_t DASH_PATTERN_STATES[] = {1U, 1U, 1U, 0U, 0U, 0U};
+#define DASH_PATTERN_LENGTH (sizeof(DASH_PATTERN_STATES) / sizeof(DASH_PATTERN_STATES[0]))
+#define DASH_PATTERN_STEP_MS 200U
+
+static void led_dash_pattern_start(void)
+{
+    g_dash_pattern.active = 1U;
+    g_dash_pattern.index = 0U;
+    g_dash_pattern.last_step_ms = HAL_GetTick();
+    led_set_blink(-1);
+    if (DASH_PATTERN_STATES[0] != 0U) {
+        BSP_LED_On(LED2);
+    } else {
+        BSP_LED_Off(LED2);
+    }
+}
+
+static void led_dash_pattern_stop(void)
+{
+    g_dash_pattern.active = 0U;
+    g_dash_pattern.index = 0U;
+}
+
+static void led_dash_pattern_process(uint32_t now)
+{
+    if (!g_dash_pattern.active) {
+        return;
+    }
+    if ((now - g_dash_pattern.last_step_ms) < DASH_PATTERN_STEP_MS) {
+        return;
+    }
+    g_dash_pattern.last_step_ms = now;
+    g_dash_pattern.index = (uint8_t)((g_dash_pattern.index + 1U) % DASH_PATTERN_LENGTH);
+    if (DASH_PATTERN_STATES[g_dash_pattern.index] != 0U) {
+        BSP_LED_On(LED2);
+    } else {
+        BSP_LED_Off(LED2);
+    }
+}
+
 /* ========= Double-press (no debouncing) ========= */
 #define CLICK_WINDOW_MS 600U
 static volatile uint8_t  click_window_active = 0;
@@ -205,6 +257,10 @@ static volatile uint8_t  single_press_event = 0;  /* used in Catch window */
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+    if (GPIO_Pin == GPIO_PIN_1) {
+        SPI_WIFI_ISR();
+        return;
+    }
     if (GPIO_Pin != BUTTON_EXTI13_Pin) return;
     uint32_t now = HAL_GetTick();
     if (!click_window_active) { click_window_active = 1; click_window_start = now; click_count = 1; }
@@ -335,7 +391,14 @@ static void GameOver_Trigger(game_t game, const char *message)
                            1U);
     }
 
-    
+    led_dash_pattern_start();
+
+    if (g_role == ROLE_PLAYER && !g_sync_silent && g_wifi_ready && WifiSync_IsConnected() &&
+        ((game == GAME_RLGL) || (game == GAME_CATCH))) {
+        if (!WifiSync_SendGameOver((uint8_t)game)) {
+            printu("WiFi: failed to broadcast Game Over\r\n");
+        }
+    }
 
     g_game_reset_pending = 1U;
     g_reset_target = game;
@@ -361,14 +424,11 @@ static void GameOver_Trigger(game_t game, const char *message)
     }
 }
 
-static uint8_t GameReset_Attempt(game_t game, uint32_t now, int catch_level)
+static void GameReset_Execute(game_t game, uint32_t now, int catch_level)
 {
-    if (!g_game_reset_pending || (g_reset_target != game) || !single_press_event) {
-        return 0U;
-    }
-
-    single_press_event = 0;
-    g_game_reset_pending = 0;
+    single_press_event = 0U;
+    g_game_reset_pending = 0U;
+    led_dash_pattern_stop();
 
     switch (game) {
         case GAME_RLGL:
@@ -397,8 +457,82 @@ static uint8_t GameReset_Attempt(game_t game, uint32_t now, int catch_level)
         default:
             break;
     }
+}
+
+static uint8_t GameReset_Attempt(game_t game, uint32_t now, int catch_level)
+{
+    if (!g_game_reset_pending || (g_reset_target != game) || !single_press_event) {
+        return 0U;
+    }
+
+    GameReset_Execute(game, now, catch_level);
+
+    if (g_role == ROLE_PLAYER && !g_sync_silent && g_wifi_ready && WifiSync_IsConnected() &&
+        ((game == GAME_RLGL) || (game == GAME_CATCH))) {
+        if (!WifiSync_SendReset((uint8_t)game)) {
+            printu("WiFi: failed to broadcast reset\r\n");
+        }
+    }
 
     return 1U;
+}
+
+static void GameReset_Force(game_t game, uint32_t now, int catch_level)
+{
+    uint8_t prev_silent = g_sync_silent;
+    g_sync_silent = 1U;
+
+    if (!g_game_reset_pending) {
+        g_game_reset_pending = 1U;
+        g_reset_target = game;
+    }
+
+    GameReset_Execute(game, now, catch_level);
+
+    g_sync_silent = prev_silent;
+}
+
+static void Sync_HandleGameOver(uint8_t game)
+{
+    if (g_role != ROLE_PLAYER) {
+        return;
+    }
+
+    uint8_t prev_silent = g_sync_silent;
+    g_sync_silent = 1U;
+
+    switch ((game_t)game) {
+        case GAME_RLGL:
+            GameOver_Trigger(GAME_RLGL, "Game Over! (peer)");
+            break;
+        case GAME_CATCH:
+            GameOver_Trigger(GAME_CATCH, "Game Over! (peer)");
+            break;
+        default:
+            break;
+    }
+
+    g_sync_silent = prev_silent;
+}
+
+static void Sync_HandleReset(uint8_t game)
+{
+    if (g_role != ROLE_PLAYER) {
+        return;
+    }
+
+    uint32_t now = HAL_GetTick();
+
+    switch ((game_t)game) {
+        case GAME_RLGL:
+            GameReset_Force(GAME_RLGL, now, -1);
+            break;
+        case GAME_CATCH:
+            GameReset_Force(GAME_CATCH, now, -1);
+            break;
+        default:
+            break;
+    }
 }
 
 /* ========= Gyroscope Calibration ========= */
@@ -412,7 +546,10 @@ void CalibrateGyroscope(void)
     printu("========================================\r\n\r\n");
     printu("IMPORTANT: Keep board COMPLETELY STILL!\r\n");
     printu("Starting calibration in 1 seconds...\r\n\r\n");
-    HAL_Delay(1000);
+    uint32_t delay_start = HAL_GetTick();
+    while ((HAL_GetTick() - delay_start) < 1000U) {
+        /* busy wait to replace HAL_Delay */
+    }
 
     for (int i = 0; i < NUM_SAMPLES; i++)
     {
@@ -421,7 +558,10 @@ void CalibrateGyroscope(void)
         sum_x += gyro_raw[0];
         sum_y += gyro_raw[1];
         sum_z += gyro_raw[2];
-        HAL_Delay(2);
+        uint32_t loop_delay_start = HAL_GetTick();
+        while ((HAL_GetTick() - loop_delay_start) < 2U) {
+            /* busy wait */
+        }
     }
 
     gyro_offset_x = sum_x / NUM_SAMPLES;
@@ -540,6 +680,36 @@ int main(void)
     BSP_HSENSOR_Init();
     BSP_PSENSOR_Init();
 
+    wifi_sync_config_t wifi_cfg = {
+        .ssid = WIFI_SYNC_DEFAULT_SSID,
+        .password = WIFI_SYNC_DEFAULT_PASSWORD,
+        .security = WIFI_SYNC_DEFAULT_SECURITY,
+        .peer_ip = {
+            WIFI_SYNC_DEFAULT_PEER_IP0,
+            WIFI_SYNC_DEFAULT_PEER_IP1,
+            WIFI_SYNC_DEFAULT_PEER_IP2,
+            WIFI_SYNC_DEFAULT_PEER_IP3
+        },
+        .port = WIFI_SYNC_DEFAULT_PORT,
+        .poll_interval_ms = WIFI_SYNC_DEFAULT_POLL_MS,
+        .rx_timeout_ms = WIFI_SYNC_DEFAULT_RX_TIMEOUT
+    };
+    g_wifi_ready = WifiSync_Init(&wifi_cfg);
+    if (g_wifi_ready) {
+        printu("WiFi sync initialised for SSID=%s Port=%u\r\n",
+               wifi_cfg.ssid, (unsigned int)wifi_cfg.port);
+        if (!WifiSync_IsConnected()) {
+            printu("WiFi sync: waiting for network...\r\n");
+        }
+    } else {
+        const char *err = WifiSync_GetLastError();
+        if (err != NULL) {
+            printu("WiFi sync init failed: %s\r\n", err);
+        } else {
+            printu("WiFi sync init failed\r\n");
+        }
+    }
+
     /* Gyro calibration before starting game */
     CalibrateGyroscope();
     srand((unsigned int)HAL_GetTick());
@@ -631,8 +801,26 @@ int main(void)
 
             process_clicks(now);
             led_blink_process(now);
+            led_dash_pattern_process(now);
             NFC_PrintDetected();
             Buzzer_Service(now);
+
+            if (g_wifi_ready) {
+                WifiSync_Process(now);
+                wifi_sync_event_t evt;
+                if (WifiSync_PopEvent(&evt)) {
+                    switch (evt.type) {
+                        case WIFI_SYNC_EVENT_GAME_OVER:
+                            Sync_HandleGameOver(evt.game);
+                            break;
+                        case WIFI_SYNC_EVENT_RESET:
+                            Sync_HandleReset(evt.game);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
 
             bool menu_active = false;
             if (g_switch_ready) {
@@ -729,7 +917,7 @@ int main(void)
                         }
                     }
                 } else {
-                    BSP_LED_Off(LED2);
+                    /* LED state driven by dash pattern animation during reset wait */
                 }
                 OLED_UpdateGameplayDisplay(now);
             }
