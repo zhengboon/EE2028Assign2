@@ -9,8 +9,10 @@
 ../Core/Src/menu_system.c:107:14:get_param_value	24	static
 ../Core/Src/menu_system.c:128:13:set_param_value	24	static
 ../Core/Src/menu_system.c:166:19:get_next_param	32	static
-../Core/Src/menu_system.c:182:13:menu_render_selected	96	static
-../Core/Src/menu_system.c:207:13:menu_render_adjust	96	static
-../Core/Src/menu_system.c:238:6:Menu_Process	120	static
-../Core/Src/menu_system.c:360:14:Menu_GetState	16	static
-../Core/Src/menu_system.c:366:6:Menu_GetDisplayString	48	static
+../Core/Src/menu_system.c:182:13:menu_render_selected	88	static
+../Core/Src/menu_system.c:206:13:menu_render_adjust	96	static
+../Core/Src/menu_system.c:237:6:Menu_Process	120	static
+../Core/Src/menu_system.c:356:14:Menu_GetState	16	static
+../Core/Src/menu_system.c:361:6:Menu_Open	16	static
+../Core/Src/menu_system.c:377:6:Menu_Close	16	static
+../Core/Src/menu_system.c:393:6:Menu_GetDisplayString	48	static

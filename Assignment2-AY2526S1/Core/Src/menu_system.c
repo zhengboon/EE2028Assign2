@@ -183,22 +183,21 @@ static void menu_render_selected(menu_handle_t *menu)
 {
     char line1[32];
     char line2[32];
-    snprintf(line1, sizeof(line1), "Selected:");
+    snprintf(line1, sizeof(line1), "Menu");
 
+    const char *name = params[menu->current_param].name;
     if (menu->current_param == PARAM_EXIT) {
         printu("Selected: Exit Menu\r\n");
-        snprintf(line2, sizeof(line2), "Exit Menu");
+        snprintf(line2, sizeof(line2), "Exit");
     } else {
         float value = get_param_value(menu->current_param);
-        const char *name = params[menu->current_param].name;
         if ((menu->current_param == PARAM_ARROW_COUNT) ||
             (menu->current_param == PARAM_SEQUENCE_TIME)) {
             printu("Selected: %s = %.0f\r\n", name, value);
-            snprintf(line2, sizeof(line2), "%s = %.0f", name, value);
         } else {
             printu("Selected: %s = %.1f\r\n", name, value);
-            snprintf(line2, sizeof(line2), "%s = %.1f", name, value);
         }
+        snprintf(line2, sizeof(line2), "%s", name);
     }
 
     Menu_RenderStatus(line1, line2);
@@ -216,20 +215,20 @@ static void menu_render_adjust(menu_handle_t *menu, const char *header)
     }
 
     float value = get_param_value(menu->current_param);
-    const char *name = params[menu->current_param].name;
+    const char *param_name = params[menu->current_param].name;
     if ((menu->current_param == PARAM_ARROW_COUNT) || (menu->current_param == PARAM_SEQUENCE_TIME)) {
-        printu("%s %s = %.0f\r\n", header, name, value);
+        printu("%s %s = %.0f\r\n", header, param_name, value);
     } else {
-        printu("%s %s = %.1f\r\n", header, name, value);
+        printu("%s %s = %.1f\r\n", header, param_name, value);
     }
 
     char line1[32];
     char line2[32];
-    snprintf(line1, sizeof(line1), "%s", header);
+    snprintf(line1, sizeof(line1), "%s", param_name);
     if ((menu->current_param == PARAM_ARROW_COUNT) || (menu->current_param == PARAM_SEQUENCE_TIME)) {
-        snprintf(line2, sizeof(line2), "%s = %.0f", name, value);
+        snprintf(line2, sizeof(line2), "%.0f", value);
     } else {
-        snprintf(line2, sizeof(line2), "%s = %.1f", name, value);
+        snprintf(line2, sizeof(line2), "%.1f", value);
     }
     Menu_RenderStatus(line1, line2);
 }
@@ -281,8 +280,8 @@ bool Menu_Process(menu_handle_t *menu) {
                 menu->state = MENU_VARIABLE_SELECT;
                 menu->last_update_ms = now;
                 printu("\r\n=== MENU OPENED ===\r\n");
-                printu("Use LEFT/RIGHT to browse\r\n");
-                printu("Press CENTER to adjust\r\n");
+                printu("Use LEFT/RIGHT to select\r\n");
+                printu("CENTER adjusts, BLUE exits\r\n");
                 menu_render_selected(menu);
             }
             break;
@@ -291,16 +290,13 @@ bool Menu_Process(menu_handle_t *menu) {
         case MENU_VARIABLE_SELECT: {
             if (center_pressed) {
                 if (menu->current_param == PARAM_EXIT) {
-                    menu->state = MENU_CLOSED;
-                    menu->last_update_ms = now;
-                    printu("=== MENU CLOSED ===\r\n\r\n");
-                    Menu_RenderStatus("MENU CLOSED", "");
-                    Menu_SetGame(menu, menu->current_game);
+                    Menu_Close(menu);
                 } else {
                     menu->state = MENU_VALUE_ADJUST;
                     menu->last_update_ms = now;
                     printu(">>> Adjusting: %s\r\n", params[menu->current_param].name);
                     printu("UP/DOWN coarse, LEFT/RIGHT fine\r\n");
+                    printu("Press CENTER to apply, BLUE to exit\r\n");
                     menu_render_adjust(menu, "Adjusting:");
                 }
             } else if (left_pressed) {
@@ -362,21 +358,52 @@ menu_state_t Menu_GetState(menu_handle_t *menu) {
     return menu->state;
 }
 
+void Menu_Open(menu_handle_t *menu) {
+    if (menu == NULL) {
+        return;
+    }
+    if (menu->state != MENU_CLOSED) {
+        return;
+    }
+
+    menu->state = MENU_VARIABLE_SELECT;
+    menu->last_update_ms = HAL_GetTick();
+    printu("\r\n=== MENU OPENED ===\r\n");
+    printu("Use LEFT/RIGHT to select\r\n");
+    printu("CENTER adjusts, BLUE exits\r\n");
+    menu_render_selected(menu);
+}
+
+void Menu_Close(menu_handle_t *menu) {
+    if (menu == NULL) {
+        return;
+    }
+    if (menu->state == MENU_CLOSED) {
+        return;
+    }
+
+    menu->state = MENU_CLOSED;
+    menu->last_update_ms = HAL_GetTick();
+    printu("=== MENU CLOSED ===\r\n\r\n");
+    Menu_RenderStatus("MENU CLOSED", "Press CENTER to open");
+    Menu_SetGame(menu, menu->current_game);
+}
+
 /* Get display string for current menu state */
 void Menu_GetDisplayString(menu_handle_t *menu, char *buffer, size_t buffer_size) {
     if (menu == NULL || buffer == NULL || buffer_size == 0) return;
     
     if (menu->state == MENU_CLOSED) {
-        snprintf(buffer, buffer_size, "Press CENTER for menu");
+        snprintf(buffer, buffer_size, "CENTER=open menu");
         return;
     }
     
     param_def_t *param = &params[menu->current_param];
     if (menu->current_param == PARAM_EXIT) {
         if (menu->state == MENU_VARIABLE_SELECT) {
-            snprintf(buffer, buffer_size, "[SEL] Exit Menu");
+            snprintf(buffer, buffer_size, "[SEL] Exit (BLUE)");
         } else {
-            snprintf(buffer, buffer_size, "[ADJ] Exit Menu");
+            snprintf(buffer, buffer_size, "[ADJ] Exit (CENTER)");
         }
         return;
     }

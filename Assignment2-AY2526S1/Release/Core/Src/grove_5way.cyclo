@@ -1,0 +1,4 @@
+../Core/Src/grove_5way.c:103:13:grove5way_read_event	5
+../Core/Src/grove_5way.c:90:13:grove5way_write_cmd.isra	3
+../Core/Src/grove_5way.c:29:6:Grove5Way_Init	6
+../Core/Src/grove_5way.c:60:6:Grove5Way_Poll	8

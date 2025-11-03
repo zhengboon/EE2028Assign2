@@ -1,0 +1,11 @@
+../Core/Src/menu_system.c:166:19:get_next_param	20	static
+../Core/Src/menu_system.c:107:14:get_param_value	0	static
+../Core/Src/menu_system.c:182:13:menu_render_selected	80	static
+../Core/Src/menu_system.c:206:13:menu_render_adjust.constprop	96	static
+../Core/Src/menu_system.c:81:6:Menu_Init	0	static
+../Core/Src/menu_system.c:92:6:Menu_SetGame	8	static
+../Core/Src/menu_system.c:356:14:Menu_GetState	0	static
+../Core/Src/menu_system.c:361:6:Menu_Open	8	static
+../Core/Src/menu_system.c:377:6:Menu_Close	8	static
+../Core/Src/menu_system.c:237:6:Menu_Process	120	static
+../Core/Src/menu_system.c:393:6:Menu_GetDisplayString	32	static

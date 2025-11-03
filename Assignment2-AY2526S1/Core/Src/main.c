@@ -61,30 +61,12 @@ static void Arrow_ShowDigit(uint8_t digit);
 static void Arrow_InitDigits(void);
 static void Arrow_StartGame(void);
 
-static void Arrow_ShowDigit(uint8_t digit)
-{
-    if (!g_matrix_ready) {
-        return;
-    }
-    if (digit > 9U) {
-        digit = 9U;
-    }
-    uint64_t bitmap = g_digit_bitmaps[digit];
-    for (uint8_t row = 0U; row < 8U; ++row) {
-        uint8_t pattern = (uint8_t)((bitmap >> (row * 8U)) & 0xFFU);
-        HT16K33_SetRow(&hmatrix, row, pattern);
-    }
-    HT16K33_Update(&hmatrix);
-}
-
 static void Arrow_Stop(void);
 static void Arrow_RenderSequence(void);
 static void Arrow_UpdateMatrix(uint32_t now);
 static void Arrow_HandleInput(uint8_t edges);
 static void Arrow_Fail(const char *message);
 static void Arrow_Success(void);
-static uint64_t Arrow_FlipBitmap64(uint64_t raw);
-static uint8_t Arrow_ReverseByte(uint8_t value);
 
 /* Thresholds */
 float ACCEL_THRESHOLD_MS2   = 15.0f;
@@ -154,6 +136,12 @@ static uint32_t           g_arrow_last_matrix_update = 0U;
 static uint8_t            g_arrow_last_remaining = 0xFFU;
 static uint32_t           g_arrow_time_limit_ms = 0U;
 
+#define ARROW_MAX_VISIBLE   4U
+#define ARROW_SYMBOL_SPACING  2
+#define ARROW_SYMBOL_Y        4
+
+static const char ARROW_SYMBOLS[4] = { '^', 'v', '<', '>' };
+
 /* ========= LED alert blinker (Catch mode) ========= */
 typedef struct {
     uint8_t enabled;
@@ -220,6 +208,12 @@ static void process_clicks(uint32_t now)
             return;
         }
 
+        if ((n == 1U) && g_switch_ready && (Menu_GetState(&g_menu) != MENU_CLOSED)) {
+            printu("Blue button: closing menu\r\n");
+            Menu_Close(&g_menu);
+            return;
+        }
+
      	 if (n == 2) {
             if (g_game == GAME_RLGL) {
                 g_game = GAME_CATCH;
@@ -252,21 +246,16 @@ static void process_clicks(uint32_t now)
             }
 		
         }
-		else if(n ==3){
-			if(g_game == GAME_CATCH){
-				if (g_role == ROLE_PLAYER) {
-					g_role = ROLE_ENFORCER;
-					printu("Role switched to Enforcer\r\n");
-				} else {
-					g_role = ROLE_PLAYER;
-					printu("Role switched to Player\r\n");
-				}
-			}
-
-
-				
-			
-		}
+        else if (n == 3U) {
+            if (g_role == ROLE_PLAYER) {
+                g_role = ROLE_ENFORCER;
+                printu("Role switched to Enforcer\r\n");
+            } else {
+                g_role = ROLE_PLAYER;
+                printu("Role switched to Player\r\n");
+            }
+            return;
+        }
         else if ((n == 1) && (g_game == GAME_RLGL) && !g_game_reset_pending && !g_gameOver) {
             /* single press in Catch mode */
             if (g_role == ROLE_PLAYER) {
@@ -314,9 +303,9 @@ static void GameOver_Trigger(game_t game, const char *message)
     Buzzer_PlayFailureTune();
 
     if (g_oled_ready) {
+        SSD1306_Stopscroll();
         SSD1306_Clear();
         SSD1306_DrawBitmap(0, 0, gameoveranimation, 128, 64, 1);
-        SSD1306_ScrollLeft(0x00, 0x07);
         SSD1306_UpdateScreen();
     }
 
@@ -638,6 +627,10 @@ int main(void)
                         if (Grove5Way_Poll(&g_switch, &evt)) {
                             uint8_t edges = (uint8_t)(evt.pressed & evt.changed);
                             if (edges != 0U) {
+                                if ((edges & GROVE5WAY_BTN_CENTER) != 0U) {
+                                    Menu_Open(&g_menu);
+                                    continue;
+                                }
                                 Arrow_HandleInput(edges);
                             }
                         }
@@ -827,42 +820,45 @@ int main(void)
     }
 }
 
-static uint8_t Arrow_ReverseByte(uint8_t value)
-{
-    value = (uint8_t)(((value & 0xF0U) >> 4) | ((value & 0x0FU) << 4));
-    value = (uint8_t)(((value & 0xCCU) >> 2) | ((value & 0x33U) << 2));
-    value = (uint8_t)(((value & 0xAAU) >> 1) | ((value & 0x55U) << 1));
-    return value;
-}
-
-static uint64_t Arrow_FlipBitmap64(uint64_t raw)
-{
-    uint64_t flipped = 0U;
-    for (uint8_t row = 0U; row < 8U; ++row) {
-        uint8_t row_byte = (uint8_t)((raw >> (row * 8U)) & 0xFFU);
-        row_byte = Arrow_ReverseByte(row_byte);
-        flipped |= ((uint64_t)row_byte << (row * 8U));
-    }
-    return flipped;
-}
-
 static void Arrow_InitDigits(void)
 {
     if (g_digit_initialized) {
         return;
     }
-
-    uint8_t frames = (uint8_t)HT16K33_IMAGES_GAMEOVER_LEN;
-    if (frames == 0U) {
-        g_digit_initialized = 1U;
-        return;
-    }
+    static const uint64_t digit_src[10] = {
+        0x3C6666766E663C00ULL, /* 0 */
+        0x7E18181838181800ULL, /* 1 */
+        0x7E60300C06663C00ULL, /* 2 */
+        0x3C66061C06663C00ULL, /* 3 */
+        0x0C0C7E4C2C1C0C00ULL, /* 4 */
+        0x3C6606067C607E00ULL, /* 5 */
+        0x3C66667C60663C00ULL, /* 6 */
+        0x1818180C0C667E00ULL, /* 7 */
+        0x3C66663C66663C00ULL, /* 8 */
+        0x3C66063E66663C00ULL  /* 9 */
+    };
 
     for (uint8_t i = 0U; i < 10U; ++i) {
-        uint64_t frame = HT16K33_IMAGES_GAMEOVER[i % frames];
-        g_digit_bitmaps[i] = Arrow_FlipBitmap64(frame);
+        g_digit_bitmaps[i] = digit_src[i];
     }
     g_digit_initialized = 1U;
+}
+
+static void Arrow_ShowDigit(uint8_t digit)
+{
+    if (!g_matrix_ready) {
+        return;
+    }
+    if (digit > 9U) {
+        digit = 9U;
+    }
+    Arrow_InitDigits();
+    uint64_t bitmap = g_digit_bitmaps[digit];
+    for (uint8_t row = 0U; row < 8U; ++row) {
+        uint8_t pattern = (uint8_t)((bitmap >> (row * 8U)) & 0xFFU);
+        HT16K33_SetRow(&hmatrix, row, pattern);
+    }
+    HT16K33_Update(&hmatrix);
 }
 
 static void Arrow_Stop(void)
@@ -885,35 +881,55 @@ static void Arrow_RenderSequence(void)
         return;
     }
 
+    SSD1306_Stopscroll();
     SSD1306_Fill(SSD1306_COLOR_BLACK);
-    const char arrow_chars[4] = {'^', 'v', '<', '>'};
-    const int16_t base_x = 10;
-    const int16_t base_y = 10;
-    const int16_t step_x = 20;
+    FontDef_t *arrow_font = &Font_16x26;
+    uint8_t symbol_width = arrow_font->FontWidth;
+    const uint8_t max_visible = ARROW_MAX_VISIBLE;
 
     if (g_arrow_index < g_arrow_length_active) {
         uint8_t remaining = (uint8_t)(g_arrow_length_active - g_arrow_index);
         uint8_t visible = remaining;
-        if (visible > 6U) {
-            visible = 6U;
+        if (visible > max_visible) {
+            visible = max_visible;
+        }
+        int16_t total_width = (int16_t)(visible * symbol_width +
+                                         (visible > 0U ? (visible - 1U) * ARROW_SYMBOL_SPACING : 0U));
+        int16_t base_x = (int16_t)((128 - total_width) / 2);
+        if (base_x < 0) {
+            base_x = 0;
         }
         for (uint8_t i = 0U; i < visible; ++i) {
             uint8_t dir = g_arrow_sequence[g_arrow_index + i];
             if (dir > 3U) {
                 dir = 0U;
             }
-            char glyph[2] = { arrow_chars[dir], '\0' };
-            SSD1306_GotoXY((int16_t)(base_x + (int16_t)(i * step_x)), base_y);
-            SSD1306_Puts(glyph, &Font_11x18, SSD1306_COLOR_WHITE);
+            char glyph[2] = { ARROW_SYMBOLS[dir], '\0' };
+            int16_t x = (int16_t)(base_x + i * (symbol_width + ARROW_SYMBOL_SPACING));
+            SSD1306_GotoXY(x, ARROW_SYMBOL_Y);
+            SSD1306_Puts(glyph, arrow_font, SSD1306_COLOR_WHITE);
         }
         char info[20];
-        snprintf(info, sizeof(info), "Left:%u",
+        snprintf(info, sizeof(info), "Left %02u",
                  (unsigned)(g_arrow_length_active - g_arrow_index));
-        SSD1306_GotoXY(base_x, (int16_t)(base_y + 24));
-        SSD1306_Puts(info, &Font_7x10, SSD1306_COLOR_WHITE);
+        size_t info_len = strlen(info);
+        int16_t text_width = (int16_t)(info_len * (size_t)Font_16x26.FontWidth);
+        int16_t text_x = (int16_t)((128 - text_width) / 2);
+        if (text_x < 0) {
+            text_x = 0;
+        }
+        SSD1306_GotoXY(text_x, 34);
+        SSD1306_Puts(info, &Font_16x26, SSD1306_COLOR_WHITE);
     } else {
-        SSD1306_GotoXY(base_x, base_y + 10);
-        SSD1306_Puts("Ready!", &Font_11x18, SSD1306_COLOR_WHITE);
+        char msg[] = "Ready!";
+        size_t msg_len = strlen(msg);
+        int16_t text_width = (int16_t)(msg_len * (size_t)Font_16x26.FontWidth);
+        int16_t text_x = (int16_t)((128 - text_width) / 2);
+        if (text_x < 0) {
+            text_x = 0;
+        }
+        SSD1306_GotoXY(text_x, 20);
+        SSD1306_Puts(msg, &Font_16x26, SSD1306_COLOR_WHITE);
     }
 
     SSD1306_UpdateScreen();
@@ -983,7 +999,7 @@ static void Arrow_UpdateMatrix(uint32_t now)
 
     if ((remaining_s != g_arrow_last_remaining) ||
         ((now - g_arrow_last_matrix_update) >= 200U)) {
-        HT16K33_DisplayBitmap64(&hmatrix, g_digit_bitmaps[remaining_s]);
+        Arrow_ShowDigit(remaining_s);
         g_arrow_last_remaining = remaining_s;
         g_arrow_last_matrix_update = now;
     }
@@ -1035,6 +1051,11 @@ static void Arrow_HandleInput(uint8_t edges)
         return;
     }
 
+    if (edges & GROVE5WAY_BTN_CENTER) {
+        Menu_Open(&g_menu);
+        return;
+    }
+
     const uint8_t directional_mask =
         GROVE5WAY_BTN_UP | GROVE5WAY_BTN_DOWN |
         GROVE5WAY_BTN_LEFT | GROVE5WAY_BTN_RIGHT;
@@ -1048,7 +1069,7 @@ static void Arrow_HandleInput(uint8_t edges)
     }
 
     if ((edges & expected_mask) != 0U) {
-        if (edges & ((directional_mask | GROVE5WAY_BTN_CENTER) & (uint8_t)~expected_mask)) {
+        if (edges & (directional_mask & (uint8_t)~expected_mask)) {
             Arrow_Fail("Wrong direction!");
             return;
         }
@@ -1059,7 +1080,7 @@ static void Arrow_HandleInput(uint8_t edges)
         } else {
             Arrow_RenderSequence();
         }
-    } else if (edges & (directional_mask | GROVE5WAY_BTN_CENTER)) {
+    } else if (edges & directional_mask) {
         Arrow_Fail("Wrong direction!");
     }
 }
@@ -1140,10 +1161,38 @@ void Menu_RenderStatus(const char *line1, const char *line2)
     strncpy(g_menu_line2, line2, sizeof(g_menu_line2) - 1);
     g_menu_line2[sizeof(g_menu_line2) - 1] = '\0';
 
+    SSD1306_Stopscroll();
     SSD1306_Fill(SSD1306_COLOR_BLACK);
-    SSD1306_GotoXY(0, 0);
-    SSD1306_Puts(g_menu_line1, &Font_7x10, SSD1306_COLOR_WHITE);
-    SSD1306_GotoXY(0, 12);
-    SSD1306_Puts(g_menu_line2, &Font_7x10, SSD1306_COLOR_WHITE);
+
+    FontDef_t *large_font = &Font_11x18;
+    FontDef_t *small_font = &Font_7x10;
+
+    char *texts[2] = { g_menu_line1, g_menu_line2 };
+    const uint8_t y_positions[2] = { 6U, 32U };
+
+    for (uint8_t i = 0U; i < 2U; ++i) {
+        char *text = texts[i];
+        if (text == NULL) {
+            continue;
+        }
+        size_t len = strlen(text);
+        if (len == 0U) {
+            continue;
+        }
+        FontDef_t *font = large_font;
+        if ((len * (size_t)large_font->FontWidth) > 128U) {
+            font = small_font;
+        }
+        size_t width = len * (size_t)font->FontWidth;
+        if (width > 128U) {
+            width = 128U;
+        }
+        int16_t x = (int16_t)((128U - width) / 2U);
+        if (x < 0) {
+            x = 0;
+        }
+        SSD1306_GotoXY(x, y_positions[i]);
+        SSD1306_Puts(text, font, SSD1306_COLOR_WHITE);
+    }
     SSD1306_UpdateScreen();
 }

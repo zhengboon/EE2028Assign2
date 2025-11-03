@@ -93,6 +93,18 @@ void Menu_SetGame(menu_handle_t *menu, uint8_t game_id);
 menu_state_t Menu_GetState(menu_handle_t *menu);
 
 /**
+ * @brief Force the menu to open without requiring 5-way input
+ * @param menu Pointer to menu handle
+ */
+void Menu_Open(menu_handle_t *menu);
+
+/**
+ * @brief Force the menu to close without requiring 5-way input
+ * @param menu Pointer to menu handle
+ */
+void Menu_Close(menu_handle_t *menu);
+
+/**
  * @brief Get display string for current menu state
  * @param menu Pointer to menu handle
  * @param buffer Buffer to store display string
