@@ -818,13 +818,23 @@ int main(void)
                     uint8_t hh = (h > HUMID_THRESH_PCT);
                     uint8_t ph = (p > PRESS_THRESH_HPA);
 
-                    if (th && !was_temp_high)  printu("Temperature spike detected! T:%.2fC. Dangerous environment!\r\n", t);
-                    if (hh && !was_hum_high)   printu("Humidity spike detected! H:%.2f%%.\r\n", h);
-                    if (ph && !was_press_high) printu("Pressure spike detected! P:%.2fhPa.\r\n", p);
+                    if (th) {
+                        printu("Temperature spike detected! T:%.2fC. Dangerous environment!\r\n", t);
+                    } else if (was_temp_high) {
+                        printu("Temperature back to normal: %.2fC\r\n", t);
+                    }
 
-                    if (!th && was_temp_high)  printu("Temperature back to normal: %.2fC\r\n", t);
-                    if (!hh && was_hum_high)   printu("Humidity back to normal: %.2f%%\r\n", h);
-                    if (!ph && was_press_high) printu("Pressure back to normal: %.2fhPa\r\n", p);
+                    if (hh) {
+                        printu("Humidity spike detected! H:%.2f%%.\r\n", h);
+                    } else if (was_hum_high) {
+                        printu("Humidity back to normal: %.2f%%\r\n", h);
+                    }
+
+                    if (ph) {
+                        printu("Pressure spike detected! P:%.2fhPa.\r\n", p);
+                    } else if (was_press_high) {
+                        printu("Pressure back to normal: %.2fhPa\r\n", p);
+                    }
 
                     was_temp_high = th; was_hum_high = hh; was_press_high = ph;
                 }
