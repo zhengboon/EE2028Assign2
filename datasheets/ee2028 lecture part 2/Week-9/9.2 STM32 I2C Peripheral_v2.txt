@@ -1,0 +1,258 @@
+       STM32 I2C Peripheral
+
+
+                   Ankit Srivastava
+                       EE2028
+                 STM32L4S5xx Datasheet
+             STM32L4+ User Manual RM0432
+           B-L4S5I-IOT01A User Manual UM2708
+                  HTS221 Datasheet
+Acknowledgement: Slides adapted from Dr Rajesh Panicker
+                                                                                                                    1
+
+                                               ©
+                                               © Copyright
+                                                 Copyright National
+                                                           National University
+                                                                    University of
+                                                                               of Singapore.
+                                                                                  Singapore. All
+                                                                                             All Rights
+                                                                                                 Rights Reserved.
+                                                                                                        Reserved.
+OVERVIEW
+•   STM32L4+ I2C interface
+    •   STM32L4S5VI as an example
+•   STM32L4+ I2C peripheral registers
+    •   Control
+    •   Data
+    •   Status
+
+
+
+
+                                                                                                             2
+
+                                        © Copyright National University of Singapore. All Rights Reserved.
+I2C IN STM32L4+
+ • STM32L4S5VI chip has 4 I2C bus interfaces handling communications
+   between the microcontroller and the serial I2C bus
+    •   controls all I2C bus-specific sequencing, protocol, arbitration and timing
+    •   converts data from serial to parallel format and vice versa
+
+ • The I2C peripheral supports
+    •   Slave and master modes
+    •   Multi-master capability
+    •   Standard-mode, Fast-mode, Fast-mode Plus •                            Self-reading
+    •   7-bit and 10-bit addressing mode                                       •       Which I2C interface is used for interfacing the
+                                                                                       devices on the Board?
+    •   In slave mode - multiple 7-bit slave addresses
+                                                                               •       Which pins are used for SDA and SCL?
+        and optional clock stretching                                          •       Which MODE? Which AF? What PUPD and OTYPE
+                                                                                                                               3
+                                                                                       values should be used?
+                                                                                            © Copyright National University of Singapore. All Rights Reserved.
+
+                             Refer to DS12024: STM32L4S5VI datasheet, Fig 1 (pg. 16)
+ CONTROL REGISTER I2C_CR1 (BASIC CTRL / ENABLES)
+
+                                                                                                Address offset: 0x00,
+                                                                                                Default value: 0x0000 0000
+
+
+
+• xxIE is to enable various I2C interrupts. We use polling, so it will all be 0
+• Writing a 0 to PE disables and performs a soft reset of the I2C interface
+    •   SCL and SDA are released. Internal states machines are reset
+    •   Some communication control bits (in I2C_CR2, e.g.: START, STOP) as well as status bits (in
+        I2C_ISR, e.g: TXIS, RXNE) go back to their Default value. Other I2C_CR1 bits are unaffected
+• Writing a 1 enables the I2C interface. Before doing this,
+    •   Set analog / digital noise filters
+    •   Configure I2C master clock by setting the SCLH and SCLL bits in the I2C_TIMINGR (which sets
+        speed modes etc.)                                                                                                                                    4
+    •   Set an appropriate value for NOSTRETCH (useful only in slave mode)              © Copyright National University of Singapore. All Rights Reserved.
+
+
+                      Ref. to RM0432 (STM32L4+ Technical reference manual) (pg. 1696)
+SENSOR IO INIT
+                       Note : A function with static qualifier is
+                       a ‘private’ function, meant to be used
+                       by other functions within the file, rather
+                       than directly from the user (main)
+                       program. Those which are called from
+                       the main program are ‘public’ functions
+
+
+
+
+                                                                                      5
+
+                 © Copyright National University of Singapore. All Rights Reserved.
+    DATA REGISTERS I2C_RXDR & I2C_TXDR
+
+Receive data register (I2C_RXDR)                                                        Transmit data register (I2C_TXDR)
+•    Address offset: 0x24, Default value: 0x0000 0000                                   •    Address offset: 0x28, Default value: 0x0000 0000
+•    Bits 31:8 Reserved, must be kept at Default value                                  •    Bits 31:8 Reserved, must be kept at Default value
+•    Bits 7:0 RXDATA[7:0]  8-bit receive data : Data byte                              •    Bits 7:0 TXDATA[7:0]  8-bit transmit data : Data byte
+     received from the I2C bus                                                               to be transmitted to I2C bus
+      •     The content from the SIPO (serial-in, parallel-out) shift                          •    The content written to this register is copied into a PISO
+            register which samples the serial data on SDA in receive                                (parallel-in, serial-out) shift register which sends the data
+            mode is copied into this register once a complete byte is                               serially on SDA in transmit mode
+            received
+
+
+
+
+Note: Every on-chip peripheral register, including I2C_RXDR and I2C_TXDR, is read or written by the processor (i.e., by the software) through parallel interfaces                         6
+
+                                                                                                                     © Copyright National University of Singapore. All Rights Reserved.
+
+
+                                 Ref. to RM0432 (STM32L4+ Technical reference manual) (pg. 1709)
+    CONTROL REGISTER I2C_CR2 (COMMUNICATION CONTROL)
+    Address offset: 0x04,
+    Default value: 0x0000 0000
+                  read or set. Don’t clear
+                  (self-clearing)
+
+
+
+•    Software (driver) writes to this register to specify information related to one transfer in master mode
+•    Setting START=1 will cause the interface to enter the master mode (by default, interface is in slave mode)
+     and send a S condition over the bus if the bus is free
+      •   cleared by hardware after the S followed by the address sequence is sent, by an arbitration loss, by a timeout error
+          detection, or when PE = 0. Writing ‘0’ to this bit has no effect
+•    Setting STOP will cause P to be generated after current byte transfer
+      •   cleared by hardware when a P condition is detected (i.e., when P has been sent successfully by the hardware), or
+          when PE = 0. Writing ‘0’ to this bit has no effect
+•    The I2C interface has a byte counter to generate A / A’, P (optional) as appropriate to manage byte
+     transfer
+      •   while receiving n bytes (n is set in NBYTES) of data, the first n-1 bytes will be A-ed, the last one will be A’ ed                                     7
+          automatically. P will also be generated if AUTOEND bit is set                     © Copyright National University of Singapore. All Rights Reserved.
+
+
+                              Ref. to RM0432 (STM32L4+ Technical reference manual) (pg. 1699)
+CONTROL REGISTER I2C_CR2 (COMMUNICATION CONTROL)
+ •   SADD[9:8] and SADD[0] are don’t cares in 7-bit addressing modes, 7-bit slave address should be
+     written to SADD[7:1]
+ •   RD_WRN: transfer direction : 0  write, 1  read
+ •   ADD10: 1 -> 10-bit addressing mode, 0  7-bit mode
+ •   RELOAD: NBYTES reload mode
+     •   0 -> transfer is completed after the NBYTES data transfer (P / Sr will follow)
+     •   1 -> transfer is not completed after the NBYTES data transfer (NBYTES will need to be reloaded when
+         TCR* is set). Possible use : when more than 255 bytes are transferred
+ •   AUTOEND: Automatic end mode
+     •   0 -> software end mode: TC* is set when NBYTES data are transferred, stretching SCL low. The
+         software needs to write to STOP / START to send a P / Sr explicitly
+     •   1 -> automatic end mode: a P condition is automatically sent when NBYTES data are transferred.
+         Should not be used when we plan to send Sr
+     •   Ignored when RELOAD is set, as there is still data left to be sent/received
+                                                                                                                                                        8
+                                            *bit in I2C_ISR
+                                                                                   © Copyright National University of Singapore. All Rights Reserved.
+CONTROL REGISTER I2C_CR2 (COMMUNICATION CONTROL)
+ •   NACK (is a control bit) has no effect in master mode
+     •   A / A’ is automatically generated when receiving, not by setting/clearing ACK explicitly
+     •   When transmitting, we can’t read NACK bit to see if the slave has sent a A’ by reading this bit – we do
+         that by reading NACKF (is a status bit) of I2C_ISR
+ •   NBYTES, ADD10, RD_WRN, SADD cannot change when the START bit is set
+
+
+
+
+                                                                                                                                                        9
+
+                                                                                   © Copyright National University of Singapore. All Rights Reserved.
+    INTERRUPT AND STATUS REGISTER I2C_ISR
+    Address offset: 0x18,
+    Default value: 0x0000 0001
+
+
+
+
+•    Contains various status and interrupt status bits
+      •   Generally set by the hardware, cleared due to some action by the software
+      •   If a bit in this register becomes 1, and the corresponding interrupt is enabled in I2C_CR1, the interrupt is sent to
+          NVIC, and the interrupt handler will be triggered if the interrupt is enabled in the NVIC as well
+      •   There are 2 separate interrupts from each I2C interface to NVIC : event (EV) and error (ER)
+           •   Note that TC and TCR interrupts can only be enabled or disabled together in I2C_CR1. Similarly, all error interrupts are
+               enabled or disabled together
+      •   If not using interrupts, these bits can be polled by the s/w as status bits
+      •   Clearing some bits (e.g: STOPF) require s/w to write 1 to the corresponding bits (e.g: STOPCF) in I2C_ICR.
+          I2C_ICR has the same bit definition* as I2C_ISR
+                                                                                             *For bits available in I2C_ICR
+      •   Bits are changed to their default values when PE=0                                                                                                            10
+
+                                                                                                   © Copyright National University of Singapore. All Rights Reserved.
+
+
+                          Ref. to RM0432 (STM32L4+ Technical reference manual) (pg. 1699)
+INTERRUPT AND STATUS REGISTER I2C_ISR
+ •   TCR: Transfer Complete Reload
+     •   Set when RELOAD=1 and NBYTES data have been transferred
+     •   Cleared when s/w writes a non-zero value to NBYTES
+ •   TC: Transfer Complete (master mode)
+     •   Set when RELOAD=0, AUTOEND=0 and NBYTES data have been transferred completely
+     •   Cleared when s/w sets START bit or STOP bit
+ •   RXNE: Receive data register not empty
+     •   Set when the received data is ready to be read from I2C_RXDR
+     •   Cleared when I2C_RXDR is read by s/w, following which h/w acknowledges the byte
+     •   Remains set between the 8th and 9th SCL pulse (before sending ACK)
+
+
+
+
+                                                                                                                                                   11
+
+                                                                              © Copyright National University of Singapore. All Rights Reserved.
+INTERRUPT AND STATUS REGISTER I2C_ISR
+• TXIS: Transmit interrupt status
+    •   Set when the I2C_TXDR register is empty and the data to be transmitted must be written in the
+        I2C_TXDR register, after the 9th SCL pulse when an ACK is received and NBYTES data have not been
+        transmitted completely
+    •   Cleared when the next data to be sent is written by s/w to I2C_TXDR
+    •   Can be written to ‘1’ by s/w in order to generate a TXIS event
+• TXE: Transmit data register empty
+    •   Set when the I2C_TXDR register is empty
+    •   Cleared when the next data to be sent is written by s/w to I2C_TXDR
+    •   Can be written to ‘1’ by s/w in order to flush the I2C_TXDR register
+
+
+
+                                 TXIS is not set during a read
+                                 operation even when TXDR is empty,
+                                 while TXE remains set (TXE=TXDR
+                                 can be written)
+                                                                                                                                                    12
+
+                                                                               © Copyright National University of Singapore. All Rights Reserved.
+INTERRUPT AND STATUS REGISTER I2C_ISR
+• STOPF: Set when a stop condition has appeared on the bus
+    •   Cleared by writing to STOPCF in I2C_ICR
+• NACKF: Set when a byte sent is not acknowledged by the receiver (slave)
+    •   Cleared by writing to NACKCF in I2C_ICR
+
+
+
+
+                                    I2C_ICR: Interrupt Clear Register
+
+
+                                                                                                                                             13
+
+                                                                        © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ •   STM32L4+ I2C interface
+     •   STM32L4S5VI as an example
+ •   STM32L4+ I2C peripheral registers
+     •   Control – I2C_CR1, I2C_CR2
+     •   Data – I2C_RXDR, I2C_TXDR
+     •   Status – I2C_ISR
+
+
+
+
+                                                                                                              14
+
+                                         © Copyright National University of Singapore. All Rights Reserved.
+

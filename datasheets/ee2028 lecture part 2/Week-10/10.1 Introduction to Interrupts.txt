@@ -1,0 +1,138 @@
+                   Introduction to Interrupts
+
+
+                                     Ankit Srivastava
+                                          EE2028
+                               ARMv7-M Architecture Ref Manual
+Figures from “The Definitive Guide to ARM® Cortex®-M3 and Cortex®-M4 Processors” by Joseph Yiu
+               Acknowledgement: Slides adapted from Dr Rajesh Panicker
+
+
+
+
+                                                                                                                                         1
+
+                                                                    ©
+                                                                    © Copyright
+                                                                      Copyright National
+                                                                                National University
+                                                                                         University of
+                                                                                                    of Singapore.
+                                                                                                       Singapore. All
+                                                                                                                  All Rights
+                                                                                                                      Rights Reserved.
+                                                                                                                             Reserved.
+OVERVIEW
+•   Introduction to Interrupts
+•   Polling vs Interrupt
+•   Interrupt Processing
+
+
+
+
+                                                                                                      2
+
+                                 © Copyright National University of Singapore. All Rights Reserved.
+INTRODUCTION TO INTERRUPTS
+                                                               When do you
+                                                                need me?
+ • A computer system normally connects to
+   I/O and other devices
+    •   keyboard
+    •   monitor
+    •   mouse
+    •   sensors etc.
+ • Processor needs to serve these devices at
+   unpredictable times (e.g., CPU does not
+   know when you are about to hit a key)
+
+
+
+                                                                                                                    3
+
+                                               © Copyright National University of Singapore. All Rights Reserved.
+POLLING VS INTERRUPT
+
+• Imagine processor is like a CEO working in his office, and devices are
+  guests
+   • Polling is like the CEO who goes to open the door periodically to see if a guest is there
+   • Interrupt is like when a guest comes, he/she knocks on the door. CEO then stops
+     what he/she is doing and prepares to welcome the guest
+
+
+
+
+                                                                                                                                         4
+
+                                                                    © Copyright National University of Singapore. All Rights Reserved.
+POLLING VS INTERRUPT
+
+•   Alternative 1: Polling
+    •   Periodically processor checks each device to see if it has a request
+        • Takes CPU time even if no request is pending
+        • How does software know when to let the system poll?
+
+
+•   Alternative 2: Interrupts
+    •   Give each device a wire (interrupt line) that it can use to signal the processor
+        • When interrupt signalled, processor executes a routine called an interrupt service routine
+          (ISR) to deal with the interrupt
+        • No overhead when no requests pending
+
+
+
+
+                                                                                                                                              5
+
+                                                                         © Copyright National University of Singapore. All Rights Reserved.
+POLLING VS INTERRUPT
+
+•   Polling
+    •   (+) CPU determines how often it needs to poll. Potentially simpler software
+    •   (-) CPU needs to check the device many times, and in most cases, the device might
+        not have new data / situation which require attention from CPU
+    •   (-) Most I/O devices operate at a much slower speed than CPU
+
+
+•   Interrupt
+    •   (+) More efficient since CPU can do other work
+    •   (-) Harder to design, debug and test
+    •   (-) Overhead/latency : CPU has to stop working, determine which device is
+        requesting service, save its work before serving the request
+                                                                                                                                        6
+
+                                                                   © Copyright National University of Singapore. All Rights Reserved.
+INTERRUPT PROCESSING
+•   CPU is executing the main task
+•   A device/peripheral requests for service using an
+    interrupt
+                                                                                   Low priority
+•   Based on the interrupt configuration and priority, CPU
+                                                                                    Interrupt
+    decides if it allows that interrupt                                            Processing
+•   If yes, save all the status (R0-R3, SP, LR, PC, APSR
+
+
+
+
+                                                                Main Task
+    saved automatically, others may need manual saving)                                                                        High priority
+    onto stack, run the interrupt handler (a function that is                                                                   Interrupt
+    invoked by the processor hardware automatically) to                                                                        Processing
+    serve the I/O device
+•   When done, CPU reloads all status as it was before
+    processing interrupt, and continues the main task
+•   A higher priority interrupt can interrupt or pre-empt the                                                                               7
+    lower priority one (interrupt nesting)                             © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ •   Introduction to Interrupts
+ •   Polling vs Interrupt
+ •   Interrupt Processing
+
+
+
+
+                                                                                                       8
+
+                                  © Copyright National University of Singapore. All Rights Reserved.
+

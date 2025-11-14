@@ -1,0 +1,214 @@
+Cortex-M4 NVIC and SCB Registers
+
+
+                     Ankit Srivastava
+                         EE2028
+            ARMv7-M Architecture Ref Manual
+         RM0432 STM32L4+ Technical reference manual
+         PM0214 STM32 Cortex-M4 Programming Manual
+  Acknowledgement: Slides adapted from Dr Rajesh Panicker
+
+
+                                                                                                                       1
+
+                                                  ©
+                                                  © Copyright
+                                                    Copyright National
+                                                              National University
+                                                                       University of
+                                                                                  of Singapore.
+                                                                                     Singapore. All
+                                                                                                All Rights
+                                                                                                    Rights Reserved.
+                                                                                                           Reserved.
+OVERVIEW
+•   Interrupt Configuration and Status via NVIC and SCB
+    •   NVIC Registers
+    •   SCB Registers
+
+
+
+
+                                                                                                                          2
+
+                                                     © Copyright National University of Singapore. All Rights Reserved.
+    INTERRUPT CONFIGURATION/S TATUS VIA NVIC AND SCB
+•   NVIC registers                                     •     SCB registers
+    •   NVIC_ISER: Interrupt Set Enable Registers            •   SHPR: System Handler Priority Registers
+    •   NVIC_ICER: Interrupt Clear Enable Registers          •   ICSR: Interrupt Control and State Register
+    •   NVIC_ISPR: Interrupt Set Pending Registers           •   SHCSR: System Handler Control and State
+    •   NVIC_ICPR: Interrupt Clear Pending Registers             Register
+    •   NVIC_IPR: Interrupt Priority Registers               •   VTOR: Vector Table Offset Register
+    •   NVIC_IABR: Interrupt Active Bit Registers            •   PRIGROUP in AIRCR: Priority group in
+                                                                 Application Interrupt & Reset Control Register
+    •   STIR: Software Trigger Interrupt Register
+
+
+                                       •    Exception-masking registers
+                                            •    PRIMASK
+                                            •    FAULTMASK
+                                            •    BASEPRI
+                                                                                                                                                  3
+
+                                                                             © Copyright National University of Singapore. All Rights Reserved.
+INTERRUPT SET ENABLE REGISTERS (ISER) AND
+INTERRUPT CLEAR ENABLE REGISTERS (ICER)
+ •   NVIC_ISER (32 bits, RW) is used to
+     •   Enable interrupts
+     •   Determine which interrupts are currently enabled and disabled
+ •   NVIC_ICER (32 bits) is used to
+     •   Disable interrupts
+     •   Determine which interrupts are currently enabled and disabled
+ •   NVIC can have more than one NVIC_ISER/NVIC_ICER. Each bit of the registers is
+     corresponding to one interrupt
+ •   Enable/Disable an interrupt:
+     •   To enable an interrupt (set enable bit), write 1 to NVIC_ISER
+     •   To disable an interrupt (clear enable bit), write 1 to NVIC_ICER
+
+
+                                                                                                                                                 4
+
+                                                                            © Copyright National University of Singapore. All Rights Reserved.
+INTERRUPT SET PENDING REGISTERS (ISPR) AND
+INTERRUPT CLEAR PENDING REGISTERS (ICPR)
+•   NVIC_ISPR (32 bits) register is used to
+    •   Force interrupts into pending state
+    •   Determine which interrupts are currently pending (R/W)
+•   NVIC_ICPR (32 bits) register is used to
+    •   Clear pending interrupts
+    •   Determine which interrupts are currently pending (R/W)
+
+
+•   NVIC can have more than one NVIC_ISPR/NVIC_ICPR and each bit is
+    corresponding to one interrupt input
+•   Interrupt pending status can be accessed through NVIC_ISPR/NVIC_ICPR
+    •   To pend an interrupt, write 1 to corresponding bit in NVIC_ISPR
+    •   To cancel a current interrupt pending, write 1 to corresponding bit in NVIC_ICPR
+                                                                                                                                               5
+    •   Writing to NVIC_ISPR has no effect on an interrupt which is already pending
+                                                                          © Copyright National University of Singapore. All Rights Reserved.
+
+    •   Writing to NVIC_ICPR has no effect on the active status of an interrupt.
+INTERRUPT PRIORITY REGISTERS (IPR) AND
+INTERRUPT ACTIVE BIT REGISTERS (IABR)
+ •   NVIC Interrupt Priority Registers (IPRs) are 8-bit registers, though only some of the
+     MSBs are implemented depending on the SoC
+ •   Accessible as IP[i], where i=0 to 94 for STM32 as there are 95 external interrupts
+ •   Each register is used to assign a priority level (from 0 to 255) to interrupts: 0 is the
+     highest programmable priority
+
+ •   Read NVIC_IABR to determine which interrupts are active. Each external interrupt has a
+     bit in NVIC_IABRs
+ •   When CPU starts an interrupt handler, its active bit is set to 1, and then cleared when
+     return is executed
+ •   If two interrupts are nested, both are active
+     •   Active = has started, has not finished. An interrupt being active doesn’t necessarily mean that
+         the processor is currently executing the ISR
+                                                                                                                                               6
+ •   NVIC_IABRs for external interrupts are read only
+                                                                          © Copyright National University of Singapore. All Rights Reserved.
+INTERRUPT PRIORITY REGISTERS (IPR) AND
+INTERRUPT ACTIVE BIT REGISTERS (IABR)
+           KB
+
+
+  Main                    KB_ISR                            Main
+                      Timer
+           KB
+
+                 KB_ISR        Timer_ISR       KB_ISR
+  Main                                                             Main
+                       Timer                   Mouse
+            KB
+
+                 KB_ISR        Timer_ISR       KB_ISR      Mouse_ISR
+  Main                                                                                 Main
+         Timer     KB Mouse
+
+                 Timer_ISR         Mouse_ISR            KB_ISR
+  Main                                                                                 Main                                                 7
+
+                                                                       © Copyright National University of Singapore. All Rights Reserved.
+
+Pre(Timer) > Pre(KB) = Pre(Mouse)                Sub(Mouse) > Sub(KB)
+REGISTERS FOR SYSTEM EXCEPTIONS
+  •       So far, we saw the various NVIC registers which deals with external interrupts. For system
+          exceptions, the corresponding controls are considered a part of the System Control Block
+          (SCB – a core peripheral) rather than NVIC
+  •       SHPR: System Handler Priority Register are used to set Priority of system exceptions with
+          programmable priority levels, accessible as SHP[i], where i=0 to 11 for all CM4 chips
+  Self-
+reading
+  •       ICSR: Interrupt Control and State Register (ICSR) can be used to
+          •   Set and clear the pending status of system exceptions including SysTick, PendSV, and NMI
+          •   Determine the currently executing exception/interrupt number by reading VECTACTIVE
+  •       SHCSR: System Handler Control and State Register (SHCSR)
+          •   Usage faults, memory management (MemManage) faults, and bus fault exceptions are enabled
+              by the SHCSR
+                                                                                                                                                   8
+          •   The pending status of faults and active status of most system exceptions are also available from
+              this register
+                                                                              © Copyright National University of Singapore. All Rights Reserved.
+PRIMASK, FAULTMASK AND BASEPRI
+•     PRIMASK is a 1-bit register (default = 0)
+      •    When it is set, it allows only NMI, hard fault, and reset exceptions. Other interrupts and
+           exceptions (having PRI >= 0) are masked (disabled)
+•     FAULTMASK is a 1-bit register (default = 0)
+      •    When it is set, it allows only NMI and reset. All the interrupts and exceptions including hard
+           fault exception (having PRI >= -1) are masked
+•     BASEPRI is an 8-bit unsigned register
+      •    used to disable all exceptions/interrupts having PRI >= BASEPRI. Writing a 0 to BASEPRI
+           disables BASEPRI
+    void   enable_irq(); // Clear PRIMASK void
+    disable_irq(); // Set PRIMASK
+    void   set_PRIMASK(uint32_t priMask); // Set PRIMASK to value priMask uint32_t
+    get_PRIMASK(void);// Read the PRIMASK value
+    void   set_FAULTMASK(uint32_t faultMask); //Set or clear FAULTMASK
+    uint32_t   get_FAULTMASK(void); // Read the FAULTMASK value
+    void   set_BASEPRI(uint32_t basePri); // Set the base priority register
+    uint32_t   get_BASEPRI(void); // Return the content of the base priority register                                                                  9
+      set_BASEPRI(0x60);          // Disable interrupts with priorities from 0x60-0xFF
+                                                                                  © Copyright National University of Singapore. All Rights Reserved.
+ACCESSING CORTEX-M4 NVIC REGISTERS
+           CMSIS functions                                       Description
+void NVIC_EnableIRQ(IRQn_Type IRQn)         Enables an interrupt or exception.
+void NVIC_DisableIRQ(IRQn_Type IRQn)        Disables an interrupt or exception.
+void NVIC_SetPendingIRQ(IRQn_Type IRQn)     Sets the pending status of interrupt or exception to 1.
+void NVIC_ClearPendingIRQ(IRQn_Type IRQn)   Clears the pending status of interrupt or exception to 0.
+                                            Reads the pending status of interrupt or exception. This
+uint32_t NVIC_GetPendingIRQ(IRQn_Type
+                                            function returns non-zero value if the pending status is
+IRQn)
+                                            set to 1.
+uint32_t NVIC_GetActive(IRQn_Type IRQn);    Read the active bit for an external interrupt
+void NVIC_SetPriority(IRQn_Type IRQn,       Sets the priority of an interrupt or exception with
+uint32_t priority)                          configurable priority level to 1.
+                                            Reads the priority of an interrupt or exception with
+uint32_t NVIC_GetPriority(IRQn_Type IRQn)   configurable priority level. This function return the
+                                            current priority level.
+void NVIC_SetPriorityGrouping(uint32_t
+PriorityGroup);                             Set the Priority Grouping in NVIC Interrupt Controller
+
+uint32_t NVIC_EncodePriority (uint32_t      Encode the priority for an interrupt. The returned
+PriorityGroup, uint32_t PreemptPriority,    priority value can be used for NVIC_SetPriority(...)                                                    10
+uint32_t SubPriority);                      function
+                                                                               © Copyright National University of Singapore. All Rights Reserved.
+
+                          The input parameter IRQn is the IRQ number
+CONCLUSION
+ •   Interrupt Configuration and Staus via NVIC and SCB
+     •   NVIC Registers
+         •   ISER and ICER
+         •   ISPR and ICPR
+         •   IPR
+         •   IABR
+     •   SCB Registers
+         •   SHPR
+         •   ICSR
+         •   SHCSR
+     •   PRIMASK, FAULTMASK and BASEPRI
+ •   CMSIS functions
+                                                                                                                           11
+
+                                                      © Copyright National University of Singapore. All Rights Reserved.
+

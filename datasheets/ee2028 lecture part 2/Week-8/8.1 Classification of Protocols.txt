@@ -1,0 +1,275 @@
+Classification of Protocols
+
+
+                   Ankit Srivastava
+                        EE2028
+
+
+Unless stated otherwise, for the second part of the module,
+            ‘STM32 Chip’ = STM32L4S5VIT6
+                ‘Board’ = B-L4S5I-IOT01A
+Acknowledgement: Slides adapted from Dr Rajesh Panicker
+                                                                                                                          1
+
+                                                     ©
+                                                     © Copyright
+                                                       Copyright National
+                                                                 National University
+                                                                          University of
+                                                                                     of Singapore.
+                                                                                        Singapore. All
+                                                                                                   All Rights
+                                                                                                       Rights Reserved.
+                                                                                                              Reserved.
+OVERVIEW
+•   What is a Protocol?
+•   Classification of Protocols
+
+
+
+
+                                                                                                       2
+
+                                  © Copyright National University of Singapore. All Rights Reserved.
+WHAT IS A PROTOCOL?
+ •   Voltage to be used
+ •   Transmission data rate
+ •   Transmit data with or without clock
+ •   Transmission through single or multi-wire
+ •   Selection of device
+
+
+
+
+                                                                                                                      3
+
+                                                 © Copyright National University of Singapore. All Rights Reserved.
+CLASSIFICATION OF PROTOCOLS
+ •   Parallel vs Serial
+ •   Synchronous vs Asynchronous
+ •   Bus-based vs Point-to-point
+ •   Master-Slave vs Peer-to-peer
+ •   Simplex vs Half-duplex vs Full-duplex
+ •   In-band addressing vs Out-of-band addressing
+
+
+
+
+                                                                                                                         4
+
+                                                    © Copyright National University of Singapore. All Rights Reserved.
+    PARALLEL VS SERIAL
+
+
+                                                                                                                                  b0                       b7
+    Device 1                                 Device 2                                                         Device 1            0      1     . . .1 1                    Device 2
+
+
+
+                         b0
+                                                                                                                   MSB First (Need not always be the case)
+               Need not always be 8-bit
+
+
+Parallel: use several parallel wires to                                                                Serial: data is sent through a
+transmit bits in parallel                                                                              single wire, one bit at a time
+•    Processor-to-memory buses, old (pre-2005)                                                         •       Serial ATA (SATA), PCIe, I2C, SPI, UART
+     protocols such as PCI, IDE, printer port, AXI, AXI-
+     Stream
+                              Note: Data processing and storage (e.g. ALU, Registers, Memories) deal with data in a parallel manner even when data transfer
+                              is serial. This means serial protocols require a parallel-serial converter at the transmitter, serial-parallel converter at the receiver                                     5
+
+                                                                                                                                      © Copyright National University of Singapore. All Rights Reserved.
+    PARALLEL PROTOCOL ISSUES
+
+           b1
+
+           b2
+
+
+           b3
+
+
+
+                                       Data valid at receiver only in this interval
+
+Parallel Protocols:
+•    suffers from bus-skew: different signals travel at different speeds
+•    suffers from cross-talk: signals from different wires interfere with each other
+
+                                                                                                                                                           6
+
+                                                                                      © Copyright National University of Singapore. All Rights Reserved.
+SUMMARY: PARALLEL VS SERIAL
+
+Parallel Protocols:                            Serial Protocols:
+•   Used for shorter distance (preferred for   •   Preferred for longer distances but can be
+    few cms or below)                              used for smaller distances
+•   Error-prone over longer distances due to   •   Less prone to skew & cross-talk
+    skew & cross-talk                          •   Requires less hardware as single wire
+•   Requires more hardware as multiple             carries the information
+    wires carry the information                •   In-general, lower cost as less hardware
+•   In-general, higher cost as more                is required
+    hardware is required
+
+
+
+
+                                                                                                                                        7
+
+                                                                   © Copyright National University of Singapore. All Rights Reserved.
+SYNCHRONOUS VS ASYNCHRONOUS
+
+             b7           b0
+                                                           b7                  b0
+    Device                     Device            Device                                     Device
+      1                          2                 1                                          2
+                  Clock
+
+
+
+
+• Synchronous: one of the wires carry       • Asynchronous: only data is
+  clock – allows transmitter and receiver     transmitted, not clock
+  to have a common time reference
+• Synchronous protocols are generally       • Asynchronous protocols are
+  faster                                      generally slower
+• I2C, SPI, AXI, AXI-Stream                 • UART, USB                                                                        8
+
+                                                          © Copyright National University of Singapore. All Rights Reserved.
+LIMITATIONS OF SYNCHRONOUS PROTOCOLS
+
+                                                       b0=0                          b7=0
+                                                                    ....
+                                            Device 1               Data                                     Device 2
+                                                                   Clock
+Synchronous protocols suffer from the                               ....
+
+same issue as the parallel protocols i.e.
+bus-skew and cross-talk                                b0=1                         b7=1
+                                                                           ....
+                                            Device 1               Data                                     Device 2
+                                                                   Clock
+                                                                    ....
+
+
+
+
+                                                                                                                              9
+
+                                                         © Copyright National University of Singapore. All Rights Reserved.
+LIMITATIONS OF ASYNCHRONOUS PROTOCOLS
+
+                                               Edge detected – done every once in a while for
+                                               synchronization – to figure out when to sample
+
+
+Receiver in Asynchronous protocol needs                                                                                       …
+
+to recover timing info from data/control
+bits (start/stop etc.) – hence,
+                                           Sample half Sample every
+complicated hardware                        bit period  bit interval
+                                               later
+
+                                                              Other means of asynch
+                                                              transmissions, such as
+                                                                 read-acknowledge
+                                                              handshaking exist, but
+                                                                require more wires
+
+
+                                                                                                                                  10
+
+                                                         © Copyright National University of Singapore. All Rights Reserved.
+BUS-BASED VS POINT-TO-POINT
+                        Device 3
+   Device 1
+                                               Device 1                               Device 2
+
+                        Device 4
+   Device 2
+
+               Bus
+• Bus: several devices are connected to    • Point-to-point: two devices
+  the same set of wires (called a bus) –     have a dedicated link between
+  each device has a unique address           them – no addressing
+• I2C, SPI, USB, AXI, CAN                  • UART, AXI-Stream
+
+                                                                                                                               11
+
+                                                          © Copyright National University of Singapore. All Rights Reserved.
+MASTER-SLAVE VS PEER-TO-PEER
+                       Slave 1                                                                Peer 2
+
+
+    Master                                   Peer 1
+
+                        Slave 2                                                               Peer 3
+
+
+               Bus                                              Bus
+Master-slave:                              Peer-to-peer:
+• only master can initiate communication   • any device can initiate
+  & decides which slave should respond       communication
+• master generates the clock (in some
+  synchronous protocols)                   • CAN, Ethernet (configuration
+• I2C, SPI, USB, AXI, AXI-Stream             dependent)                                                                     12
+
+                                                       © Copyright National University of Singapore. All Rights Reserved.
+SIMPLEX VS HALF-DUPLEX VS FULL-DUPLEX
+            Simplex                 Simplex: unidirectional link, one-way interaction
+Device 1                 Device 2   GPIO output to LEDs, GPIO input from switches,
+                                    AXI-Stream
+
+           Half-duplex              Half-duplex: one bi-directional link, devices take
+Device 1                 Device 2   turns
+                                    I2C, USB2.0
+
+           Full-duplex              Full-duplex: at least two links, can transmit &
+Device 1                 Device 2   receive at the same time
+                                    SPI, UART, USB3.x
+                                                                                                                                 13
+
+                                                            © Copyright National University of Singapore. All Rights Reserved.
+IN-BAND VS OUT-OF-BAND ADDRESSING
+                                                                                                 Peripheral 1
+                         Peripheral 1
+                                                                                                EN
+
+                         Same bus for             Master
+     Master              Address, Data
+
+
+                                                                                                 Peripheral 2
+                         Peripheral 2                                                           EN
+                                                                                                                             14
+                                                 Address   Address       Data
+                 Bus                               Bus     Decoder       Bus
+
+
+In-band: address of the device being          Out-of-band: separate address
+accessed (to select the device), as well as   bus, a decoder enables/activates
+the data (read from or written to the         the device
+device) are sent through the same bus         • SPI, AXI
+• I2C, USB
+                                                                                                                                  14
+
+                                                             © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ •   What is a Protocol?
+ •   Classification of Protocols
+     •   Parallel vs Serial
+     •   Synchronous vs Asynchronous
+     •   Bus-based vs Point-to-point
+     •   Master-Slave vs Peer-to-peer
+     •   Simplex vs Half-duplex vs Full-duplex
+     •   In-band addressing vs Out-of-band addressing
+
+
+
+
+                                                                                                                             15
+
+                                                        © Copyright National University of Singapore. All Rights Reserved.
+

@@ -1,0 +1,245 @@
+Introduction to STM32 Peripherals
+
+
+                       Ankit Srivastava
+                            EE2028
+
+
+    Unless stated otherwise, for the second part of the module,
+                ‘STM32 Chip’ = STM32L4S5VIT6
+                    ‘Board’ = B-L4S5I-IOT01A
+   Acknowledgement: Slides adapted from Dr Rajesh Panicker
+                                                                                                                              1
+
+                                                         ©
+                                                         © Copyright
+                                                           Copyright National
+                                                                     National University
+                                                                              University of
+                                                                                         of Singapore.
+                                                                                            Singapore. All
+                                                                                                       All Rights
+                                                                                                           Rights Reserved.
+                                                                                                                  Reserved.
+OVERVIEW
+• What is a Computer System?
+• STM32 Microcontroller and Development Board
+• Accessing STM32 Peripherals via Libraries
+
+
+
+
+                                                                                                                     2
+
+                                                © Copyright National University of Singapore. All Rights Reserved.
+WHAT IS A COMPUTER SYSTEM?
+
+                         RAM                                                               Keyboard/
+                                                              USB                          Mouse
+
+
+                     Processor
+                     Core (MP)
+                                                                                           Another
+                                                           Ethernet                        computer
+
+                      Interrupt
+                      Controller
+
+                                                             HDMI                           Display
+                       System
+                       Timer
+                                             Internal peripherals/
+                                             controllers                                  Accelerometer
+                        Flash                                  I2C
+
+                                                                                          Gyroscope
+                                          BUS
+
+                                   Motherboard/ SoC                                External Devices
+                                                                      Protocol specific
+                                                                                                                                                                    3
+                                                                          signals /            © Copyright National University of Singapore. All Rights Reserved.
+ (Not specifically STM32 Chip / Board)                                  connections
+MULTI-TIERED BUS ARCHITECTURE
+
+
+           RAM                           Other high
+                                           speed                       SPI                       SD Card
+                                         peripherals
+                                             (eg.
+         Processor                        Graphics/
+         Core (MP)                         HDMI)
+
+
+
+
+                                        High speed –
+           Flash                         low speed                     I2C                   Accelerometer
+                                           bridge
+
+
+                                                                            Protocol specific
+                      High Speed Bus                   Low Speed Bus     signals / connections
+
+                     Motherboard/ SoC
+                                                                                                                                                    4
+
+                                                                               © Copyright National University of Singapore. All Rights Reserved.
+    THREE-TIER COMPOSITION OF STM32 BOARD
+
+
+                    RAM
+                                                          GPIO          Switch/ LED
+                                                                                                   Core peripherals from
+              ARM Cortex M4
+                                               On-chip peripherals                                  ARM, tightly integrated with
+                  CPU                                                   USB-UART
+                                                                        Bridge (to
+                                                                                                    Cortex M4
+                                                         UART            another
+                                                                        computer)
+                                                                                                   On-chip peripherals
+                                                                                                    from STM. Part of STM32
+                 Interrupt
+      Core    Controller (NVIC)                                                                     Chip
+                                                           SPI             WiFi
+peripherals
+                                                                                                   External devices /
+               System Timer                    On-chip peripherals                                  peripherals mostly from
+                                                                       Accelerometer
+               Cortex M4 Core
+                                                                                                    STM on the Board
+                                                          I2C
+
+                   Flash                BUS                            Temp. Sensor
+
+                                                                     External Devices
+Board                             STM32 Chip                           (on Board)
+                                                                                                                                                             5
+
+                                                                                        © Copyright National University of Singapore. All Rights Reserved.
+STM32 CHIP AND DEVELOPMENT BOARD (PARTIAL)
+                                                            LD1     LD2
+
+
+
+
+                                                                                                                                                   6
+
+                                                                              © Copyright National University of Singapore. All Rights Reserved.
+
+
+              Refer to UM2708: STM32L4+ series Discovery kit, Fig 3 (pg. 8)
+PROGRAMMING HARDWARE PERIPHERALS VIA REGISTERS
+ Software interacts with the hardware by reading/writing peripheral registers
+ • Details of the registers and what happens when you write them / what you get when you read
+   them can be found in the appropriate datasheet
+                                                                                          Peripheral 1
+Broadly 3 categories:                                                                     0x4800A0B0
+
+ •   Status registers - read by the processor to                                          0x4800A0B4                     Peripheral
+     know the status of the hardware                                                                                     registers
+                                                                                                                         (status,
+ •   Control registers - written by the processor    Cortex M4                            …
+                                                                                                                         control,
+                                                     Processor
+     to give commands / control signals                                                                                  data)
+
+ •   Data registers - read (for input) and/or
+     written (for output) to perform actual
+     transfer of data
+ •   Some functionalities could be combined in                                            Peripheral 2
+     some registers, e.g., control cum status
+
+
+
+
+                                                                                                …
+                                                                   AHB2
+     registers                                                      BUS
+                                                                                                                                           7
+ Peripheral registers are accessed like memory – using LDR/STR equiv.
+                                                                      © Copyright National University of Singapore. All Rights Reserved.
+NAVIGATING STM32 DOCUMENTATION
+            Reference Manual for
+                  ARMv7-M
+
+
+
+            Datasheet for STM32L4+
+                Processor Series
+
+
+           Datasheet for specific SoC:
+                STM32L4S5VIT6
+
+
+
+           User Manual for Board: B-
+                 L4S5I-IOT01A
+
+
+
+     Datasheets of specific Devices on Board
+               (self-exploration)
+                                               Refer to Canvas > EE2028 > FIles > Labs > Data sheet
+                                                                                                                                                              8
+
+                                                                                         © Copyright National University of Singapore. All Rights Reserved.
+PERIPHERAL ABSTRACTION VIA SOFTWARE LIBRARIES
+ Libraries:
+ •   are collection of driver functions or APIs to access a peripheral
+ •   encapsulate/abstract the process of reading/writing peripheral registers
+ •   internally use pointers to peripheral registers to accomplish reading/writing
+       • pointers hold addresses of peripheral register
+       • pointers are implemented as LDR/STR instructions or equivalent
+ •   allow ease of programming (higher layer of abstraction - no need to reinvent the wheel)
+ •   provide portability - we just need to recompile/re-link with the new library, user program will
+     need minimal/no changes
+
+ CMSIS: functions for core peripherals (NVIC/Interrupts, SysTick etc.)
+ HAL: functions for on-chip peripherals (GPIO, I2C, UART, SPI etc.)
+ BSP: functions for external devices/peripherals on the baseboard (temperature sensor etc.)
+                                                                                                                                        9
+
+                                                                   © Copyright National University of Singapore. All Rights Reserved.
+       PERIPHERAL ACCESS (MMIO VS PMIO)
+                          BUS
+
+                                     Memory                               MEMORYBUS
+                                                                                                         Memory
+                                  2 locations can’t                    A memory location and I/O
+          Processor                                        Processor
+                                  have same address                    device can have same address
+                                                                             I/O BUS
+                                        I/O
+                                                                                                               I/O
+
+
+
+Memory-mapped IO (MMIO) : the addresses               Port-mapped IO (PMIO) : separate
+for peripheral registers shares the address space     address spaces for memory and
+with the memory                                       peripherals
+   LDR/STR (or pointers) used for IO                    Separate instructions (eg. IN/OUT in Intel 32)
+                                                          required for IO
+
+
+                                                                                                                                                   10
+
+                                                                              © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ • What is a Computer System?
+    • Processor, Memory, Peripherals
+    • Muti-tiered bus architecture
+ • STM32 Microcontroller and Development Board
+    • Three-tiered composition
+       • Cortex-M4 Core, STM32 Chip, Development Board
+ • Accessing STM32 Peripherals via Libraries
+    • CMSIS, HAL, BSP
+    • MMIO vs PMIO
+
+                                                                                                                       11
+
+                                                  © Copyright National University of Singapore. All Rights Reserved.
+

@@ -1,0 +1,99 @@
+     Cortex-M4 Interrupt Pending Behaviour
+
+
+                                     Ankit Srivastava
+                                          EE2028
+                            ARMv7-M Architecture Ref Manual
+                         DS12024Rev4 STM32L4Sxxx Datasheet
+                     RM0432 STM32L4+ Technical reference manual
+                     PM0214 STM32 Cortex-M4 Programming Manual
+Figures from “The Definitive Guide to ARM® Cortex®-M3 and Cortex®-M4 Processors” by Joseph Yiu
+               Acknowledgement: Slides adapted from Dr Rajesh Panicker                                                                   1
+
+                                                                    ©
+                                                                    © Copyright
+                                                                      Copyright National
+                                                                                National University
+                                                                                         University of
+                                                                                                    of Singapore.
+                                                                                                       Singapore. All
+                                                                                                                  All Rights
+                                                                                                                      Rights Reserved.
+                                                                                                                             Reserved.
+OVERVIEW
+•   Interrupt Pending Behavior
+
+
+
+
+                                                                                                      2
+
+                                 © Copyright National University of Singapore. All Rights Reserved.
+INTERRUPT PENDING BEHAVIOR
+ •   Pending is a state of an exc./int. waiting for the CPU to
+     process
+ •   When an exc./int. is asserted, it will be pended
+ •   Even if the interrupt signal is then de-asserted, pending
+     status is still maintained and causes the interrupt handler
+     to be executed
+ •   When the int. handler starts, pending status will be
+     cleared automatically by the processor/NVIC
+ •   If the int. handler cannot be carried out immediately
+     (e.g., if a higher- priority interrupt handler is running or
+     if the interrupt is disabled), the exc./int. will remain
+     pending
+ •   Pending status can be cleared before the CPU responds
+     to the int. by writing to an interrupt control register in                                                                          3
+
+     NVIC (not a ‘normal’ scenario, will see later)                 © Copyright National University of Singapore. All Rights Reserved.
+    INTERRUPT PENDING BEHAVIOR
+•    When CPU starts to execute an int., the int.
+     becomes active and pending bit is cleared
+     automatically
+•    Pending can happen when an int. is disabled. It can
+     trigger the int. sequence when it is enabled later
+•    Pending -> active happens only if the interrupt is enabled
+
+
+
+
+                                                •   An int. that is signaled several times before CPU
+                                                    starts to process it will be treated as a single int.
+                                                    request
+                                                    •    Subsequent arrivals of an interrupt which is already
+                                                         pending are ‘lost’                                                                        4
+
+                                                                              © Copyright National University of Singapore. All Rights Reserved.
+    INTERRUPT PENDING BEHAVIOR
+•    If an int. source continues to hold int. request signal
+     active, int. will be pended again at the end of int.
+     service routine (exception handler exit)
+     •   Typically happens when an interrupt is not ‘cleared’
+         by the software
+
+
+
+
+                                                    •   If a device raises an interrupt while its handler is
+                                                        already running, it will be pended again
+                                                        •       When an interrupt is raised, it goes pending as
+                                                                long as it is not already pending, irrespective of
+                                                                other factors such as whether it is enabled,
+                                                                whether the corresponding handler is already
+                                                                running                                                                                5
+
+                                                                                  © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ •   Interrupt Pending Behavior
+     •   Interrupt Pending status
+     •   Interrupt Active status
+     •   Processor mode
+     •   Thread mode
+
+
+
+
+                                                                                                         6
+
+                                    © Copyright National University of Singapore. All Rights Reserved.
+

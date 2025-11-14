@@ -1,0 +1,52 @@
+STM32 GPIO Code Walkthrough
+
+
+                      Ankit Srivastava
+                           EE2028
+
+
+   Unless stated otherwise, for the second part of the module,
+               ‘STM32 Chip’ = STM32L4S5VIT6
+                   ‘Board’ = B-L4S5I-IOT01A
+Acknowledgement: Slides adapted from Dr Rajesh Panicker
+                                                                                                                             1
+
+                                                        ©
+                                                        © Copyright
+                                                          Copyright National
+                                                                    National University
+                                                                             University of
+                                                                                        of Singapore.
+                                                                                           Singapore. All
+                                                                                                      All Rights
+                                                                                                          Rights Reserved.
+                                                                                                                 Reserved.
+OVERVIEW
+• GPIO Code Walkthrough
+
+
+
+
+                                                                                               2
+
+                          © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ • GPIO Code Walkthrough
+    • Configure GPIOs
+    • Read/Write GPIOs
+
+
+
+
+                                                                                                3
+
+                           © Copyright National University of Singapore. All Rights Reserved.
+UNDERSTANDING GPIO HAL LIBRARY VIA PROJECT
+
+
+
+
+                                                                                                        4
+
+                                   © Copyright National University of Singapore. All Rights Reserved.
+

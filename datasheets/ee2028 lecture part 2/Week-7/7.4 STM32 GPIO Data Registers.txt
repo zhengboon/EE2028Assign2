@@ -1,0 +1,185 @@
+STM32 GPIO Data Registers
+
+
+                   Ankit Srivastava
+                        EE2028
+
+
+Unless stated otherwise, for the second part of the module,
+            ‘STM32 Chip’ = STM32L4S5VIT6
+                ‘Board’ = B-L4S5I-IOT01A
+Acknowledgement: Slides adapted from Dr Rajesh Panicker
+                                                                                                                          1
+
+                                                     ©
+                                                     © Copyright
+                                                       Copyright National
+                                                                 National University
+                                                                          University of
+                                                                                     of Singapore.
+                                                                                        Singapore. All
+                                                                                                   All Rights
+                                                                                                       Rights Reserved.
+                                                                                                              Reserved.
+OVERVIEW
+• GPIO Data Registers
+   • IDR
+   • ODR
+   • BSRR/BRR
+
+
+
+
+                                                                                             2
+
+                        © Copyright National University of Singapore. All Rights Reserved.
+SYSTEM LEVEL OVERVIEW
+              BUS      STM32 Chip
+                                                                 MODER
+                                                                                                  0x00            REG_1
+
+                                                                     PUPDR
+                                             AFR                                                  0x01            REG_2
+
+                                                                 OTYPER                                             …
+                                                                                                                    .
+                                                                        P
+                                                                                                          yyy SENSOR
+                          I2C_CR1                                       U
+                                                                        N
+                                                                                 SDA
+                                                   ..
+                          I2C_ISR
+                                                                        P                         0x20         CTRL_REG1
+      ARM                I2C_TXDR
+                                                                        D
+                                                                        N
+
+     Cortex                                                             .    .                    0x2A        TEMP_OUT_L
+                         I2C_RXDR
+    M4 Core                                                             P                         0x2B              …
+                                                                                                             TEMP_OUT_H
+                                                                        U
+
+                      I2C INTERFACE
+                                                                        N
+                                                                                 SCL
+                                                   ..                   P
+                                                                        D
+                                                                                                            HTS221
+                                                                        N
+
+                     From other interfaces
+                                                                        .    .
+                    such as SPI, UART etc.
+                                             IDR                       P
+                                                                       U
+                                                                       N
+     NVIC                                                                        INT
+                            EXTI
+                                                                       P
+                                             ODR                       D
+                                                                       N
+                                                                        .
+                                                        GPIO BLOCK
+                                to analog
+                                                                                                                                                            3
+
+                                                                                       © Copyright National University of Singapore. All Rights Reserved.
+    GPIO DATA REGISTERS
+•    When a pin is in GPIO input mode (MODE=00), the logic level of a pin can be read from
+     the corresponding bit in the input data register (IDR)
+•    When a pin is in GPIO output mode (MODE=01), the logic level of a pin will be
+     controlled/determined by the value of the corresponding bit in the output data register
+     (ODR)
+                                                                               •   ODR bits can also be manipulated indirectly through bit
+                                                                                   set/reset register (BSRR) and bit reset register (BRR)
+                                                                                   which are logical interfaces/means to affect the
+                                                                                   physical register ODR
+                                                                               •   Use of BSRR and BRR allows certain pins to be
+                                                                                   modified in one action (atomic), without the need to
+                                                                                   read ODR -> m odify the relevant bits -> w rite
+                                                                                   back to ODR
+
+
+                                                                                                                                                                         4
+
+                                                                                                    © Copyright National University of Singapore. All Rights Reserved.
+
+
+      Ref. to RM0432 (STM32L4+ Technical reference manual), Fig 28 (pg. 340)
+        GPIO DATA REGISTERS: GPIOX_IDR & GPIOX_ODR
+•       GPIOx_IDR (Address offset = 0x10) : Input Data Register (read-only)
+•       GPIOx_IDR IDy contains the logic level read from port x pin y (y=15:0). Bits 31:16 of this register is
+        reserved
+    •    E.g. To know the input level at Port C Pin 13
+         (x=C, y=13): check bit value at GPIOC_IDR [13]
+
+
+
+•       GPIOx_ODR (Address offset = 0x14) : Output Data Register
+•       GPIOx_ODR ODy contains the logic level output on port x pin y (y=15:0). Bits 31:16 of this register is
+        reserved
+•       E.g., To output 1 from Port B Pin 14 (x=B, y=14):
+        Set GPIOB_ODR [14] = 1 and keep the other bits
+        unchanged
+•       ODR is read-write. We can read back and verify the
+        output when the pin is a GPIO output. Reading
+        ODR will not give the pin logic level in GPIO input                                                                                           5
+        mode                                                                     © Copyright National University of Singapore. All Rights Reserved.
+    GPIO DATA REGISTERS: GPIOX_BRR & GPIOX_BSRR
+                                                                                       Set = make a bit 1
+•   GPIOx_BRR (Address offset = 0x28) : Bit Reset Register                             Reset = make a bit 0
+
+•   GPIOx_BRR BRy, for port x pin y (y = 15:0) works as below. These bits are write-only, a read to
+    these bits returns the value 0x0000. Bits 31:16 of this register is reserved
+•    0: no action on the corresponding ODy bit
+•    1: Resets the corresponding ODy bit
+
+
+•    GPIOx_BSRR (Address offset = 0x18) : Bit Set/Reset Register (write-only)
+•    GPIOx_BSRR BSy, for port x pin y (y = 15:0) works as below
+•    0: no action on the corresponding ODy bit
+•    1: Sets the corresponding ODy bit
+
+
+•    GPIOx_BSRR BRy, for port x pin y (y = 15:0) works as below                   BRy of BSRR is intended to be
+                                                                                  used only when there is a need
+•    0: no action on the corresponding ODy bit                                    to set some pins and reset some
+                                                                                  other pins at the same instant
+•    1: Resets the corresponding ODy bit                                                                                                        6
+
+                                                                           © Copyright National University of Singapore. All Rights Reserved.
+GPIO DATA REGISTERS: GPIOX_BRR & GPIOX_BSRR
+                  GPIOx_BSRR
+
+
+                                   1        1
+
+                               1            1
+
+
+
+                   GPIOx_ODR
+
+
+
+
+                               1   0         1
+
+                                                                                                            7
+
+                                       © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ • GPIO Data Registers
+    • IDR
+    • ODR
+    • BSRR/BRR
+
+
+
+
+                                                                                              8
+
+                         © Copyright National University of Singapore. All Rights Reserved.
+

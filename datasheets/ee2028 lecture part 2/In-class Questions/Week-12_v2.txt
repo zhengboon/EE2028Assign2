@@ -1,0 +1,95 @@
+1. STM32l4S5VI has 3 USARTs and 2 UARTs. Assume LPUART is used for Debug console
+   and not available. How many accelerometers which support UART can be connected?
+   helper (driver) functions to conﬁgure NVIC can be found in (there could be more than
+   one correct answer)
+       a. 6
+       b. 5
+       c. 2
+       d. 3
+
+2. In a UART with baud rate = 10000; other settings at usual defaults; time to transmit 1
+   frame is
+       a. 1 ms
+       b. 10 ms
+       c. 0.1 ms
+       d. 5 ms
+
+3. Pick the odd one out
+       a. COM
+       b. tty
+       c. Serial
+       d. SPI
+
+4. Synchronous protocols generally need only simpler hardware as compared to
+   asynchronous protocols
+      a. True
+      b. False
+
+5. You are hired by one of the renowned Spacecraft companies as an Embedded Software
+   Engineer to develop the next-generation Guidance, Navigation and Control (GNC) System
+   for future spacecraft. The GNC team has decided to use STM32l475vg as the
+   microcontroller to interface different modules (sensors and actuators) and has provided
+   you with the interface requirements.
+
+   STM32l475vg has 5 UART interfaces (3 USARTs, 2 UARTs) and 3 I2C interfaces.
+   Note that USART can operate as UART. Assume LPUART is used for Debug console and
+   not available.
+
+   The following table sums up the interface requirement information for the modules.
+
+
+
+
+     Module        Quantity           UART                             I2C
+
+                                                          7-bit address         Speed
+
+       IMU             1             115200bps                0x20             100kbps
+
+    Sun Sensor         3                 -                 0b0100xx0           100kbps
+                                                                 Bits xx: two
+                                                           configurable hardware
+                                                           pins (Designed can use
+                                                                either 0 or 1)
+
+        Star Sensor        1             19200bps                  0x20             400kbps
+
+        Gyroscope          1                 -                     0x26             400kbps
+
+      Magnetometer         2             19200bps                  0x24             400kbps
+
+      GPS Receiver         1             115200bps                 0x20             100kbps
+
+      Reaction Wheel       3             115200bps                           -
+
+         Thruster          1                 -                     0x24             400kbps
+
+
+
+
+       (a) List the chosen interface for IMU, Star Sensor, Magnetometer and GPS receiver.
+           Clearly mention the interface number in the form of either UARTx (x = 1 to 5) or I2Cy (y
+           = 1 to 3). Note that both the Magnetometers should either be on I2C or on UART. You
+           are not allowed to have one Magnetometer on I2C and one on UART.
+                                                                                      (4 marks)
+
+       (b) Based on the answer for (a), what are the two key considerations when you decided
+           to choose (or not choose) I2C interface for IMU, Star Sensor, Magnetometer and GPS
+           receiver?
+                                                                                  (2 marks)
+
+Section C continued on Page 10
+       (c) List the chosen I2C addresses of the three Sun Sensors of the GNC system.
+                                                                                  (3 marks)
+
+       (d) List the speed of the three I2C interfaces for this question.
+                                                                                      (3 marks)
+
+       (e) Conﬁgure:
+           Pin PC12 for TX signal of UART5 (Use the Alternate function as AF8 for UART5)
+           Pin PC0 for SCL signal of I2C3 (Use the Alternate function as AF4 for I2C3)
+           Clearly show all the required register names, their addresses and the conﬁguration
+           values needed for the desired function of the pin. Include a one-line explanation for
+           each conﬁguration step. A program/code is not needed.
+                                                                                     (8 marks)
+

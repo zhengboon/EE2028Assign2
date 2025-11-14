@@ -1,0 +1,1476 @@
+                                                                                                                HTS221
+
+           Capacitive digital sensor for relative humidity and temperature
+
+                                                                                     Datasheet - not recommended for new design
+
+
+                                                                              Description
+                                                                              HTS221 is in the process of being terminated and
+                                                                              is not recommended for new design. The
+                         HLGA-6L
+                                                                             candidate replacement is SHT40-AD1B from
+                      (2 x 2 x 0.9 mm)                                        Sensirion. A deep-dive transition guide, technical
+                                                                              note TN1426, is available on www.st.com,
+                                                                              providing a high-level reference to guide the user
+Features                                                                      in replacing STMicroelectronics HTS221 sensor
+                                                                              with the SHT4x sensor family from Sensirion as a
+ 0 to 100% relative humidity range                                           high-quality alternative.
+ Supply voltage: 1.7 to 3.6 V
+                                                                              The HTS221 is an ultracompact sensor for
+ Low power consumption: 2 μA @ 1 Hz ODR                                      relative humidity and temperature. It includes a
+ Selectable ODR from 1 Hz to 12.5 Hz                                         sensing element and a mixed signal ASIC to
+                                                                              provide the measurement information through
+ High rH sensitivity: 0.004% rH/LSB
+                                                                              digital serial interfaces.
+ Humidity accuracy: ± 3.5% rH, 20 to +80% rH
+                                                                              The sensing element consists of a polymer
+ Temperature accuracy: ± 0.5 °C,15 to +40 °C                                 dielectric planar capacitor structure capable of
+ Embedded 16-bit ADC                                                         detecting relative humidity variations and is
+ 16-bit humidity and temperature output data                                 manufactured using a dedicated ST process.
+
+ SPI and I²C interfaces                                                      The HTS221 is available in a small top-holed cap
+                                                                              land grid array (HLGA) package guaranteed to
+ Factory calibrated
+                                                                              operate over a temperature range from -40 °C to
+ Tiny 2 x 2 x 0.9 mm package                                                 +120 °C.
+ ECOPACK compliant
+
+Applications
+ Air conditioning, heating and ventilation
+ Air humidifiers
+ Refrigerators
+ Wearable devices
+ Smart home automation
+ Industrial automation
+ Respiratory equipment
+ Asset and goods tracking
+                                                      Table 1. Device summary
+          Order code                   Temperature range [°C]                          Package                  Packing
+           HTS221TR                             -40 to +120                            HLGA-6L               Tape and reel
+
+
+March 2023                                                   DocID026333 Rev 5                                                 1/33
+This is information on a product still in production but not recommended for new designs.                                 www.st.com
+Contents                                                                                                                        HTS221
+
+
+Contents
+
+1          HTS221 block diagram . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+           1.1      Pin information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+
+2          Sensor parameters and electrical specifications . . . . . . . . . . . . . . . . . . 8
+           2.1      Communication interface characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+                    2.1.1       SPI - serial peripheral interface . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+                    2.1.2       I²C - control interface . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+           2.2      Absolute maximum ratings . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+
+3          Functionality . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+           3.1      IC interface . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+           3.2      Factory calibration . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+
+4          Application hints . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+           4.1      Soldering information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+
+5          Digital interfaces . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+           5.1      I2C serial interface (CS = HIGH or unconnected CS) . . . . . . . . . . . . . . . 14
+                    5.1.1       I²C operation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+           5.2      SPI bus interface (CS = LOW) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+                    5.2.1       SPI write . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+                    5.2.2       SPI read . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+
+
+6          Register mapping . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+
+7          Register description . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+           7.1      WHO_AM_I (0Fh) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+           7.2      AV_CONF (10h) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+           7.3      CTRL_REG1 (20h) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+           7.4      CTRL_REG2 (21h) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+           7.5      CTRL_REG3 (22h) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+           7.6      STATUS_REG (27h) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+           7.7      HUMIDITY_OUT_L (28h) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+
+
+2/33                                              DocID026333 Rev 5
+HTS221                                                                                                   Contents
+
+
+         7.8      HUMIDITY_OUT_H (29h) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+         7.9      TEMP_OUT_L (2Ah) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+         7.10     TEMP_OUT_H (2Bh) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+
+8        Humidity and temperature data conversion . . . . . . . . . . . . . . . . . . . . . 26
+
+9        Package information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+         9.1      HLGA-6L package information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+         9.2      HLGA-6L packing information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+
+10       Revision history . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+
+
+
+
+                                            DocID026333 Rev 5                                                   3/33
+                                                                                                                        33
+List of tables                                                                                                                        HTS221
+
+
+List of tables
+
+Table 1.    Device summary . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1
+Table 2.    Pin description . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+Table 3.    Humidity and temperature parameter specifications. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+Table 4.    Electrical characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+Table 5.    SPI slave timing values. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+Table 6.    I²C slave timing values . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+Table 7.    Absolute maximum ratings . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+Table 8.    Serial interface pin description . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+Table 9.    Serial interface pin description I2C terminology . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+Table 10.   SAD + Read/Write patterns . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+Table 11.   Transfer when master is writing one byte to slave . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+Table 12.   Transfer when master is writing multiple bytes to slave . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+Table 13.   Transfer when master is receiving (reading) one byte of data from slave . . . . . . . . . . . . . 16
+Table 14.   Transfer when master is receiving (reading) multiple bytes of data from slave . . . . . . . . . 16
+Table 15.   Register address map. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+Table 16.   Humidity and temperature average configuration . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+Table 17.   Output data rate configuration . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+Table 18.   Typical power consumption with heater ON . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 23
+Table 19.   Decoding the coefficients in the sensor Flash . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+Table 20.   HLGA-6L (2 x 2 x 0.9 mm) mechanical data outer dimensions . . . . . . . . . . . . . . . . . . . . . 29
+Table 21.   Reel dimensions for carrier tape of HLGA-6L package . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+Table 22.   Document revision history. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+
+
+
+
+4/33                                                    DocID026333 Rev 5
+HTS221                                                                                                                      List of figures
+
+
+List of figures
+
+Figure 1.    HTS221 block diagram . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+Figure 2.    Pin configuration (bottom view). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+Figure 3.    SPI slave timing diagram . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 9
+Figure 5.    HTS221 electrical connections . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+Figure 6.    SPI write protocol . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+Figure 7.    Multiple byte SPI write protocol (2-byte example). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+Figure 8.    SPI read protocol in 3-wires mode . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+Figure 9.    Step 1: Linear interpolation to convert LSB to °C . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+Figure 10.   Step 2: Linear interpolation to convert LSB to rH% . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 28
+Figure 11.   HLGA-6L (2 x 2 x 0.9 mm) package outline and mechanical data . . . . . . . . . . . . . . . . . . . 29
+Figure 12.   Carrier tape information for HLGA-6L package . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+Figure 13.   HLGA-6L package orientation in carrier tape . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
+Figure 14.   Reel information for carrier tape of HLGA-6L package. . . . . . . . . . . . . . . . . . . . . . . . . . . . 31
+
+
+
+
+                                                        DocID026333 Rev 5                                                                   5/33
+                                                                                                                                                     33
+HTS221 block diagram                                                                                                       HTS221
+
+
+1         HTS221 block diagram
+
+                                           Figure 1. HTS221 block diagram
+           +XPLGLW\ &DSDFLWRU
+           6HQVLQJ (OHPHQW
+
+
+                                &KDUJH
+                                2S$PS
+                                                                     2S                                         &RQWURO     ,ð&
+                                                             08;                                     $'&
+                                                                     $PS                                         /RJLF       63,
+
+
+
+                                 7HPSHUDWXUH
+                                    6HQVRU
+
+
+                                                               9ROWDJH
+                                6HQVRU 'ULYHU                                                  &ORFN 7LPLQJ
+                                                             &XUUHQW %LDV
+                                                                                                                 *$066*
+
+
+
+
+1.1       Pin information
+                                     Figure 2. Pin configuration (bottom view)
+                                                                            6&/63&
+                                                       9''
+
+
+
+
+                                                                            
+
+
+
+                                          &6              %277209,(:                       '5'<
+
+
+
+                                                                           
+                                                       *1'
+
+
+
+
+                                                                            6'$6',6'2
+
+
+
+
+6/33                                            DocID026333 Rev 5
+HTS221                                                                     HTS221 block diagram
+
+
+
+                                     Table 2. Pin description
+         Pin n°      Name                                     Function
+
+           1          VDD       Power supply
+                                I²C serial clock (SCL)
+           2       SCL/SPC
+                                SPI serial port clock (SPC)
+           3         DRDY       Data Ready output signal
+                                I²C serial data (SDA)
+           4      SDA/SDI/SDO
+                                3-wire SPI serial data input /output (SDI/SDO)
+           5         GND        Ground
+                                I²C/SPI mode selection
+           6       SPI enable   (1: SPI idle mode / I²C communication enabled;
+                                0: SPI communication mode / I²C disabled)
+
+
+
+
+                                  DocID026333 Rev 5                                        7/33
+                                                                                                  33
+Sensor parameters and electrical specifications                                                                      HTS221
+
+
+2               Sensor parameters and electrical specifications
+
+                Conditions at VDD = 2.5 V, T = 25 °C, unless otherwise noted.
+
+                            Table 3. Humidity and temperature parameter specifications
+ Symbol                         Parameter                    Test condition     Min.        Typ.(1)      Max.        Unit
+
+     Hop      Operating humidity range                                           0            –          100         % rH
+     Hbit     Humidity output data                                                            16          –           bit
+                                                                                            0.004                   %rH/LSB
+     Hs       Humidity sensitivity
+                                                                                             256                    LSB/%rH
+                                                             20 to 80% rH                    ±3.5
+    Hacc      Humidity accuracy(2)                                                                                   % rH
+                                                             0 to 100% rH                     ±5
+    Hnoise    Humidity noise(3)                                                              0.03                    RMS
+    Hhys      Humidity hysteresis                                                             ±1                     % rH
+    Hstep     Humidity response time(4)                      t @ 63%                          10                       s
+    Hdrift    Humidity long-term drift                       20 to 80% rH                    0.5                    %rH/yr
+     Top      Operating temperature range                                        -40          –          120          °C
+     Tbit     Temperature output data                                            –            16          –           bit
+                                                                                            0.016                   °C/LSB
+     Ts       Temperature sensitivity
+                                                                                              64                    LSB/°C
+                                                             15 to 40 °C                     ±0.5
+    Tacc      Temperature accuracy                                                                                    °C
+                                                             0 to 60 °C                       ±1
+    Tnoise    Temperature noise(3)                                                          0.007                    RMS
+    Tstep     Temperature response time                      t @ 63%                          15                       s
+    Tdrift    Temperature long-term drift                    T = 0 to 80 °C                              0.05        °C/yr
+              Humidity and temperature digital output                                       1/7/12.
+    ODR                                                                                                               Hz
+              data rate                                                                        5
+1. Typical specifications are not guaranteed
+2. Accuracy in non condensing environment including hysteresis
+3. Default value; noise value can be modified by AV_CONF (10h)
+4. Valid at 25 °C and 1 m/s airflow
+
+
+                                           Table 4. Electrical characteristics
+     Symbol                          Parameter                    Test condition       Min. Typ.(1)        Max.       Unit
+
+       VDD      Supply voltage                                                         1.7          –         3.6      V
+        IDD     Supply current (2)                               1 Hz, 25 °C, 2.5 V                 2                 μA
+                Supply current in power-down mode
+     IDDPDN                                                      25 °C, 2.5 V           –          0.5          –     μA
+                T = 25 °C
+    1. Typical specifications are not guaranteed
+    2. Refer to Table 16.
+
+
+
+8/33                                               DocID026333 Rev 5
+HTS221                                                              Sensor parameters and electrical specifications
+
+
+2.1      Communication interface characteristics
+
+2.1.1    SPI - serial peripheral interface
+         Subject to general operating conditions for VDD and TOP
+
+                                                 Table 5. SPI slave timing values
+                                                                                                 Value (1)
+            Symbol                                       Parameter                                                      Unit
+                                                                                          Min.         Max.
+
+             tc(SPC)     SPI clock cycle                                                  100                            ns
+             fc(SPC)     SPI clock frequency                                                            10             MHz
+             tsu(CS)     CS setup time                                                     6
+             th(CS)      CS hold time                                                      8
+             tsu(SI)     SDI input setup time                                              5
+              th(SI)     SDI input hold time                                              15                             ns
+             tv(SO)      SDO valid output time                                                          50
+             th(SO)      SDO output hold time                                              9
+             tdis(SO)    SDO output disable time                                                        50
+         1. Values are guaranteed at 10 MHz clock frequency for SPI, based on characterization results, not tested in
+            production.
+
+
+                                               Figure 3. SPI slave timing diagram
+
+            &6                                                                                                                
+
+
+                         WVX &6                                     WF 6 3&                              W K &6
+
+            63&                                                                                                               
+
+                                     WVX 6 ,        WK 6,
+
+
+          6',6'2                              06%,1                                                 /6%,1                
+
+
+                                                            WY 62             WK 62                                 WGLV 62
+
+          6',6'2
+                                                06%287                                               /6%287               
+
+
+                                                                                                             *$066*
+
+
+
+
+Note:    Measurement points are done at 0.2·VDD and 0.8·VDD, for both ports.
+
+
+
+
+                                                   DocID026333 Rev 5                                                          9/33
+                                                                                                                                     33
+Sensor parameters and electrical specifications                                                                                       HTS221
+
+
+2.1.2              I²C - control interface
+                   Subject to general operating conditions for VDD and TOP.
+
+                                                     Table 6. I²C slave timing values
+                                                                                    I²C standard
+                                                                                                      I²C fast mode (1)
+                                                       (1)                             mode (1)
+    Symbol                                Parameter                                                                                       Unit
+                                                                                 Min.       Max.       Min.                 Max.
+
+      f(SCL)           SCL clock frequency                                          0       100          0                   400          kHz
+    tw(SCLL)           SCL clock low time                                           4.7                 1.3
+                                                                                                                                          μs
+    tw(SCLH)           SCL clock high time                                          4.0                 0.6
+     tsu(SDA)          SDA setup time                                            250                    100                               ns
+     th(SDA)           SDA data hold time                                        0.01       3.45         0                   0.9          μs
+                                                                                                                 (2)
+  tr(SDA) tr(SCL)      SDA and SCL rise time                                                1000   20 + 0.1Cb                300
+                                                                                                                                          ns
+  tf(SDA) tf(SCL)      SDA and SCL fall time                                                300    20 + 0.1Cb (2)            300
+      th(ST)           START condition hold time                                    4                   0.6
+     tsu(SR)           Repeated START condition setup time                          4.7                 0.6
+     tsu(SP)           STOP condition setup time                                    4                   0.6                               μs
+
+                       Bus free time between STOP and
+    tw(SP:SR)                                                                       4.7                 1.3
+                       START condition
+1. Data based on standard I²C protocol requirement, not tested in production.
+2. Cb = total capacitance of one bus line, in pF.
+
+
+                                                    Figure 4. I²C slave timing diagram
+                                                                                                                              5(3($7('
+                                                                                                                                67$57
+                            67$57
+
+                                                                                                        WVX 65
+                                                                                                                       WZ 6365      67$57
+   6'$
+
+
+
+          WI 6'$                 WU 6'$                 WVX 6'$            WK 6'$
+
+                                                                                                              WVX 63               6723
+
+
+   6&/
+
+
+                    WK 67    WZ 6&//      WZ 6&/+            WU 6&/     WI 6&/                                                     $0Y
+
+
+Note:              Measurement points are done at 0.2·VDD and 0.8·VDD, for both ports.
+
+
+
+
+10/33                                                             DocID026333 Rev 5
+HTS221                                                 Sensor parameters and electrical specifications
+
+
+2.2      Absolute maximum ratings
+         Stress above those listed as “Absolute maximum ratings” may cause permanent damage to
+         the device. This is a stress rating only and functional operation of the device under these
+         conditions is not implied. Exposure to maximum rating conditions for extended periods may
+         affect device reliability.
+
+                                     Table 7. Absolute maximum ratings
+          Symbol                          Ratings                           Maximum value       Unit
+
+            VDD     Supply voltage                                            -0.3 to 4.8        V
+            VIN     Input voltage on any control pin                        -0.3 to VDD +0.3     V
+           TSTG     Storage temperature range                                 -40 to +125        °C
+            ESD     Electrostatic discharge protection                         2 (HBM)           kV
+
+
+Note:    Supply voltage on any pin should never exceed 4.8 V.
+
+              This device is sensitive to mechanical shock, improper handling can cause
+              permanent damage to the part.
+              This device is sensitive to electrostatic discharge (ESD), improper handling can
+              cause permanent damage to the part.
+
+
+
+
+                                         DocID026333 Rev 5                                       11/33
+                                                                                                         33
+Functionality                                                                                  HTS221
+
+
+3          Functionality
+
+           The HTS221 is a digital humidity and temperature sensor, packaged in an HLGA holed
+           package.The device includes the sensing element and an IC (integrated circuit) interface
+           able to take information from the sensing element and provide a digital signal to the
+           application, communicating through I²C/SPI interfaces with the host controller.
+
+
+3.1        IC interface
+           The complete measurement chain consists of a low-noise capacitive amplifier, which
+           converts the capacitive imbalance of the humidity sensor into an analog voltage signal, and
+           an analog-to-digital converter is used to generate the digital information.
+           The converter is coupled with a dedicated hardware (HW) averaging filter to remove the
+           high-frequency component and reduce the serial interface traffic.
+           The relative humidity and temperature data can be accessed through an I²C/SPI interface,
+           making the device particularly suitable for direct interfacing with a microcontroller.
+
+
+3.2        Factory calibration
+           The IC (integrated circuit) interface is factory calibrated and the coefficients required to
+           convert the ADC 16-bit values into rH% or degrees Celsius can be read through the internal
+           registers of the sensor. Further calibration by the user is not required.
+
+
+
+
+12/33                                    DocID026333 Rev 5
+HTS221                                                                                 Application hints
+
+
+4        Application hints
+
+                                  Figure 5. HTS221 electrical connections
+                                                                        9''
+
+
+
+
+                                                                     &
+
+                                                                  Q)
+
+
+
+
+                                                6&/63&
+                                                                        *1'
+
+
+
+
+                                                              9''
+                                                             
+
+
+
+                                    '5'<     7239,(9
+                                                7239,(:                 &6
+
+
+
+                                                              
+                                                              *1'
+                                                6'$6',6'2
+
+
+
+
+                                                              *1'
+
+
+                                                                    *$066*
+
+
+         The device is supplied through the VDD line. The power supply decoupling capacitor (100 nF
+         ceramic) should be placed as near as possible to the supply pad of the device (common
+         design practice).
+         The functionality of the device and the measured data outputs are selectable and accessible
+         through the I²C/SPI interfaces. To select the I²C interface, the CS line must be tied high (i.e.
+         connected to VDD) or left unconnected (thanks to the internal pull-up).
+         All the voltage and ground supplies must be present at the same time to have proper
+         behavior of the IC (refer to Figure 5).
+
+
+4.1      Soldering information
+         The HLGA package is compliant with the ECOPACK standard and it is qualified for soldering
+         heat resistance according to JEDEC J-STD-020. After soldering, the accuracy specification
+         of the sensor can be guaranteed after re-hydration of the sensor element in a stabilized
+         environment (25 °C / 55% rH) for 3 days or at 70% rH for 12 h. Otherwise the sensor may
+         read an offset that slowly disappears if exposed to ambient conditions.
+
+
+
+
+                                        DocID026333 Rev 5                                           13/33
+                                                                                                            33
+Digital interfaces                                                                                        HTS221
+
+
+5           Digital interfaces
+
+            The registers embedded in the HTS221 may be accessed through both the I²C and SPI
+            3-wire serial interfaces.
+            The serial interfaces are mapped onto the same pins.To select the I²C interface, the CS line
+            must be tied high (i.e. connected to VDD) or unconnected (internal pull-up); to select the SPI
+            interface, the CS line must be tied low (i.e. connected to GND).
+
+                                        Table 8. Serial interface pin description
+                       Pin name                                      Pin description
+
+                                         I²C/SPI mode selection
+                          CS             1: SPI idle mode / I²C communication enabled
+                                         0: SPI communication mode / I²C disabled)
+                                         I²C serial clock (SCL)
+                       SCL/SPC
+                                         SPI serial clock (SPC)
+                                         I²C serial data (SDA)
+                     SDA/SDI/SDO
+                                         3-wire SPI serial data input /output (SDI/SDO)
+
+
+
+5.1         I2C serial interface (CS = HIGH or unconnected CS)
+            The HTS221 I²C is a bus slave. The I²C is employed to write data into registers whose
+            content can also be read back.
+            The relevant I²C terminology is provided in Table 9.
+
+                                                 Table 9. I2C terminology
+                      Term                                          Description
+
+                 Transmitter       The device which sends data to the bus
+                     Receiver      The device which receives data from the bus
+                                   The device which initiates a transfer, generates clock signals and terminates a
+                     Master
+                                   transfer
+                      Slave        The device addressed by the master
+
+
+            There are two signals associated with the I²C bus: the serial clock line (SCL) and the serial
+            data line (SDA). The latter is a bi-directional line used for sending and receiving the data
+            to/from the interface. Both lines must be connected to VDD through pull-up resistors.
+            The I²C interface is compliant with fast mode (400 kHz) I²C standards as well as with normal
+            mode.
+
+
+
+
+14/33                                         DocID026333 Rev 5
+HTS221                                                                                     Digital interfaces
+
+
+5.1.1    I²C operation
+         The transaction on the bus is started through a START (ST) signal. A start condition is
+         defined as a HIGH to LOW transition on the data line while the SCL line is held HIGH. After
+         this has been transmitted by the master, the bus is considered busy. The next byte of data
+         transmitted after the start condition contains the address of the slave in the first 7 bits and
+         the eighth bit tells whether the master is receiving data from the slave or transmitting data to
+         the slave. When an address is sent, each device in the system compares the first seven bits
+         after a start condition with its address. If they match, the device considers itself addressed
+         by the master.
+         The 8-bit slave address (SAD) associated to the HTS221 humidity sensor is BEh (write) and
+         BFh (read).
+         Data transfer with acknowledge is mandatory. The transmitter must release the SDA line
+         during the acknowledge pulse. The receiver must then pull the data line LOW so that it
+         remains stable low during the HIGH period of the acknowledge clock pulse. A receiver
+         which has been addressed is obliged to generate an acknowledge after each byte of data
+         received.
+         The I²C embedded in the HTS221 behaves like a slave device and the following protocol
+         must be adhered to. After the start condition (ST) a slave address is sent, once a slave
+         acknowledge (SAK) has been returned, an 8-bit sub-address (SUB) will be transmitted: the
+         7 LSB represents the actual register address while the MSB enables address auto-
+         increment. If the MSB of the SUB field is ‘1’, the SUB (register address) will be automatically
+         increased to allow multiple data read/write.
+         The slave address is completed with a Read/Write bit. If the bit was ‘1’ (Read), a repeated
+         START (SR) condition must be issued after the two sub-address bytes; if the bit is ‘0’ (Write)
+         the master will transmit to the slave with direction unchanged. Table 10 explains how the
+         SAD + read/write bit pattern is composed, listing all the possible configurations.
+
+                                            Table 10. SAD + Read/Write patterns
+                Command                        SAD[6:0]               R/W                       SAD+R/W
+
+                     Read                        1011111               1                   10111111 (BFh)
+                     Write                       1011111               0                   10111110 (BEh)
+
+
+
+                             Table 11. Transfer when master is writing one byte to slave
+            Master           ST        SAD + W                SUB                 DATA                    SP
+
+             Slave                                     SAK            SAK                        SAK
+
+
+
+
+                       Table 12. Transfer when master is writing multiple bytes to slave
+           Master      ST         SAD + W              SUB          DATA                 DATA               SP
+
+            Slave                              SAK           SAK            SAK                    SAK
+
+
+
+
+                                               DocID026333 Rev 5                                          15/33
+                                                                                                                  33
+Digital interfaces                                                                                            HTS221
+
+
+
+              Table 13. Transfer when master is receiving (reading) one byte of data from slave
+              Master    ST      SAD + W              SUB             SR    SAD + R                       NMAK       SP
+
+              Slave                         SAK              SAK                        SAK    DATA
+
+
+
+
+               Table 14. Transfer when master is receiving (reading) multiple bytes of data from
+                                                    slave
+              Master   ST    SAD+W         SUB          SR   SAD+R                MAK          MAK           NMAK   SP
+
+              Slave                  SAK          SAK                SAK   DATA         DATA          DATA
+
+
+
+            Data are transmitted in byte format (DATA). Each data transfer contains 8 bits. The number
+            of bytes transferred per transfer is unlimited. Data is transferred with the most significant bit
+            (MSB) first. If a receiver can’t receive another complete byte of data until it has performed
+            some other functions, it can hold the clock line, SCL LOW to force the transmitter into a wait
+            state. Data transfer only continues when the receiver is ready for another byte and releases
+            the data line. If a slave receiver does not acknowledge the slave address (i.e. it is not able to
+            receive because it is performing some real-time function) the data line must be kept HIGH
+            by the slave. The master can then abort the transfer. A LOW to HIGH transition on the SDA
+            line while the SCL line is HIGH is defined as a STOP condition. Each data transfer must be
+            terminated by the generation of a STOP (SP) condition.
+            In order to read multiple bytes incrementing the register address, it is necessary to assert
+            the most significant bit of the sub-address field. In other words, SUB(7) must be equal to 1
+            while SUB(6-0) represents the address of the first register to be read.
+            In the presented communication format MAK is master acknowledge and NMAK is no
+            master acknowledge.
+            I²C high speed HS-mode devices can transfer information at bit rates of up to 3.4 Mbit/s, yet
+            they remain fully downward compatible with fast or standard-mode (F/S-mode) devices for
+            bi-directional communication in a mixed-speed bus system. With the exception that
+            arbitration and clock synchronization is not performed during the HS-mode transfer, the
+            same serial bus protocol and data format is maintained as with the F/S-mode system.
+            HS-mode can only begin after the following conditions (all of which are in F/S-mode):
+            1. START condition (S)
+            2. 8-bit master code (00001XXX)
+            3. not-acknowledge bit (A)
+            This master code has two main functions:
+            It allows arbitration and synchronization between competing masters at F/S-mode speeds,
+            resulting in one winning master.
+            It indicates the beginning of an HS-mode transfer. HS-mode master codes are reserved
+            8-bit codes, which are not used for slave addressing or other purposes.
+            The master code indicates to other devices that an HS-mode transfer is to begin and the
+            connected devices must meet the HS-mode specification. As no device is allowed to
+            acknowledge the master code, the master code is followed by a not-acknowledge (A). After
+            the not-acknowledge bit (A), and the SCLH line has been pulled up to a HIGH level, the
+            active master switches to HS-mode and enables (at time tH, see data transfer in HS mode)
+
+
+
+16/33                                             DocID026333 Rev 5
+HTS221                                                                                   Digital interfaces
+
+
+         the current-source pull-up circuit for the SCLH signal. As other devices can delay the serial
+         transfer before tH by stretching the LOW period of the SCLH signal, the active master will
+         enable its current-source pull-up circuit when all devices have released the SCLH line and
+         the SCLH signal has reached a HIGH level, thus speeding up the last part of the rise time of
+         the SCLH signal. The active master then sends a repeated START condition (Sr) followed
+         by a 7-bit slave address (or 10-bit slave address; see previous section) with a R/W bit
+         address, and receives an acknowledge bit (A) from the selected slave.
+         After a repeated START condition and after each acknowledge bit (A) or not-acknowledge
+         bit (A), the active master disables its current-source pull-up circuit. This enables other
+         devices to delay the serial transfer by stretching the LOW period of the SCLH signal. The
+         active master re-enables its current-source pull-up circuit again when all devices have
+         released and the SCLH signal reaches a HIGH level, and so speeds up the last part of the
+         SCLH signal’s rise time. Data transfer continues in HS-mode after the next repeated START
+         (Sr), and only switches back to F/S-mode after a STOP condition (P). To reduce the
+         overhead of the master code, it’s possible that a master links a number of HS-mode
+         transfers, separated by repeated START conditions (Sr).
+
+
+5.2      SPI bus interface (CS = LOW)
+         The HTS221 SPI is a slave bus that can operate in 0 and 3 SPI modes. The SPI allows
+         writing to and reading from the registers of the device. The serial interface interacts with the
+         application through 3 wires: CS, SPC, SDI/SDO.
+         CS is the serial port enable and is controlled by the SPI master. It goes low at the start of the
+         transmission and goes back high at the end. SCL is the serial port clock and it is controlled
+         by the SPI master. It is stopped high when CS is high (no transmission). SDI/SDO is the
+         serial port data input and output. This line is driven at the falling edge of SCL and should be
+         captured at the rising edge of SCL.
+         Both the read register and write register commands are completed in 16 clock pulses or in
+         multiples of 8 in case of multiple read/write bytes. Bit duration is the time between two falling
+         edges of SCL. The first bit (bit 0) starts at the first falling edge of SCL after the falling edge
+         of CS while the last bit (bit 15, bit 23,...) starts at the last falling edge of SCL just before the
+         rising edge of CS.
+
+
+
+
+                                          DocID026333 Rev 5                                            17/33
+                                                                                                                33
+Digital interfaces                                                                                                                  HTS221
+
+
+5.2.1       SPI write
+
+                                                    Figure 6. SPI write protocol
+
+                     &6
+
+                     63&
+
+             6',6'2
+                                     5:                                             '2 '2 '2 '2 '2 '2 '2 '2
+                                           06 $' $' $' $' $' $'
+
+            The SPI write command is performed with 16 clock pulses. A multiple byte write command
+            is performed by adding blocks of 8 clock pulses to the previous one.
+            bit 0: WRITE bit. The value is 0.
+            bit 1: MS bit. When 0, does not increment the address; when 1, increments the address in
+            multiple writes.
+            bit 2 -7: address AD(5:0). This is the address field of the indexed register.
+            bit 8-15: data DI(7:0) (write mode). This is the data that will be written inside the device
+            (MSB first).
+            bit 16-...: data DI(...-8). Further data in multiple byte writes.
+
+                               Figure 7. Multiple byte SPI write protocol (2-byte example)
+               &6
+
+
+               6&/
+
+
+               6',6'2
+
+
+                                                            ', ', ', ', ', ', ', ', ', ', ', ', ', ', ', ',
+                          5:
+                               06 $' $' $' $' $' $'
+                                                                                                                          *$066*
+
+
+
+
+18/33                                              DocID026333 Rev 5
+HTS221                                                                                    Digital interfaces
+
+
+5.2.2    SPI read
+
+                                 Figure 8. SPI read protocol in 3-wire mode
+
+
+                    &6
+
+                   63&
+
+                  6',2
+                               5:                                '2 '2 '2 '2 '2 '2 '2 '2
+                                    06 $' $' $' $' $' $'
+
+
+
+         The SPI read command is performed with 16 clock pulses:
+         bit 0: READ bit. The value is 1.
+         bit 1: MS bit. When 0, does not increment the address, when 1, increments the address in
+         multiple reads.
+         bit 2-7: address AD(5:0). This is the address field of the indexed register.
+         bit 8-15: data DO(7:0) (read mode). This is the data that is read from the device (MSB first).
+         A multiple read command is also available in 3-wire mode.
+
+
+
+
+                                         DocID026333 Rev 5                                            19/33
+                                                                                                               33
+Register mapping                                                                                 HTS221
+
+
+6         Register mapping
+
+          The table below provides a list of the 8-bit registers embedded in the device and the related
+          addresses.
+
+                                       Table 15. Register address map
+                      Name                    Type        Register address (hex)       Default (hex)
+
+                    Reserved                                       00-0E               Do not modify
+                    WHO_AM_I                   R                    0F                      BC
+                    AV_CONF                   R/W                   10                      1B
+                    Reserved                                       11-1C               Do not modify
+                   CTRL_REG1                  R/W                   20                      0
+                   CTRL_REG2                  R/W                   21                      0
+                   CTRL_REG3                  R/W                   22                      0
+                    Reserved                                       23-26               Do not modify
+                   STATUS_REG                  R                    27                      0
+                HUMIDITY_OUT_L                 R                    28                    Output
+                HUMIDITY_OUT_H                 R                    29                    Output
+                   TEMP_OUT_L                  R                    2A                    Output
+                   TEMP_OUT_H                  R                    2B                    Output
+                    Reserved                                      2C-2F                Do not modify
+                    CALIB_0..F                R/W                  30-3F               Do not modify
+
+
+          Registers marked as Reserved must not be changed. Writing to those registers may cause
+          permanent damage to the device.
+          The content of the CALIB_0..F registers that are loaded at power-on from device internal
+          non-volatile memory should never be modified.
+
+
+
+
+20/33                                   DocID026333 Rev 5
+HTS221                                                                                   Register description
+
+
+7        Register description
+
+         The device contains a set of registers which are used to control its behavior and to retrieve
+         humidity and temperature data. The register address, made up of 7 bits, is used to identify
+         and to read/write the data, through the serial interfaces.
+
+
+7.1      WHO_AM_I (0Fh)
+         Device identification
+
+               7                6           5           4             3              2          1       0
+               1                0           1           1             1              1          0       0
+
+
+
+
+         This read-only register contains the device identifier, set to BCh
+
+
+7.2      AV_CONF (10h)
+         Humidity and temperature resolution mode
+
+
+
+               7                6           5           4             3              2          1       0
+
+                     Reserved             AVGT2       AVGT1         AVGT0       AVGH2     AVGH1       AVGH0
+
+         To configure humidity/temperature average.
+
+           [7:6]     Reserved
+           [5:3]     AVGT2-0: To select the numbers of averaged temperature samples (2 - 256), see Table 16.
+           [2:0]     AVGH2-0: To select the numbers of averaged humidity samples (4 - 512), see Table 16.
+
+
+                            Table 16. Humidity and temperature average configuration
+                                        Nr. internal average                    Noise (RMS)         IDD 1 Hz
+           AVGx2:0
+                           Temperature (AVGT)        Humidity (AVGH)        Temp (°C)    rH %         μA
+              000                   2                          4              0.08       0.4         0.80
+              001                   4                          8              0.05       0.3         1.05
+              010                   8                          16             0.04       0.2         1.40
+                   (1)
+             011                    16                         32             0.03       0.15        2.10
+              100                   32                         64             0.02       0.1         3.43
+              101                   64                      128               0.015      0.07        6.15
+              110                   128                     256               0.01       0.05        11.60
+              111                   256                     512               0.007      0.03        22.50
+         1. Default configuration
+
+
+
+                                                DocID026333 Rev 5                                           21/33
+                                                                                                                    33
+Register description                                                                                     HTS221
+
+
+7.3        CTRL_REG1 (20h)
+           Control register 1
+
+
+                7               6            5              4         3           2            1            0
+               PD                                Reserved                        BDU         ODR1        ODR0
+
+
+
+
+                         [7]   PD: power-down control
+                               (0: power-down mode; 1: active mode)
+                     [6:3]     Reserved
+                         [2]   BDU: block data update
+                               (0: continuous update; 1: output registers not updated until MSB and LSB reading)
+                     [1:0]     ODR1, ODR0: output data rate selection (see table 17)
+
+
+           The PD bit is used to turn on the device. The device is in power-down mode when PD = ‘0’
+           (default value after boot). The device is active when PD is set to ‘1’.
+           The BDU bit is used to inhibit the output register update between the reading of the upper
+           and lower register parts. In default mode (BDU = ‘0’), the lower and upper register parts are
+           updated continuously. If it is not certain whether the read will be faster than output data rate,
+           it is recommended to set the BDU bit to ‘1’. In this way, after the reading of the lower (upper)
+           register part, the content of that output register is not updated until the upper (lower) part is
+           read also.
+           This feature prevents the reading of LSB and MSB related to different samples.
+           The ODR1 and ODR0 bits permit changes to the output data rates of humidity and
+           temperature samples.The default value corresponds to a “one-shot” configuration for both
+           humidity and temperature output. ODR1 and ODR0 can be configured as described in
+           Table 17.
+
+                                        Table 17. Output data rate configuration
+                    ODR1                            ODR0                    Humidity (Hz)      Temperature (Hz)
+
+                     0                                0                                  One-shot
+                     0                                1                          1 Hz                1 Hz
+                     1                                0                          7 Hz                7 Hz
+                     1                                1                        12.5 Hz              12.5 Hz
+
+
+
+
+22/33                                            DocID026333 Rev 5
+HTS221                                                                                          Register description
+
+
+7.4      CTRL_REG2 (21h)
+         Control register 2
+
+
+              7             6             5             4            3             2                1         0
+            BOOT                                    Reserved                                      Heater   ONE_SHOT
+
+
+
+
+                     [7]   BOOT: Reboot memory content
+                           (0: normal mode; 1: reboot memory content)
+                   [6:2]   Reserved
+                     [1]   Heater
+                           (0: heater disable; 1: heater enable)
+                     [0]   One-shot enable
+                           (0: waiting for start of conversion; 1: start for a new dataset)
+
+
+         The BOOT bit is used to refresh the content of the internal registers stored in the Flash
+         memory block. At device power-up, the content of the Flash memory block is transferred to
+         the internal registers related to trimming functions to permit good behavior of the device
+         itself. If, for any reason, the content of the trimming registers is modified, it is sufficient to
+         use this bit to restore the correct values. When the BOOT bit is set to ‘1’ the content of the
+         internal Flash is copied inside the corresponding internal registers and is used to calibrate
+         the device. These values are factory trimmed and are different for every device. They permit
+         good behavior of the device and normally they should not be changed. At the end of the
+         boot process, the BOOT bit is set again to ‘0’.
+         The ONE_SHOT bit is used to start a new conversion. In this situation a single acquisition of
+         temperature and humidity is started when the ONE_SHOT bit is set to ‘1’. At the end of
+         conversion the new data are available in the output registers, the STATUS_REG[0] and
+         STATUS_REG[1] bits are set to ‘1’ and the ONE_SHOT bit comes back to ‘0’ by hardware.
+         The Heater bit is used to control an internal heating element, that can effectively be used to
+         speed up the sensor recovery time in case of condensation. The heater can be operated
+         only by an external controller, which means that it has to be switched on/off directly by FW.
+         Humidity and temperature output should not be read during the heating cycle; valid data can
+         be read out once the heater has been turned off, after the completion of the heating cycle.
+         Typical power consumption related to VDD is described in Table 18.
+
+                              Table 18. Typical power consumption with heater ON
+                             VDD [V]                                                   I [mA]
+
+                                3.3                                                     33
+                                2.5                                                     22
+                                1.8                                                     12
+
+
+
+
+                                              DocID026333 Rev 5                                                   23/33
+                                                                                                                          33
+Register description                                                                                          HTS221
+
+
+7.5        CTRL_REG3 (22h)
+           Control register 3
+                7                6           5              4          3             2            1                0
+             DRDY_H_L          PP_OD                   Reserved                    DRDY                Reserved
+
+
+
+           Control register for data ready output signal
+
+
+                         [7]   DRDY_H_L: Data Ready output signal active high, low
+                               (0: active high - default;1: active low)
+                         [6]   PP_OD: Push-pull / Open Drain selection on pin 3 (DRDY)
+                               (0: push-pull - default; 1: open drain)
+                       [5:3]   Reserved
+                         [2]   DRDY_EN: Data Ready enable
+                               (0: Data Ready disabled - default;1: Data Ready signal available on pin 3)
+                       [1:0]   Reserved
+
+
+           The DRDY_EN bit enables the DRDY signal on pin 3. Normally inactive, the DRDY output
+           signal becomes active on new data available: logical OR of the bits STATUS_REG[1] and
+           STATUS_REG[0] for humidity and temperature, respectively. The DRDY signal returns
+           inactive after both HUMIDITY_OUT_H and TEMP_OUT_H registers are read.
+
+
+7.6        STATUS_REG (27h)
+           Status register
+
+                7                6           5              4          3             2            1                0
+                                                 Reserved                                       H_DA              T_DA
+
+
+
+
+           Status register; the content of this register is updated every one-shot reading, and after
+           completion of every ODR cycle, regardless of the BDU value in CTRL_REG1.
+
+
+               [7:2]     Reserved
+                 [1]     H_DA: Humidity data available.
+                         (0: new data for humidity is not yet available; 1: new data for humidity is available)
+                 [0]     T_DA: Temperature data available.
+                         (0: new data for temperature is not yet available; 1: new data for temperature is available)
+
+                         H_DA is set to 1 whenever a new humidity sample is available. H_DA is cleared anytime
+                         HUMIDITY_OUT_H (29h) register is read.
+                         T_DA is set to 1 whenever a new temperature sample is available. T_DA is cleared
+                         anytime TEMP_OUT_H (2Bh) register is read.
+
+
+
+
+24/33                                            DocID026333 Rev 5
+HTS221                                                                            Register description
+
+
+7.7      HUMIDITY_OUT_L (28h)
+         Relative humidity data (LSB)
+
+              7               6          5           4             3       2          1           0
+
+            HOUT7           HOUT6      HOUT5       HOUT4         HOUT3   HOUT2     HOUT1       HOUT0
+
+         Humidity data (see HUMIDITY_OUT_H)
+
+                    [7:0]    HOUT7 - HOUT0: Humidity data LSB
+
+
+
+7.8      HUMIDITY_OUT_H (29h)
+         Relative humidity data (MSB)
+
+              15              14        13           12           11       10         9           8
+
+           HOUT15           HOUT14    HOUT13       HOUT12    HOUT11      HOUT10    HOUT9       HOUT8
+
+         Humidity data are expressed as HUMIDITY_OUT_H & HUMIDITY_OUT_L in 2’s
+         complement. Values exceeding the operating humidity range (see Table 3) must be clipped
+         by SW.
+
+                    [7:0]    HOUT15 - HOUT8: Humidity data MSB
+
+
+
+7.9      TEMP_OUT_L (2Ah)
+         Temperature data (LSB)
+
+              7               6          5           4             3       2          1           0
+
+            TOUT7           TOUT6      TOUT5       TOUT4         TOUT3   TOUT2     TOUT1       TOUT0
+
+
+                    [7:0]    TOUT7 - TOUT0: Temperature data LSB (see TEMPERATURE_OUT_H)
+
+
+
+7.10     TEMP_OUT_H (2Bh)
+         Temperature data (MSB)
+
+              15              14        13           12           11       10         9           8
+
+           TOUT15           TOUT14    TOUT13       TOUT12    TOUT11      TOUT10    TOUT9       TOUT8
+
+
+                   [15:8]   TOUT15 - TOUT8: Temperature data MSB.
+
+
+         Temperature data are expressed as TEMP_OUT_H & TEMP_OUT_L as 2’s complement
+         numbers.
+         The relative humidity and temperature values must be computed by linear interpolation of
+         current registers with calibration registers, according to Table 19 and scaling as described in
+         Section 8.
+
+
+                                             DocID026333 Rev 5                                        25/33
+                                                                                                              33
+Humidity and temperature data conversion                                                          HTS221
+
+
+8           Humidity and temperature data conversion
+
+            The Registers in 30h..3Fh address range contain calibration coefficients. Every sensor
+            module has individual coefficients. Before the first calculation of temperature and humidity,
+            the master reads out the calibration coefficients.
+
+
+                        Table 19. Decoding the coefficients in the sensor Flash
+ Addr           Variable         Format      b7     b6      b5     b4       b3      b2      b1      b0
+
+Output registers
+28                                           H7     H6     H5      H4       H3      H2      H1      H0
+         H_OUT                   (s16)
+29                                           H15    H14    H13     H12     H11     H10      H9      H8
+2A                                           T7     T6      T5     T4       T3      T2      T1      T0
+         T_OUT                   (s16)
+2B                                           T15    T14    T13     T12     T11     T10      T9      T8
+Calibration registers
+30      H0_rH_x2                 (u8)        H0.7   H0.6   H0.5   H0.4     H0.3    H0.2    H0.1    H0.1
+31       H1_rH_x2                (u8)        H1.7   H1.6   H1.5   H1.4     H1.3    H1.2    H1.1    H1.0
+32       T0_degC_x8              (u8)        T0.7   T0.6   T0.5    T0.4    T0.3    T0.2    T0.1    T0.0
+33       T1_degC_x8              (u8)        T1.7   T1.6   T1.5    T1.4    T1.3    T1.2    T1.1    T1.0
+34       Reserved                (u16)
+35      T1/T0 msb                (u2),(u2)           Reserved              T1.9    T1.8    T0.9    T0.8
+36                                            7      6      5       4       3       2       1        0
+         H0_T0_OUT               (s16)
+37                                           15     14      13      12      11      10      9        8
+38
+        Reserved
+39
+3A                                            7      6      5       4       3       2       1        0
+         H1_T0_OUT               (s16)
+3B                                           15     14      13      12      11      10      9        8
+3C                                            7      6      5       4       3       2       1        0
+         T0_OUT                  (s16)
+3D                                           15     14      13      12      11      10      9        8
+3E                                            7      6      5       4       3       2       1        0
+         T1_OUT                  (s16)
+3F                                           15     14      13      12      11      10      9        8
+
+
+            (u8) is the unsigned 8-bit quantity, and (s16) the signed 16-bit quantity using 2’s
+            complement format. In the following example, the two steps required to calculate
+            temperature and relative humidity output values are described. The T0 and T1 calibration
+            temperature values are actually composed of 10 bits (unsigned), where the 2 MSB are in
+            reg 35h, and the 8 LSB are in regs 32h and 33h, respectively. T0 and T1 are the actual
+            calibration temperature values multiplied by 8.
+
+
+
+
+26/33                                        DocID026333 Rev 5
+HTS221                                                  Humidity and temperature data conversion
+
+
+         Step 1: Temperature conversion from ADC_OUT (LSB) to °C
+         Data to build the Temperature calibration curve are stored in device registers.
+         Linear interpolation (example)
+         Input temperature LSB (ADC)        Output temperature (°C)
+         T0_OUT = 300                       (Msb T0_degC U T0_degC)_x8 = 80 °C => 80/8 =
+                                            10.0°C
+         T1_OUT = 500                       (Msb T1_degC U T1_degC)_x8 = 160 °C => 160/8 =
+                                            20.0°C
+         Temperature conversion:
+         T_OUT = 400                        T_degC_x8 =120 °C =>T_degC=120/8 = 15.0 °C
+
+                        Figure 9. Step 1: Linear interpolation to convert LSB to °C
+
+
+
+
+         Conclusion: current temperature is 15 °C.
+
+
+
+
+                                          DocID026333 Rev 5                                  27/33
+                                                                                                     33
+Humidity and temperature data conversion                                                                                               HTS221
+
+
+           Step 2: Humidity conversion from ADC_OUT (LSB) to rH %
+           Linear interpolation for relative Humidity (example)
+           Input: relative Humidity LSB (ADC)                 Output: relative Humidity (% rH)
+
+
+           H0_T0_OUT = 0x4000                                 H0_rH_x2 = 40% rH => 40/2 = 20.0% rH
+           H1_T0_OUT = 0x6000                                 H1_rH_x2 = 80% rH => 80/2 = 40% rH
+           Humidity conversion:
+           H_OUT = 0x5000                                     H_rH_x2 = 60% [interp.] => 60/2 = 30.0% rH
+
+                        Figure 10. Step 2: Linear interpolation to convert LSB to rH%
+                                          5+
+
+
+
+
+                       +  B 5 +  FD O
+
+                       + B5+  P HDV
+
+                       +  B 5 +  FD O
+
+                                                                                                                          /6%  $ '&
+                                                    +  B 7 B 2 8 7 FDO
+
+
+
+
+                                                                                                  +  B 7 B 2 8 7 FDO
+                                                                            + B 7 B 2 8 7 PHDV
+
+
+
+
+           Conclusion: current relative humidity value is 30%.
+
+
+
+
+28/33                                       DocID026333 Rev 5
+HTS221                                                                                          Package information
+
+
+9        Package information
+
+         In order to meet environmental requirements, ST offers these devices in different grades of
+         ECOPACK packages, depending on their level of environmental compliance. ECOPACK
+         specifications, grade definitions and product status are available at: www.st.com.
+         ECOPACK is an ST trademark.
+
+
+9.1      HLGA-6L package information
+               Figure 11. HLGA-6L (2 x 2 x 0.9 mm) package outline and mechanical data
+                                                     
+
+
+                                         /DQG6L]H          
+
+
+
+
+                                                                                 
+
+                                                                                 %277209,(:
+                                  +
+
+
+
+
+                                                                   :
+                                3LQLQGLFDWRU
+
+
+
+
+                                                                                     7239,(:
+                                    /
+
+
+
+
+                                                                                                             B$
+
+
+
+
+                          Table 20. HLGA-6L (2 x 2 x 0.9 mm) outer dimensions
+                      Item                                  Dimension [mm]                      Tolerance [mm]
+
+                   Length [L]                                          2                             0.1
+                   Width [W]                                           2                             0.1
+                   Height [H]                                          0.9                           0.1
+                   Land size                                       0.30 x 0.35                      ± 0.05
+
+
+         Dimensions are in millimeters unless otherwise specified.
+         General tolerance is ± 0.1 mm unless otherwise specified.
+
+
+                                         DocID026333 Rev 5                                                               29/33
+                                                                                                                                 33
+Package information                                                            HTS221
+
+
+9.2       HLGA-6L packing information
+                  Figure 12. Carrier tape information for HLGA-6L package
+
+
+
+
+                      Figure 13. HLGA-6L package orientation in carrier tape
+
+
+
+
+30/33                                   DocID026333 Rev 5
+HTS221                                                                         Package information
+
+
+             Figure 14. Reel information for carrier tape of HLGA-6L package
+
+                                                                                     7
+
+
+
+                                                  PPPLQ
+                                                  $FFHVVKROHDW
+                                                  VORWORFDWLRQ
+
+                             %
+                                                                    &
+
+
+                     '                                                                   1
+         $
+
+
+
+                                 )XOOUDGLXV                                        *PHDVXUHGDWKXE 
+                                                      7DSHVORW
+                                                      LQFRUHIRU
+                                                      WDSHVWDUW
+                                                      PPPLQZLGWK
+
+
+
+
+             Table 21. Reel dimensions for carrier tape of HLGA-6L package
+                                          Reel dimensions (mm)
+
+                    A (max)                                                  330
+                    B (min)                                                  1.5
+                         C                                                13 ±0.25
+                    D (min)                                                 20.2
+                    N (min)                                                  60
+                         G                                                12.4 +2/-0
+                    T (max)                                                 18.4
+
+
+
+
+                                   DocID026333 Rev 5                                               31/33
+                                                                                                           33
+Revision history                                                                         HTS221
+
+
+10         Revision history
+
+                             Table 22. Document revision history
+                   Date      Revision                            Changes
+
+               15-May-2014      1         Initial release
+                                          Document reformatted to improve readability
+                                          Updated: Applications and Device summary in cover
+                                          page, Table 2: Pin description, Section 4: Application
+               06-Apr-2015      2
+                                          hints, Section 5.1: I2C serial interface (CS = HIGH or
+                                          unconnected CS), Section 7: Register description and
+                                          Section 8: Humidity and temperature data conversion.
+                                          Document update to align device performance
+               21-Oct-2015      3
+                                          confirmed in volume production
+                                          Minor textual changes
+               30-Aug-2016      4
+                                          Added Section 9.2: HLGA-6L packing information
+                                          Updated product status to “Not recommended for new
+                                          design (NRND)”
+               22-Mar-2023      5
+                                          Updated the product Description to reference the family
+                                          of replacement devices from Sensirion
+
+
+
+
+32/33                            DocID026333 Rev 5
+HTS221
+
+
+
+
+                                           IMPORTANT NOTICE – PLEASE READ CAREFULLY
+
+
+STMicroelectronics NV and its subsidiaries (“ST”) reserve the right to make changes, corrections, enhancements, modifications, and
+improvements to ST products and/or to this document at any time without notice. Purchasers should obtain the latest relevant information on
+ST products before placing orders. ST products are sold pursuant to ST’s terms and conditions of sale in place at the time of order
+acknowledgement.
+
+
+Purchasers are solely responsible for the choice, selection, and use of ST products and ST assumes no liability for application assistance or
+the design of Purchasers’ products.
+
+
+No license, express or implied, to any intellectual property right is granted by ST herein.
+
+
+Resale of ST products with provisions different from the information set forth herein shall void any warranty granted by ST for such product.
+
+
+ST and the ST logo are trademarks of ST. For additional information about ST trademarks, please refer to www.st.com/trademarks. All other
+product or service names are the property of their respective owners.
+
+
+Information in this document supersedes and replaces information previously supplied in any prior versions of this document.
+
+
+                                               © 2023 STMicroelectronics – All rights reserved
+
+
+
+
+                                                           DocID026333 Rev 5                                                          33/33
+                                                                                                                                                33
+

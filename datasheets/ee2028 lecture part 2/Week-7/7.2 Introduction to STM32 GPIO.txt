@@ -1,0 +1,183 @@
+Introduction to STM32 GPIO
+
+
+                    Ankit Srivastava
+                         EE2028
+
+
+ Unless stated otherwise, for the second part of the module,
+             ‘STM32 Chip’ = STM32L4S5VIT6
+                 ‘Board’ = B-L4S5I-IOT01A
+Acknowledgement: Slides adapted from Dr Rajesh Panicker
+                                                                                                                           1
+
+                                                      ©
+                                                      © Copyright
+                                                        Copyright National
+                                                                  National University
+                                                                           University of
+                                                                                      of Singapore.
+                                                                                         Singapore. All
+                                                                                                    All Rights
+                                                                                                        Rights Reserved.
+                                                                                                               Reserved.
+OVERVIEW
+• What is GPIO?
+• GPIO Organization
+• GPIO Registers
+
+
+
+
+                                                                                           2
+
+                      © Copyright National University of Singapore. All Rights Reserved.
+    GPIO ORGANIZATION IN STM32L4SXXX
+•   GPIO: General Purpose Input-Output
+•   STM32L4Sxxx have up to 140 I/O lines, organized into ports and pins
+•   GPIO ports:
+     •   GPIOA to GPIOI (up to 16 I/O pins per port)
+     •   Exact number of pins implemented depends on the specific SoC (System-on-chip)
+
+
+
+
+•   For STM32L45SVI:
+     •   83 GPIOs
+     •   Port A to Port E -> 16 pins each
+                                                                                                                                        3
+     •   Port H -> 3 pins
+                                                                   © Copyright National University of Singapore. All Rights Reserved.
+    GPIO ORGANIZATION IN STM32L4SXXX MCU
+•   Direct connection to AHB2 bus (120 MHz) allows fast I/O timing
+•   GPIO peripheral is used to interface with
+     •   Inputs like Switches
+     •   Outputs like LEDs
+     •   Embedded/on-chip peripherals for both digital & analog signals
+
+
+
+
+                                                                                                                                           4
+
+                                                                      © Copyright National University of Singapore. All Rights Reserved.
+GPIO BLOCK DIAGRAM (PARTIAL) - STM32L4SXXX
+
+
+
+
+                                  Refer to DS12024: STM32L4S5VI datasheet, Fig 1 (pg. 16)
+                                     © Copyright National University of Singapore. All Rights Reserved.
+    GPIO MULTIPLEXING IN STM32
+•    Each pin of the GPIO ports can be individually configured by software in
+     several modes & directions:
+     •   Input
+     •   Output
+     •   Analog
+     •   Alternative function (AF)
+•    The number of physical pins are kept low by multiplexing different functions
+     on a particular pin – helps to keep the cost low
+•    Possible mutual exclusivity of functions, but typical applications need only a
+     small subset of the various peripheral interfaces available on an SoC
+•    GPIO lines are configurable through GPIO registers, which have to be
+     accessed as 32-bit words, half-words or bytes                                                                               6
+
+                                                            © Copyright National University of Singapore. All Rights Reserved.
+GPIO REGISTERS - STM32L4S+++
+
+
+
+
+                                                                             STM32L4Sxxx devices peripheral register boundary addresses
+
+
+
+
+                     Memory map for STM32L4Sxxx devices                                            © Copyright National University of Singapore. All Rights Reserved.
+
+    Refer to RM0432: STM32L4+ Technical reference manual, Fig 3 (pg. 94) & Table 1 (pg. 97)
+  GPIO REGISTERS OVERVIEW - STM32L4S5VI
+
+  Type              Register Name (where x = A to I)          Offset                           Description
+                  Mode register             GPIOx_MODER RW 0x00 Selects pin mode: Input, Output, Analog, or Alternate Function
+               Output type register         GPIOx_OTYPER RW 0x04           Configures output type: Push-Pull or Open-Drain
+              Output speed register         GPIOx_OSPEEDR RW 0x08         Sets output speed: Low, Medium, High, or Very High
+           Pull-up / Pull-down register     GPIOx_PUPDR RW 0x0C             Enables internal Pull-Up or Pull-Down resistors
+Control
+            Configuration lock register      GPIOx_LCKR   RW 0x1C        Locks pin configuration (prevents accidental changes)
+          Alternate function low register    GPIOx_AFRL   RW 0x20         Selects Alternate Function (AF0 to AF15) for pin 0-7
+          Alternate function high register GPIOx_AFRH     RW 0x24        Selects Alternate Function (AF0 to AF15) for pin 8-15
+                Input data register           GPIOx_IDR    RO 0x10             Reads the current logic level on each pin
+
+ Data          Output data register          GPIOx_ODR    RW 0x14                 Writes the logic level to output pin
+               Bit set/reset register        GPIOx_BSRR   WO 0x18            Allows atomic setting/resetting of output bits
+                 Bit reset register           GPIOx_BRR   WO 0x28               Allows atomic resetting of output bits
+
+                                                                                                                                                                 8
+
+                                                                                            © Copyright National University of Singapore. All Rights Reserved.
+SYSTEM LEVEL OVERVIEW
+              BUS      STM32 Chip
+                                                                 MODER
+                                                                                                  0x00            REG_1
+
+                                                                     PUPDR
+                                             AFR                                                  0x01            REG_2
+
+                                                                 OTYPER                                             …
+                                                                                                                    .
+                                                                        P
+                                                                                                          yyy SENSOR
+                          I2C_CR1                                       U
+                                                                        N
+                                                                                 SDA
+                                                   ..
+                          I2C_ISR
+                                                                        P                         0x20         CTRL_REG1
+      ARM                I2C_TXDR
+                                                                        D
+                                                                        N
+
+     Cortex                                                             .    .                    0x2A        TEMP_OUT_L
+                         I2C_RXDR
+    M4 Core                                                             P                         0x2B              …
+                                                                                                             TEMP_OUT_H
+                                                                        U
+
+                      I2C INTERFACE
+                                                                        N
+                                                                                 SCL
+                                                   ..                   P
+                                                                        D
+                                                                                                            HTS221
+                                                                        N
+
+                     From other interfaces
+                                                                        .    .
+                    such as SPI, UART etc.
+                                             IDR                       P
+                                                                       U
+                                                                       N
+     NVIC                                                                        INT
+                            EXTI
+                                                                       P
+                                             ODR                       D
+                                                                       N
+                                                                        .
+                                                        GPIO BLOCK
+                                to analog
+                                                                                                                                                            9
+
+                                                                                       © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ • What is GPIO?
+ • GPIO Organization
+ • GPIO Registers
+
+
+
+
+                                                                                            10
+
+                       © Copyright National University of Singapore. All Rights Reserved.
+

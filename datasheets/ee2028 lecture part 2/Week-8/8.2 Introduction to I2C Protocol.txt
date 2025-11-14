@@ -1,0 +1,199 @@
+Introduction to I2C Protocol
+
+
+                 Ankit Srivastava
+                       EE2028
+
+
+Acknowledgement: Slides adapted from Dr Rajesh Panicker
+
+
+
+
+                                                                                                                      1
+
+                                                 ©
+                                                 © Copyright
+                                                   Copyright National
+                                                             National University
+                                                                      University of
+                                                                                 of Singapore.
+                                                                                    Singapore. All
+                                                                                               All Rights
+                                                                                                   Rights Reserved.
+                                                                                                          Reserved.
+OVERVIEW
+•   Characteristics and features of I2C
+•   How I2C Protocol works?
+
+
+
+
+                                                                                                               2
+
+                                          © Copyright National University of Singapore. All Rights Reserved.
+I2C CHARACTERISTICS
+ •   I2C (also written as I2C) stands for Inter-Integrated Circuit
+ •   I2C characteristics:
+     •   Uses just two wires + ground
+     •   Bus-based
+     •   Multi-master
+     •   Low-bandwidth
+     •   Synchronous
+     •   Short-distance
+     •   Serial
+     •   Uses in-band addressing
+     •   Half-duplex
+                                                                                                                               3
+
+                                                          © Copyright National University of Singapore. All Rights Reserved.
+I2C CHARACTERISTICS
+ •   Only a master device can initiate and terminate the data transfer
+ •   True multi-master bus including collision detection & arbitration to prevent
+     data corruption if two or more masters simultaneously initiate data transfer
+     •   We only consider the single master case here, i.e., STM32 chip is always the only master. Hence,
+         we will not discuss arbitration
+ •   Master generates the clock irrespective of the stage & direction of transfer
+ •   During transfer, any device addressed by the master is considered a slave,
+     recognized by a unique 7-bit address (a 10-bit variant exists)
+ •   The number of devices that can be connected to the same bus is limited
+     only by the maximum bus capacitance
+
+                                                                                                                                              4
+
+                                                                         © Copyright National University of Singapore. All Rights Reserved.
+I2C CHARACTERISTICS
+ •   Originally developed by Philips, became an industry standard
+ •   Motivation – lower pin count & hence lower
+     •   IC manufacturing/packaging costs
+     •   PCB complexity & cost
+     •   Power & size
+ •   Maximal bi-directional data bit rate:
+     •   Standard-mode: 100 kbps
+     •   Fast-mode: 400 kbps
+     •   Fast-mode plus: 1 Mbps
+     •   High-speed mode: 3.4 Mbps
+ •   Not all devices are capable of all the modes
+     •   Many low-speed devices support only standard-mode
+
+                                                                                                                                  5
+
+                                                             © Copyright National University of Singapore. All Rights Reserved.
+I2C: COMMON PERIPHERALS
+ •   RTC (Real Time Clock)
+ •   Converters: ADC & DAC
+ •   Memory cards/modules: EEPROM & Flash
+ •   Sensors: accelerometer, temperature, light, pressure sensor etc.
+ •   Signal-mixer, Amplifier, Potentiometer
+ •   LCD/OLED displays
+ •   UART, CAN & USB controller
+ •   SDRAM, DDR SDRAM, DDR2 SDRAM memory stick
+ •   Port expander
+ •   Note: Not every model/make of the peripherals mentioned above use I2C. Some use
+     analog, some use SPI, some use UART etc.
+     •   For e.g., there are many accelerometers with SPI interface
+                                                                                                                                           6
+
+                                                                      © Copyright National University of Singapore. All Rights Reserved.
+I2C DEVICES ON THE BOARD
+
+
+
+                                             The devices highlighted use I2C2 for
+                                             data transfer.
+                                             They also use GPIOs (EXTIs) for
+                                             interrupts.
+
+
+
+
+                           Refer to UM2708: STM32L4+ series Discovery kit, Fig 2 (pg. 7)                             7
+
+                                                © Copyright National University of Singapore. All Rights Reserved.
+  I2C SIGNALS
+                                            • Two bi-directional lines:
+                                                   •   Serial Data line SDA contains the data
+                                                   •   Serial Clock line SCL with the clock signal for
+                                                       synchronization
+                                            • When the bus is free, both lines are high due to
+                                              pull-up
+                                            • The output stages of devices connected to the bus
+                                              must have an open-drain or open- collector to
+                                              perform the wired- AND function
+ STM32xx
+
+
+
+
+Open drain -> a pin outputs Z or low, never high
+
+                                                                                                                                                  8
+
+                                                                             © Copyright National University of Singapore. All Rights Reserved.
+HOW I2C PROTOCOL WORKS?
+
+
+
+
+ • All transactions begin with a START S and can be terminated by a STOP P, and are
+   always generated by the master
+ • The bus is considered to be busy after S. The bus is free again a certain time after P
+ • Another master (if multiple masters are present on the same bus) will not attempt to
+   send a S condition if the bus is not free – all devices will keep listening to the bus all the
+   time to know whether the bus is free or not!
+ • SDA changes when SCL is high only for S and P. For usual data bits, SDA can change
+   only when SCL is low
+                                                                                                                                                     9
+ Why is S a high->low transition, P a low->high transition, and not the other way around?
+                                                                                © Copyright National University of Singapore. All Rights Reserved.
+
+       Refer to UM10204: I2C-bus specification and user manual, Fig 5 (pg. 9)
+HOW I2C PROTOCOL WORKS?
+
+
+
+
+ • After S, a slave address is sent. This address is 7 bits long followed by an
+   eighth bit which is a data direction bit R/W
+     • 0 → transmission WRITE
+     • 1 → request for data READ
+ • Sometimes, datasheets mention read (high) and write (low) addresses
+   separately : 7-bit address appended with a 1 (R) / 0 (W)
+
+
+                                                                                                                                                             10
+
+                                                                                        © Copyright National University of Singapore. All Rights Reserved.
+
+     Refer to UM10204: I2C-bus specification and user manual, Fig 9 & Fig 10 (pg. 13)
+HOW I2C PROTOCOL WORKS?
+•   Every byte put on the SDA line must be 8 bits long
+•   The number of bytes that can be transmitted per transfer is unrestricted
+•   The transmitter releases the SDA line during the 9th clock so the receiver can pull the
+    SDA line low, and it remains stable low during the high period of this clock pulse to
+    indicate an ACK (A)
+•   When SDA remains high during this 9th clock pulse, this is defined as the Not
+    Acknowledge (NACK / Ā) signal
+•   Interpretation depends on whether the master or the slave generates it
+•   Note : Ā is fact not 'generated'. A lack of A is Ā
+
+
+
+
+                                                                                                                                        11
+
+                                                                   © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ •   Characteristics and features of I2C
+ •   How I2C Protocol works?
+     •   Start & Stop conditions
+     •   Address byte with 7bit address + R/W bit
+     •   Acknowledgement and Not Acknowledgement
+
+
+
+
+                                                                                                                         12
+
+                                                    © Copyright National University of Singapore. All Rights Reserved.
+

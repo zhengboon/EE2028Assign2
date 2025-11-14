@@ -1,0 +1,247 @@
+               Cortex-M4 Interrupt Priorities
+
+
+                                     Ankit Srivastava
+                                          EE2028
+                               ARMv7-M Architecture Ref Manual
+                           RM0432 STM32L4+ Technical reference manual
+                           PM0214 STM32 Cortex-M4 Programming Manual
+Figures from “The Definitive Guide to ARM® Cortex®-M3 and Cortex®-M4 Processors” by Joseph Yiu
+               Acknowledgement: Slides adapted from Dr Rajesh Panicker
+
+                                                                                                                                         1
+
+                                                                    ©
+                                                                    © Copyright
+                                                                      Copyright National
+                                                                                National University
+                                                                                         University of
+                                                                                                    of Singapore.
+                                                                                                       Singapore. All
+                                                                                                                  All Rights
+                                                                                                                      Rights Reserved.
+                                                                                                                             Reserved.
+OVERVIEW
+•   Priority Levels: Exceptions and Interrupts
+•   Priority Types: Preempt and Sub-priority
+•   Configuration of Priorities
+    • Interrupt Priority Register or Priority Level Register
+    • Priority Group Setting
+
+
+
+
+                                                                                                                              2
+
+                                                         © Copyright National University of Singapore. All Rights Reserved.
+PRIORITY LEVELS OF EXCEPTIONS AND INTERRUPTS
+ •   A higher priority (smaller priority level) exception/
+     interrupt can pre-empt a lower priority one
+ •   This is called nested interrupts                                                   Low Priority
+                                                                                         Interrupt
+ •   3 exceptions have fixed priority levels                                            Processing
+
+     •   Reset (-3); NMI (-2) and hard fault (-1)
+
+
+
+
+                                                                         Main Task
+                                                                                                                           High
+     •   Negative levels is to assure the highest priorities                                                              priority
+                                                                                                                         Interrupt
+ •   Other exceptions and interrupts have                                                                               Processing
+
+     programmable (user configurable) priority levels
+     •   Up to 256 levels (up to 128 levels of preemption), exact
+         number of levels depends on the specific SoC
+     •   Exception number is used as a tie-breaker (a sub-sub-
+         priority) if two interrupts have identical priority settings                                                                        3
+
+                                                                        © Copyright National University of Singapore. All Rights Reserved.
+CORTEX-M4 EXCEPTIONS AND INTERRUPTS
+
+
+
+
+                                                                                                           4
+
+                                      © Copyright National University of Singapore. All Rights Reserved.
+PRIORITY TYPES: PREEMPT PRIORITY AND SUB-PRIORITY
+ •   Preempt priority: Defines whether an exc./int. handler can execute when
+     CPU is running another exc./int. handler
+     •    Interrupts with significant difference in urgency / importance = diff. preempt
+          priorities
+ •   Sub-priority: Is used when 2 exceptions/interrupts with the same
+     preempt priority have occurred (and are pending). Higher sub-priority
+     one will be handled first
+     •    Interrupts with only slight difference in urgency; not worth the preemption
+          overhead = same preempt priorities, diff. sub-priorities
+
+
+
+
+                                                                                                                                                                 5
+         Priority Level Register with 3 bits implemented   Priority Level Register with 4 bits implemented
+                                                                                            © Copyright National University of Singapore. All Rights Reserved.
+PRIORITY TYPES: PREEMPT PRIORITY AND SUB-PRIORITY
+ •   Each exc./int. has an Interrupt Priority Register (IPR) (or Priority Level
+     Register) to store its preempt (left bits) and sub-priority (right bits)
+     values.
+ •   IPR has 8 bits but only some of the more significant bits are
+     implemented. This number is called the IPR width, and depends on the
+     specific SoC
+     •    The split of implemented (available) bits between preempt and subpriority is
+          determined by PRIGROUP
+
+
+
+         Priority Level Register with 3 bits implemented   Priority Level Register with 4 bits implemented
+
+            stm32l4s5xx.h:                                                                                                                                       6
+            #define   NVIC_PRIO_BITS 4
+                                                                                            © Copyright National University of Singapore. All Rights Reserved.
+            // This is not a ‘setting’ and should not be modified
+PRIORITY TYPES: PREEMPT PRIORITY AND SUB-PRIORITY
+             KB
+
+
+    Main                    KB_ISR                            Main
+                        Timer
+             KB
+
+                   KB_ISR        Timer_ISR       KB_ISR
+    Main                                                                  Main
+                         Timer                   Mouse
+              KB
+
+                   KB_ISR        Timer_ISR       KB_ISR      Mouse_ISR
+    Main                                                                                         Main
+           Timer     KB Mouse
+
+                   Timer_ISR         Mouse_ISR            KB_ISR
+    Main                                                                                          Main
+                                                                                                                                        7
+  Pre(Timer) > Pre(KB) = Pre(Mouse)                Sub(Mouse) > Sub(KB)
+                                                                   © Copyright National University of Singapore. All Rights Reserved.
+INTERRUPT PRIORITY REGISTER
+
+
+    0   0   1   0   0   0   0   0
+
+
+
+
+    0   0   0   1   0   0   0   0
+
+
+
+
+   Bits not implemented are read as 0
+   Writes to them will be ignored                                                                            8
+
+                                        © Copyright National University of Singapore. All Rights Reserved.
+PRIORITY GROUP & 2 PRIORITY FIELDS IN INTERRUPT
+PRIORITY REGISTER
+ •   In IPR, the division of preempt and
+     sub-priority field is decided by a
+     PRIGROUP (Priority group) in
+     Application Interrupt and Reset
+     Control Register (AIRCR) in System
+     Control Block (SCB)
+     •   Number of bits implemented in the
+         Interrupt Priority Register and the
+         Priority group setting affects the
+         effective preempt and sub-priority
+         levels
+     •   PRIGROUP to be set is decided by the
+         programmer based on the number of
+                                                                                                                     9
+         distinctly different priority levels
+         required in the application
+                                                © Copyright National University of Singapore. All Rights Reserved.
+PRIORITY FIELDS IN A 3-BIT IPR WITH PRIGROUP SET TO 5
+
+IPR width = 3
+PRIGROUP = 5
+
+
+
+
+                              Definition of Priority Fields in a 3-bit Priority
+                              Level Register with Priority Group Set to 5
+                                                                                                                   10
+
+                                              © Copyright National University of Singapore. All Rights Reserved.
+PRIORITY FIELDS IN A 3-BIT IPR WITH PRIGROUP SET TO 5
+
+
+
+                                  0   0   0      0       0        0        0        0
+
+                                  0   0   1      0       0        0        0        0
+
+                                  0   1   0      0       0        0        0        0
+
+                                  0   1   1      0       0        0        0        0
+
+                                  1   0   0      0       0        0        0        0
+
+                                  1   0   1      0       0        0        0        0
+
+                                  1   1   0      0       0        0        0        0
+
+                                  1   1   1      0       0        0        0        0
+                                                                                                                   11
+
+                                              © Copyright National University of Singapore. All Rights Reserved.
+PRIORITY FIELDS IN A 3-BIT IPR WITH PRIGROUP SET TO 1
+
+IPR width = 3
+PRIGROUP = 1
+
+
+
+
+                              Definition of Priority Fields in a 3-bit Priority
+                              Level Register with Priority Group Set to 1
+                                                                                                                   12
+
+                                              © Copyright National University of Singapore. All Rights Reserved.
+PRIORITY FIELDS IN A 3-BIT IPR WITH PRIGROUP SET TO 1
+
+
+
+                                 0   0   0   0      0        0        0        0
+
+                                 0   0   1   0      0        0        0        0
+
+                                 0   1   0   0      0        0        0        0
+
+                                 0   1   1   0      0        0        0        0
+
+                                 1   0   0   0      0        0        0        0
+
+                                 1   0   1   0      0        0        0        0
+
+                                 1   1   0   0      0        0        0        0
+
+                                 1   1   1   0      0        0        0        0                                  13
+
+                                             © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ •   Priority Levels: Exceptions and Interrupts
+     •   Fixed priority levels
+     •   Configurable priority levels
+     •   Exception Number
+ •   Priority Types
+     •   Preempt priority
+     •   Sub-priority
+ •   Interrupt Priority Register (IPR)
+     • SoC specific IPR width
+ •   Priority Group Settings in Application Interrupt and Reset Control
+     Register (AIRCR)
+                                                                                                                              14
+
+                                                         © Copyright National University of Singapore. All Rights Reserved.
+

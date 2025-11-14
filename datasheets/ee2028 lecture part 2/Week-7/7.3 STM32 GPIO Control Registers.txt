@@ -1,0 +1,235 @@
+STM32 GPIO Control Registers
+
+
+                     Ankit Srivastava
+                          EE2028
+
+
+  Unless stated otherwise, for the second part of the module,
+              ‘STM32 Chip’ = STM32L4S5VIT6
+                  ‘Board’ = B-L4S5I-IOT01A
+ Acknowledgement: Slides adapted from Dr Rajesh Panicker
+                                                                                                                            1
+
+                                                       ©
+                                                       © Copyright
+                                                         Copyright National
+                                                                   National University
+                                                                            University of
+                                                                                       of Singapore.
+                                                                                          Singapore. All
+                                                                                                     All Rights
+                                                                                                         Rights Reserved.
+                                                                                                                Reserved.
+OVERVIEW
+• GPIO Control Registers
+   •   MODER (Mode Register)
+   •   AFRL/H (Alternate Function Low/High Register)
+   •   PUPDR (Pull-Up Pull-Down Register)
+   •   OTYPER (Output Type Register)
+• Open Drain Application
+
+
+
+
+                                                                                                                            2
+
+                                                       © Copyright National University of Singapore. All Rights Reserved.
+SYSTEM LEVEL OVERVIEW
+              BUS      STM32 Chip
+                                                                 MODER
+                                                                                                  0x00            REG_1
+
+                                                                     PUPDR
+                                             AFR                                                  0x01            REG_2
+
+                                                                 OTYPER                                             …
+                                                                                                                    .
+                                                                        P
+                                                                                                          yyy SENSOR
+                          I2C_CR1                                       U
+                                                                        N
+                                                                                 SDA
+                                                   ..
+                          I2C_ISR
+                                                                        P                         0x20         CTRL_REG1
+      ARM                I2C_TXDR
+                                                                        D
+                                                                        N
+
+     Cortex                                                             .    .                    0x2A        TEMP_OUT_L
+                         I2C_RXDR
+    M4 Core                                                             P                         0x2B              …
+                                                                                                             TEMP_OUT_H
+                                                                        U
+
+                      I2C INTERFACE
+                                                                        N
+                                                                                 SCL
+                                                   ..                   P
+                                                                        D
+                                                                                                            HTS221
+                                                                        N
+
+                     From other interfaces
+                                                                        .    .
+                    such as SPI, UART etc.
+                                             IDR                       P
+                                                                       U
+                                                                       N
+     NVIC                                                                        INT
+                            EXTI
+                                                                       P
+                                             ODR                       D
+                                                                       N
+                                                                        .
+                                                        GPIO BLOCK
+                                to analog
+                                                                                                                                                            3
+
+                                                                                       © Copyright National University of Singapore. All Rights Reserved.
+GPIO CONTROL REGISTER - GPIOX_MODER
+•    MODER (Address Offset = 0x00) : Mode Register : First level of multiplexing
+•    GPIOx_MODER bits MODEy[1:0] configures the mode of pin y (y=15:0) of port x (x = A, B, C, D,
+     E, F, G, H, I) to be
+      •   00: Input mode
+      •   01: General purpose output mode
+      •   10: Alternate function (AF) mode
+      •   11: Analog mode (reset state)
+•    2 bits per pin -> 1 MODER register needed per port [port = up to 16 pins]
+ E.g. To configure Port B Pin 14 as GPIO output (x=B, y=14):
+ MODE14[1:0] of GPIOB_MODER, i.e.,
+ GPIOB_MODER [29:28] = 01
+    GPIOB_MODER address =
+            AHB2 base (0x48000000) +
+                                                                                                                                                4
+            GPIOB offset (1 KB = 0x400) +
+                                                                           © Copyright National University of Singapore. All Rights Reserved.
+
+            MODER offset (0x00) = 0x48000400
+GPIO CONTROL REGISTER - GPIOX_AFRL/H
+ •     AFRL/H (Address Offset = 0x20/0x24) : Alternate Function Low/ High Registers : Second level
+       multiplexing : To choose which of the 16 internal peripherals/interfaces a pin is connected to,
+       when GPIOx_MODER bits = 10 (alternate function)
+ •     GPIOx_AFRL/H bits AFSELy[3:0]: Alternate function selection for port x pin y (y = 7:0 for AFRL;
+       y = 15:8 for AFRH)
+
+              •    0000: AF0                     GPIOx_AFRL
+              •    0001: AF1
+              •    0010: AF2
+              •    ....
+              •    1111: AF15                    GPIOx_AFRH
+
+
+•     Since there are 16 alternate functions per pin, 4 AFSEL bits are required per pin. Hence, 2 AFR
+      registers (AFRL and AFRH) per port
+•     E.g., To configure Port C Pin 12 as UART5_TX (x=C, y=12): AFSEL12[3:0] of GPIOC_AFRH, i.e.,                                                                         5
+      GPIOC_AFRH[19:16] = 4’b1000 (UART5_TX is AF8)                                                  © Copyright National University of Singapore. All Rights Reserved.
+
+
+     Ref. to DS12024Rev4_STM32L4Sxxx Data-sheet, Table 16 (pg.95) & Table 17 (pg. 104)   Refer to DS12024: STM32L4S5VI datasheet
+GPIO CONTROL REGISTER - GPIOX_PUPDR
+ •   PUPDR (Address Offset = 0x0C) : Pull-up/pull-down register: Selects whether an internal pull-up /
+     pull-down resistor is connected to a pin
+ •   GPIOx_PUPDR bits PUPDy[1:0] configures pull-up/down setting of port x pin y (y=15:0)
+      •   00: No pull-up, pull-down: Used when the pin is not an input, or when we do
+                                                                                                                          VDD                 Chip
+          not wish to set a default value to input When we are confident that the
+          external device will drive a strong LOW or HIGH and won’t be floating
+                                                                                                                                 Pull-up
+      •   01: Pull-up: Sets the default input to HIGH . Used when the pin is an input    Device
+          which could be floating (unconnected / not driven actively by the external
+          device at times). The default HIGH is overridden by the strong LOW driven by                                                 GPIO
+          the external device                                                                               .                          Input
+      •   10: Pull-down: Similar to above, but sets the default input to LOW
+                                                                                                                          VDD                 Chip
+      •   11: Reserved: do not write 11 to PUPD bits
+                                                                                                   VDD
+ •   2 bits per pin -> 1 PUPDR register needed per port                                                                                GPIO
+                                                                                         Device                                        Input
+                                                                                                                                  Pull-down
+                                                                                                                             .                                6
+
+                                                                                         © Copyright National University of Singapore. All Rights Reserved.
+GPIO CONTROL REGISTER - GPIOX_OTYPER
+ •   OTYPER (Address Offset = 0x04) : Output Type Register
+ •   GPIOx_OTYPER bits OTy configures OTYPE of port x pin y (y=15:0)
+0: Output push-pull (reset state) : Output is either a strong   1: Output open-drain : Output is either a strong LOW or High-
+HIGH or a strong LOW. Cannot connect multiple outputs           impedance (Z, also called floating, weak HIGH etc.)
+together
+             Pull-up Network                                    PUN is disconnected. Allows multiple outputs to
+             (PUN = PMOS)
+                                                                be connected together to one bus.
+                                                                Writing a logic 1 (weak HIGH) =
+                                                                disconnected from bus
+            Pull-down Network
+             (PDN = NMOS)
+
+
+
+
+•    1 bit per pin: OTYPER register needed per port with16 bits unused/reserved (must be kept at reset level)
+•    E.g. To configure Port E Pin 11 as Output push-pull (x=E, y=11): OT14 of GPIOE_OTYPER, i.e.,
+     GPIOE_OTYPER [11] = 0
+
+                                                                                                                                                                7
+
+                                                                                           © Copyright National University of Singapore. All Rights Reserved.
+    OPEN-DRAIN: INTERFACING VIA LEVEL-SHIFTING
+•    Open-drain mode can be used to interface between logic families using
+     different voltage levels
+                                                3.3V
+
+                           5V Device                    3.3V Device
+
+                                         Pin in open-
+                                         drain mode
+
+
+                                               5V
+
+                           3.3V Device                  5V Device
+
+                                         Pin in open-
+                                         drain mode                                                                                        8
+
+                                                                      © Copyright National University of Singapore. All Rights Reserved.
+    OPEN-DRAIN: BIDIRECTIONAL COMMUNICATION (WIRED-AND)
+•    Open-drain mode allows bi-directional communication between multiple
+     devices using a single wire                         STM32 internal pull-
+                                                       Vcc
+                                                                                      up can be used!
+
+
+
+                                   Z                         Z
+
+                 O/P       I/P     O/P       I/P             O/P       I/P
+                     Dev 1               Dev 2                     Dev 3
+                                                       Vcc                           Can be multicast (one device
+                                                                                   sends, more than one receives)!
+
+
+
+                 Z                 Z
+
+                 O/P         I/P       O/P       I/P             O/P       I/P                                                                        9
+
+                       Dev 1             Dev 2                     Dev 3         © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ • GPIO Control Registers
+    •   MODER
+    •   AFRL/AFRH
+    •   PUPDR
+    •   OTYPER
+ • Open Drain Application
+    • Interfacing via Level-shifting
+    • Bidirectional communication
+
+
+
+
+                                                                                                            10
+
+                                       © Copyright National University of Singapore. All Rights Reserved.
+

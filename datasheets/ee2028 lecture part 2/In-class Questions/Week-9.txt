@@ -1,0 +1,40 @@
+1. Which of the following devices on the Board is NOT interfaced using I2C?
+      a. Barometer
+      b. Gyroscope
+      c. Bluetooth module
+      d. NFC module
+
+2. In I2C, if the master does not acknowledge the byte, the slave will
+        a. not transmit any further bytes in the current transaction
+        b. re-transmit the byte only if it is explicitly conﬁgured to do so
+        c. re-transmit the byte only if it is in transmitter mode
+        d. always re-transmit the byte
+
+3. Which of the following is NOT considered a limitation/disadvantage of I2C?
+      a. Pin Count
+      b. Data Rate
+      c. Transmission Distance
+      d. Address Clashes
+
+4. Which of the following bits is NOT present in I2C_ISR?
+      a. TCR
+      b. TC
+      c. TXE
+      d. NACK
+
+5. STM32 I2C is interfaced to an accelerometer (7-bit address 0x32) which measures the
+   acceleration values in X, Y and Z coordinates as 16-bit values (8 bits stored in L and 8 bits
+   stored in H). The 8-bit register addresses for accelerometer are as follows:
+            Acceleration at X-axis: ACC_XL (0x10), ACC_XH (0x11)
+            Acceleration at Y-axis: ACC_YL (0x12), ACC_YH (0x13)
+            Acceleration at Z-axis: ACC_ZL (0x14), ACC_ZH (0x15)
+   STM32 does an I2C transaction to read the 16-bit acceleration values in X, Y and Z axes.
+   Assuming autoincrement is enabled by default in the accelerometer and the I2C
+   transaction is successful, list the number of:
+   a) start conditions
+   b) stop conditions
+   c) acknowledges
+   d) not acknowledges
+   e) bytes from master to slave (including slave address)
+   f) bytes from slave to master
+

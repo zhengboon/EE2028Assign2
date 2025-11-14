@@ -1,0 +1,43 @@
+    1. What is the address of GPIOF_BSRR?
+         a. 0x48001814
+         b. 0x48001828
+         c. 0x48001418
+         d. 0x48001028
+
+    2. To light up an active-low LED interfaced to Port B Pin 12, you must write ..... value to
+       address.....
+            a. 0x10000000, 0x48000418
+            b. 0x00001000, 0x48000428
+            c. 0x10000000, 0x48000428
+            d. 0x00001000, 0x48000418
+
+    3. To conﬁgure Port F Pin 14 as I2C4_SCL, you must write.....to...... register.
+           a. 4'b1000 to GPIOF AFRL
+           b. 4'b0100 to GPIOF AFRH
+           c. 4'b1000 to GPIOF AFRH
+           d. 4'b0100 to GPIOF AFRL
+
+    4. Assume STM32 in its new chip design introduces a new register GPIOx_BTR.
+
+        GPIOx_BTR (Address offset = 0x30): Bit Toggle Register
+        GPIOx_BTR BTy, for port x pin y (y = 15:0) works as below.
+        These bits are write-only, a read to these bits returns the value 0x0000.
+        Bits 31:16 of this register are reserved.
+            • 0: no action on the corresponding ODy bit
+            • 1: Toggles the corresponding ODy bit
+
+BT31   BT30   BT29   BT28   BT27   BT26   BT25   BT24   BT23   BT22   BT21   BT20   BT19   BT18   BT17   BT16
+
+
+
+BT15   BT14   BT13   BT12   BT11   BT10   BT9    BT8    BT7    BT6    BT5    BT4    BT3    BT2    BT1    BT0
+
+w      w      w      w      w      w      w      w      w      w      w      w      w      w      w      w
+
+
+
+        a) Write the new HAL_GPIO_TogglePin function by using the new BTR register.
+        b) What is the address of GPIOD_BTR?
+        c) Two LEDs (PB6 and PB10) are to be toggled together every second. What would be the
+        value written to the GPIOB_BTR register every second?
+

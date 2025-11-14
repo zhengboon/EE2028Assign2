@@ -1,0 +1,260 @@
+      STM32 EXTI peripheral
+
+
+                   Ankit Srivastava
+                       EE2028
+          ARMv7-M Architecture Ref Manual
+       RM0432 STM32L4+ Technical reference manual
+       PM0214 STM32 Cortex-M4 Programming Manual
+Acknowledgement: Slides adapted from Dr Rajesh Panicker
+
+
+                                                                                                                     1
+
+                                                ©
+                                                © Copyright
+                                                  Copyright National
+                                                            National University
+                                                                     University of
+                                                                                of Singapore.
+                                                                                   Singapore. All
+                                                                                              All Rights
+                                                                                                  Rights Reserved.
+                                                                                                         Reserved.
+OVERVIEW
+•   EXTI Introduction
+•   EXTI Registers
+•   Configuration and Handling of EXTI
+
+
+
+
+                                                                                                              2
+
+                                         © Copyright National University of Singapore. All Rights Reserved.
+NVIC CONNECTIONS (PARTIAL)
+                                                                                             In fact, the SCL and SDA comes
+                                                     USART1                                  out of the chip through GPIO
+                             BUS                                                             block as well, not shown below
+                                      USART1 Int.
+  ARM Core
+                                                               TX
+                                                                                SDA
+                                                               RX
+                                                                                 SCL           Accelerometer
+
+
+
+
+                                                               ..
+                                                               TC
+                                      I2C2_EV Int.
+      NVIC                                           I2C2        ALERT
+                                                               TIMEOUT
+                                                                BERR                              Acc Int.
+                                                       ERRIE
+                                   I2C2_ER Int.
+ SysTick
+                                                                                                   USER
+ EXTI9_5 Int.   EXTI0 Int.                                                                       PushButton
+                                                     GPIO
+                                                      A-I
+                  EXTI5
+                 EXTI6
+                  ..
+
+
+
+
+                 EXTI9                                                   Often, a few different interrupts generated within a peripheral are
+                                                                         combined (or-ed) into one single interrupt that goes into NVIC ->only one
+        EXTI                                                             priority and one handler. The handler reads appropriate status register(s) 3
+                                                                         within the peripheral to know the exact cause
+                                                                                                  © Copyright National University of Singapore. All Rights Reserved.
+
+                             STM32 Chip
+EXTI INTRODUCTION
+ •   The EXTI manages the external and internal asynchronous events/interrupts and
+     generates the event request to NVIC
+ •   Interrupts from other chips/devices (e.g., accelerometer, pressure sensor) cannot be
+     connected directly to NVIC- they have to be forwarded/taken in through GPIO Pins =>
+     EXTI => NVIC
+ •   The EXTI allows the management of up to 40 interrupt/event requests, including 26
+     configurable lines
+
+
+
+
+                                                                                                                                      4
+
+                                                                 © Copyright National University of Singapore. All Rights Reserved.
+EXTI INTRODUCTION
+
+
+
+
+                                                                                         5
+
+                    © Copyright National University of Singapore. All Rights Reserved.
+EXTI REGISTERS
+          •   Interrupts from GPIO pins are configurable, and occupying EXTI line 0-15.
+                                        Registers                      Register                         Address Offset                    EXTI Lines
+                                                                    SYSCFG_EXTICR1                              0x08                        EXTI0-3
+
+                                SYSCFG External Interrupt           SYSCFG_EXTICR2                              0x0C                        EXTI4-7
+                                 Configuration Registers            SYSCFG_EXTICR3                              0x10                       EXTI8-11
+                                                                    SYSCFG_EXTICR4                              0x14                      EXTI12-15
+
+
+
+
+          •   Bits 31:16 Reserved, must be kept at reset value.
+          •   Bits 15:0 bits are grouped in 4, used to choose the source for EXTI line
+              x: 0b0000: PA[x], 0b0001: PB[x], .... 0b1000: PI[x]*
+                                                                                                                                                          6
+
+                                                                                     © Copyright National University of Singapore. All Rights Reserved.
+              *Depends on the SoC, refer to STM32L4S5xx datasheet
+EXTI REGISTER: EXTI_IMR1
+ •   Interrupt mask registers: Address Offset = 0x00 (n=1) : RW
+ •   Bits 31:0 IMx: Interrupt Mask on line x (x=31 to 0)
+     •   0: Interrupt request from Line x is masked, i.e., disabled (default for EXTI0-15)
+     •   1: Interrupt request from Line x is not masked
+ •   EXTI line 0-15: GPIO configurable lines. We do not care about bits 31:16 while
+     configuring GPIO EXTI lines
+
+
+
+
+                                                                                                                                               7
+
+                                                                          © Copyright National University of Singapore. All Rights Reserved.
+EXTI REGISTER: EXTI_RTSR1
+ •   Rising trigger selection registers: Address Offset = 0x08 (n=1) : RW
+ •   Bits 31:23 and 17: Reserved, must be kept at reset value
+ •   Bits 22:18 and 16:0 RTx: Rising trigger event configuration bit of line x (x=22 to 18,
+     and 16 to 0). We do not care about bits 31:16 while configuring GPIO EXTI lines
+     •   0: Rising trigger disabled for input line
+     •   1: Rising trigger enabled for input line
+
+
+
+
+                                                                                                                                         8
+
+                                                                    © Copyright National University of Singapore. All Rights Reserved.
+EXTI REGISTER: EXTI_FTSR1
+ •   Falling trigger selection registers: Address Offset = 0x0C (n=1) : RW
+ •   Bits 31:23 and 17: Reserved, must be kept at reset value
+ •   Bits 22:18 and 16:0 FTx: Falling trigger event configuration bit of line x (x=22 to 18,
+     and 16 to 0). We do not care about bits 31:16 while configuring GPIO EXTI lines
+     •   0: Falling trigger disabled for input line
+     •   1: Falling trigger enabled for input line
+ •   EXTI_RTSR and EXTI_FTSR can be set for the same interrupt lines
+
+
+
+
+                                                                                                                                         9
+
+                                                                    © Copyright National University of Singapore. All Rights Reserved.
+EXTI REGISTER: EXTI_RTSR1 AND EXTI_FTSR1
+ •   Is it possible to have both rising edge and falling edge enabled for the same EXTI?
+
+
+
+
+                                                                                                                                        10
+
+                                                                   © Copyright National University of Singapore. All Rights Reserved.
+EXTI REGISTER: EXTI_PR1
+ •   Pending registers: Address Offset = 0x14 (n=1) : rc_w1 (read/write 1 to clear)
+ •   Bits 31:23 and 17: Reserved, must be kept at reset value
+ •   Bits 22:18 and 16:0 PIFx: Pending interrupt flag on line x (x=22 to 18, and 16 to 0).
+     We do not care about bits 31:16 while configuring GPIO EXTI
+     •   0: No trigger request occurred
+     •   1: Selected trigger request occurred
+ •   This bit is set when the selected edge event arrives on the interrupt line.
+ •   This bit is cleared by writing a ‘1’ to the bit
+
+
+
+
+                                                                                                                                          11
+
+                                                                     © Copyright National University of Singapore. All Rights Reserved.
+EXTI REGISTER: EXTI_PR1
+ •   What if you forget to clear the pending bit?
+
+
+
+
+                                                                                                                         12
+
+                                                    © Copyright National University of Singapore. All Rights Reserved.
+CONFIGURATION AND HANDLING OF EXTI
+ •   Configuration steps:
+     •   Enable AHB2 bus for the GPIO port(s)
+     •   Configure SYSCFG_EXTICRn to choose Port Pin as source of the specific EXTI line
+     •   Configure EXTI_IMRn to enable the specific EXTI line
+     •   Configure EXTI_RTSRn or/and EXTI_FTSRn to choose the Rising or Falling edge (or both) trigger
+     •   Enable specific interrupt request (IRQ) in NVIC
+
+ •   Once the settings are done, the user program
+     need not ‘call’ the handler, it will be invoked by
+     the hardware automatically
+ •   At the end of handler, should clear the interrupt
+     flag by writing to the pending register
+     EXTI_PRn
+     • what if you don’t?                                                                                                                   13
+
+                                                                       © Copyright National University of Singapore. All Rights Reserved.
+EXAMPLE
+•   A pushbutton connected to STM32L4S5VI port-C pin-13 is required to be configured as
+    EXTI interrupt input, so that the processor is able to print another message when
+    pushbutton is pressed
+
+                   STM32L4S5VI
+
+
+
+
+•   Falling/rising edge should be used depending on the connected hardware. Active low
+    pushbutton = falling edge                                                                                                        14
+
+                                                                © Copyright National University of Singapore. All Rights Reserved.
+EXAMPLE                                                           EXTI10 to EXTI15 is OR-ed together
+                                                                  and sent as a single interrupt to NVIC.
+                                                                  This means the same priority and the
+          Called by HAL_GPIO_EXTI_IRQHandler(),
+                                                                  same handler for these EXTIs
+          which in turn is called by
+          EXTI15_10_IRQHandler()
+          HAL_GPIO_EXTI_IRQHandler() checks if
+          EXTI_PR1[13] = 0b1 and clears it
+
+
+
+
+                                          Configures SYSCFG_EXTICR4[7:4] = 0b0010,
+                                          EXTI_IMR1[13]=0b1, EXTI_FTSR1[13]=0b1
+                                                                                                                                   15
+
+                                                              © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ •   EXTI Introduction
+ •   EXTI Registers
+     •   SYSCFG
+     •   IMR
+     •   RTSR
+     •   FTSR
+     •   PR
+ •   Configuration and Handling of EXTI
+     •   demo_exti_print example code
+
+
+
+                                                                                                               16
+
+                                          © Copyright National University of Singapore. All Rights Reserved.
+

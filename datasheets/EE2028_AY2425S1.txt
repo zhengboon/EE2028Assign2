@@ -1,0 +1,1164 @@
+Tutorial 1: Condition Code Flags (Basic)
+Sunday, 25 August 2024   22:33
+
+
+
+
+     (T)EE2028
+    Tutorial 1...
+
+
+
+
+                                 Additional Notes Page 1
+Additional Notes Page 2
+Additional Notes Page 3
+Tutorial 2: Condition Code Flags (Advanced)
+Wednesday, 28 August 2024   7:15 pm
+
+
+
+
+ Tutorial_2
+_Conditio...
+
+
+
+
+                                      Additional Notes Page 4
+Additional Notes Page 5
+Additional Notes Page 6
+Additional Notes Page 7
+Tutorial 2: Instruction Key Points                              - Addressing Mode
+Wednesday, 28 August 2024   9:48 pm
+                                                                - Pseudo Instruction
+                                                                - Compare instructions
+                                                                - Branch instructions
+
+
+Tutorial_2_
+Instructio...
+
+
+
+
+                                      Additional Notes Page 8
+Additional Notes Page 9
+Additional Notes Page 10
+Tutorial 4: System Architecture/ Protocols Overview/ GPIO
+Summary
+Sunday, 6 October 2024   2:23 pm
+
+
+
+
+Tutorial_4
+_System ...
+
+
+
+
+                                   Additional Notes Page 11
+Additional Notes Page 12
+Additional Notes Page 13
+Additional Notes Page 14
+Additional Notes Page 15
+Additional Notes Page 16
+Additional Notes Page 17
+Tutorial 5: I2C Protocol
+2024年10月13日    15:36
+
+
+
+
+Tutorial_5_I
+2C Protocol
+
+
+
+
+                       Additional Notes Page 18
+Additional Notes Page 19
+Welcome to EE2028 Tutorial!
+Wednesday, 14 August 2024   4:34 pm
+
+
+
+
+Some housekeeping
+
+  • About me: Qingqing, a full-time instructor in the ECE Department.
+  • Feel free to stop me anytime to ask questions.
+  • Cooling-off period: I DO NOT answer any questions 24 hours prior to midterm, and final. If you
+    have questions, ask EARLY.
+  • Contact me through my favourite turn-based strategy game: ✉ ni.qq@nus.edu.sg
+
+Access the Note
+  • Log in with your NUS ID.
+  • Copy the link below and paste in your browser to open the notebook in OneNote App.
+  • https://nusu-my.sharepoint.com/:o:/g/personal/ni_qq_nus_edu_sg/EkL5HkVTF_5KmdWbG-
+    Lzg8cBuol5sezaRBHYdJ24y77elA
+
+
+
+
+                                      Tut Page 20
+Tutorial 01: Microprocessor Concepts
+Sunday, 25 August 2024   5:24 pm
+
+
+
+
+ (T)EE2028
+Tutorial 1...
+
+
+                                                                                                                 Q1. No.                                                                                   Memory Organization (For 32-bit ARM)
+                                                                                                                   - Information is stored in the form of 0s and 1s. (When using higher-level languages,
+                                                                                                                     the compiler translates source code into machine code that a computer's processor
+                                                                                                                     can execute.)+9
+                                                                                                                   - Memory: bit/ byte/ word (byte is the smallest addressable unit)
+                                                                                                                   - A word may store:
+                                                                                                                        ○ (part of) an instruction
+                                                                                                                        ○ Data (float, string, integer, long, …)
+                                                                                                                   - Any binary pattern can be interpreted as an instruction or as a number
+
+                                                                                                                 Q2.
+                                                                                                                   - Instruction ADD R4, R2, R3 is stored in memory -> can be located with an address
+                                                                                                                   - Assume this address is 0x2000 31FC, the steps for executing the instruction are:
+
+
+
+
+                                                                                                                  1. Program Counter (PC) should contain the address before executing this instruction:
+                                                                                                                       0x2000 31FC
+                                                                                                                  2. Control Unit (CU) sends address in PC to Processor-memory interface, issue Read
+                                                                                                                     command.
+                                                                                                                  3. CU loads the instruction into the Instruction Register (IR), now IR contains the
+                                                                                                                     instruction in the forms of machine code (0s and 1s).
+                                                                                                                  4. CU decodes the machine code, to determine the operation
+                                                                                                                  5. CU sends the content of R2 and R3 and issues ADD command to Arithmetic & Logic
+                                                                                                                     Unit (ALU)
+                                                                                                                  6. CU gets the output from ALU and sends it to R4.
+                                                                                                                  7. PC ++, pointing to the next instruction in the memory address:
+                                                                                                                       0x2000 3200
+
+
+                                                                                                                 Q3.
+                                                                                                                   - In a RISC computer, only Load and Store instructions are used to access memory
+                                                                                                                     operands.
+                                                                                                                   - All the operands for arithmetic/logic instructions must be in the registers, or one
+                                                                                                                     of them may be a constant given explicitly in the instruction word, as #immediate.
+                                                                                                                   - In this case, A and B are both memory locations.
+
+                                                                                                                 Q4.
+                                                                                                                 The Conditional Branch instruction could lead to branching or looping.
+
+                                                                                                                   - When executing instructions in sequence, by default, the value (address pointing to
+                                                                                                                     the next instruction) stored in the PC increases by 4.
+                                                                                                                   - Branching: At the conditional branch line, it checks the condition given and places
+                                                                                                                     the address of the next instruction to be executed into PC.
+Q5.                                                                                                                    ○ The value contained in PC might increase by 4n instead of 4!
+   - The flow of an ARM assembly program can be altered by changing the content of the PC. (T)                            See the example below:
+   - By default, the PC is incremented by 4 because the next instruction word is 4 bits away in Cortex-M4. (F)
+
+
+
+
+                                                                                                                   - Looping: Similarly, when looping is instructed, the address pointing to the first
+                                                                                                                     instruction of the looped section will be placed into the PC.
+                                                                                                                       ○ The value contained in PC might decrease by 4n!
+
+                                                                                                                 Read on your own
+                                                                                                                 More on conditional branching/ looping: Condition Code Flags
+
+
+
+
+                                      Tut Page 21
+Tutorial 02: ARMv7E-M Assembly Language
+Sunday, 25 August 2024      10:39 pm
+
+
+                                                                       Q1. Instruction Syntax
+                                                                       Erroneous instructions:
+                                         Solution password: 24102028   (b). [Rd] is a memory operand, arithmetic instructions should not access memory locations.
+  CG2028            Solns
+Tutorial 2...
+                                                                       (c). MOV is a one-to-one operation, inclusion of a second source operand (R2) is invalid.
+
+                                                                       (d). LDR (and STR) are for data transfer between register and memory locations. To transfer data
+                                                                       between registers, use MOV.
+
+                                                                       (f). BLXAL LOL-> BLX{Cond.} LABEL (This is to break down the given instruction, not a valid syntax)
+                                                                            BLX (Branch Indirect with Link register) must be used with Rm.
+         Don't worry Tut 2 for CG and EE
+         are identical. I'm just being lazy.
+                                                                            Rm should contain the branch target address.
+
+                                                                       (j). TEQ (Test if EQual). Test instructions update condition flags without the need to specify the S
+                                                                       suffix.
+
+                                                                       (k). In ARMv7E-M, there are only 16 directly-accessible registers, R0 to R15.
+                                                                                                                                                      [Read more on branching
+                                                                       (l). The S suffix is invalid for PUSH/ POP.
+                                                                                                                                                   instructions in additional note]
+
+                                                                       Correct instructions that appear to be wrong:
+                                                                       (e). ADDS R0, R1, R2, LSL #3
+
+
+
+
+                                                                           For R2, LSL #3:
+                                                                               ○ R2: base register
+                                                                               ○ LSL: Logical Shift Left
+                                                                               ○ #3: No. of positions to be shifted
+
+                                                                           This instruction performs: R0 = R1 + (R2 * 8)
+
+                                                                       Q2. Addressing Mode
+
+
+
+
+                                                                           - R0 contains the address of a memory location
+                                                                           - LDR R9, [R0, #4]
+                                                                               ○ #4 is an one-time offset
+                                                                               ○ Do not change the value stored in the root register (R0 in this case)
+                                                                               ○ Equivalent to LDR R9, =0x0000 1004 (Pseudo-Instruction)                   [Read more in additional note]
+                                                                                                                                                              - Pseudo-instruction
+                                                                                                                                                              - Addressing mode
+                                                                       Q3. Addressing Mode
+
+
+
+
+                                                                       0x00001FFF8        30
+                                                                       0x00001FFC         20
+                                                                       0x00002000
+
+                                                                           - R1 contains the address of a memory location
+                                                                           - STR R6, [R1, #-4]!
+                                                                               ○ Pre-indexing -> Offset then STR
+                                                                               ○ The value stored in the root register is offset by #-4 (pay attention to the !)
+                                                                               ○ Equivalent to
+                                                                                    ▪ ADD R1, #-4
+                                                                                    ▪ STR R6, [R1]
+                                                                                    ▪ Pseudo-Instruction does not work with STR
+
+                                                                           - LDR R8, [R1], #4
+                                                                               ○ Post-indexing -> LDR then Offset
+                                                                               ○ The value stored in the root register is offset by #4
+                                                                               ○ Equivalent to
+                                                                                   ▪ ADD R1, #4
+                                                                                   ▪ LDR R8, [R1]
+
+                                                                       Q4. If-Then(-Else) & Loop
+                                                                       Given in Memory:
+                                                                       Address           Data
+                                                                       …                 …
+                                                                       N                 n
+                                                                       …                 …
+                                                                       NUMBERS           1st integer in the list
+
+
+
+
+                                               Tut Page 22
+              …                 …
+              N                 n
+              …                 …
+              NUMBERS           1st integer in the list
+
+
+              Draft the logic flow:
+
+
+
+
+              Analyse:
+                - We are to implement 1 loop and 2 IF-THEN structures.
+                - 2 ways to implement the check & count loop
+                     ○ As a loop (simple, with B{cond})
+                     ○ As a subroutine (slightly challenging, with BL/BLX{cond} and BX{cond})
+
+              Sample code implemented a simple loop:
+
+
+
+
+                                                                                                [Read more about Condition
+                                                                                                Flag in additional note]
+
+
+
+
+              Q5. Branch
+              Hint: If you need to look for an instruction, go to ARMv7-M Architecture Ref Manual.pdf, which can
+              be found on Canvas.
+
+
+
+
+Tut Page 23
+Tutorial 03: C Programming
+Tuesday, 3 September 2024   15:34
+                                                    Q1. Instruction Syntax
+                                                    Erroneous lines:
+                                                    (a). int a, main(void)
+                   <-
+                                                        - Put the two of them together -> it's ok!
+                   Solution password: 24102028
+ (T)EE2028                                              - Missing the semicolon ";"     -> not ok!
+Tutorial 3 ...                                          - Not a usual approach but it is indeed valid to declare the main together with other variables
+                                                        - The common practice is to perform declaration and definition together.
+                                                    (c). char c=NULL;
+                                                        NULL is usually defined as (void *0), which is a null pointer instead of a character. Type mismatch.
+
+                                                    (d). #define TEE=2028;
+                                                         correct syntax: #define TEE 2028
+
+                                                    (e). int16_t ee 2028;
+                                                         correct syntax: int16_t ee=2028;
+
+                                                    (f). printf("%s\n", z? "good" : "ok" : “bad”);
+                                                        - For the ternary operator "? :" takes in one condition and two expressions.
+
+
+                                                    Correct lines that could use some explanation:
+                                                    (g). z? a = 10 : (y? a = 1 : (a = 0) ); //variables z and y are bool, and a is int.
+                                                         Two nested ternary operations, refer to the flowchart to understand how it works ->
+
+                                                    (h). printf("Percentage = %d%%\n", weightage);
+
+
+
+
+                                                    Q2. Loop, If Statement, Print array/list with for-loop
+                                                    Code highlights
+                                                      - For loop:
+                                                              for (int i=0; Stop Condition; i++){
+                                                                  do these until hit the stop condition
+                                                                  …
+                                                              }
+                                                      - If Statement
+                                                              if (Condition) {
+                                                                  do these if the Condition checks
+                                                                  …
+                                                              }
+
+
+
+
+                                                    Q3. Ternary operator, Loop, ASCII, Bit Shift, Logical operations
+                                                    We are asked to write a program that:
+                                                     1. Converts an ASCII character to its ASCII code,
+                                                     2. Reverse the ASCII code order
+                                                     3. Add a 30
+                                                     4. Convert the resulting code back to an ASCII character
+
+                                                    I've provided a different (possibly harder to understand) version of the solution here, as it involves some useful skills for
+                                                                                                                                                                                    Understand the core logic (Two lines highlighted)
+                                                    interfacing with hardware through C.
+                                                                                                                                                                                    (Similar idea with Tut 2, Q5)
+                                                                                                                                                                                    Let's assume x = 0101, and reversed = 0000
+
+                                                                                                                                                                                    Ln 7: reversed = (reversed << 1) | (x & 1);             (1 ≡ 0001)
+                                                                                                                                                                                       - (reversed << 1): shift reserved left, pad with a '0'.
+                                                                                                                                                                                            ○ 1st pass: reversed = 0000 << 1 = 0000,
+                                                                                                                                                                                            ○ 2nd pass: reversed = 0001 << 1 = 0010.
+                                                                                                                                                                                       - (x & 1): bitwise AND, retrieve the rightmost bit of x
+                                                                                                                                                                                            ○ 1st pass: x = 0101, x & 0001 = 0001
+                                                                                                                                                                                            ○ 2nd pass: x = 0010, x & 0001 = 0000
+                                                                                                                                                                                       - reversed = …|… : bitwise OR, sets the LSB of reversed to the LSB of x retrieved.
+                                                                                                                                                                                            ○ 1st pass: reversed = 0000 | 0001 = 0001
+                                                                                                                                                                                            ○ 2nd pass: reversed = 0010 | 0000 = 0010
+                                                                                                                                                                                    Ln 9: x >> = 1;
+                                                                                                                                                                                       - Shift x to the right by 1 bit for the next round.
+                                                                                                                                                                                            ○ 1st pass: x = 0101 >> 1 = 0010
+                                                                                                                                                                                            ○ 2nd pass: x = 0010 >> 1 = 0001
+
+                                                                                                                                                                                    In human language: "Cut" the rightmost bit of x, and append it to the rightmost of reversed.
+                                                                                                                                                                                                         The shifting left of reversed is to make room
+                                                                                                                                                                                                         The shifting right of x is to facilitate the "cut"
+                                                                                                                                                                                    With diagram illustration:
+
+
+
+
+                                                    Make sure to also check out another interesting approach provided in the answer sheet.
+
+
+
+
+                                      Tut Page 24
+                                                                                                                      Q4. Pointers, dereference (*)
+
+
+
+
+                                                                                                                      We shall focus on Ln 6, Ln 14 - Ln 21:
+                                                                                                                        - Ln 6: int fibo_store[N];
+                                                                                                                            ○ This line defines an array and allocates (blocks) enough memory space for N integers.
+                                                                                                                            ○ The array name fibo_store, is functionally equivalent to a constant pointer, that points to the starting
+                                                                                                                                address of this block of memory.
+
+                                                                                                                        - Ln 14: void fibonacci (int n, int * fibo)
+                                                                                                                            ○ int * fibo -> emphasizes that the second argument is a pointer
+                                                                                                                            ○ This line is equivalent to void fibonacci (int n, int fibo[]) (why?)
+                                                                                                                                  ▪ Array in C naturally decays into a pointer, when passing the array around, we are passing the pointer to
+                                                                                                                                    the first element, this is constant regardless of how is this array being passed.
+                                                                                                                        - Ln 15-16: *(fibo) = 0; *(fibo + 1) = 1;
+                                                                                                                            ○ *(fibo) = 0; is equivalent to fibo[0] = 0;
+                                                                                                                            ○ *(fibo + 1) = 0; is equivalent to fibo[1] = 0;
+                                                                                                                             ○ Why 1? The + 1 here represents "increment by one position in the array". When performing pointer
+                                                                                                                                arithmetic like fibo + 1, the compiler automatically accounts for the size of the data type being pointed to.
+                                                                                                                                (That is to say, it moves to 4 bytes later)
+
+                                                                                                                      Let me fry your brain a bit deeper: Will the following two versions of codes work?
+
+
+
+
+  Q5. Declare and use pointers
+
+
+
+
+                                                                                                                      Let me cook your brain beyond well-done so that it is now congratulations: What is the fundamental difference
+                                                                                                                      between passing array and array pointer into function in C? （int *fibo vs. int fibo[]）
+                                                                                                                      https://stackoverflow.com/questions/5573310/difference-between-passing-array-and-array-pointer-into-function-in-c
+
+
+
+
+- Ln 9 : int *Aptr, *Bptr;
+    ○ This line declares two empty pointers.
+           ▪ What's the difference between these two pointers and the array pointer in Q4?
+           ▪ You can make Aptr and Bptr point to any variable, but the array name can only be used to point to
+             the array itself (thus the "constant").
+- Ln 10 : Aptr = A;
+    ○ Assigned the pointer Aptr to the address of the 1st element of the array A.
+           ▪ A, as the name of an array, can be treated as a pointer.
+           ▪ Equate Aptr to A, making Aptr a pointer to the 1st element of the array A.
+
+- Ln 14 : *(Aptr + i) = *(Aptr + i) + *(Bptr + i)
+
+
+
+
+  I heard that your brain still exists: Are there any redundant lines here in the code?
+
+
+
+
+  Anyone still remember that the array name can be treated as a pointer as well? Then why bother declaring that two
+  empty pointers?
+
+
+
+
+                                        Tut Page 25
+Tutorial 04: Interfacing Concepts and GPIO
+Sunday, 6 October 2024   2:03 pm
+
+                                                                                  Q1. Classifying Hardware Protocols
+                                                                                  Answer: I2C.
+            [T]EE2028 Tutorial 4 Interfacing Concepts and GPIO    [T]EE2028
+                                                                 Tutorial 4 ...
+
+
+
+
+                                                                                                                                                                                                                              GPIO Registers
+
+
+
+
+                                                                                  * Taken from Additional Notes, read more here.
+
+                                                                                  Q2. GPIO (Control) Registers
+                                                                                  Key Steps to configure the MODE of PB14.
+                                                                                   (1) Identify that to configure MODE -> Write to MODER
+                                                                                   (2) Determine the address of GPIOB_MODR.
+
+
+
+
+                                                                                                                                                                                                                                - Each port (A, B, …, H) contains a set of Registers
+                                                                                                                                                                                                                                - Each Register in the set comprises 32-bits
+                                                                                                                                                                                                                                - Each pin requires a subset of bits from a Register or from multiple Registers to be configured
+                                                                                                                                                                                                                                - E.g., MODER: 2 bits per pin, in total 1 Register for a port
+                                                                                                                                                                                                                                        AFRL/H: 4 bits per pin, in total 2 Register for a port
+
+
+                                                                                                                                                                                                                              BIC (to Clear [29:28])
+
+
+
+
+                                                                                        a. GPIOB Registers -> Starting Addr.: 0x4800 0400
+                                                                                        b. GPIOx_MODER Addr. Offset -> 0x00
+                                                                                        c. GPIOB_MODER Addr. = Base Addr. + Addr. Offset = 0x4800 0400 + 0x00 = 0x4800 0400
+                                                                                   (3) Determine the bits in control of Pin 14.
+                                                                                                                                                                                                                              (1) Complement
+                                                                                        a. GPIOx_MODER PIN 14 -> MODE14[1:0] (GPIOx_MODER[29:28])
+                                                                                                                                                                                                                                  0x3000 0000 = 0b0011 0000 … 0000
+                                                                                   (4) Determine the values to be written.
+                                                                                                                                                                                                                                      ↓ Flip All bits
+                                                                                        d. LED -> Output -> General purpose output mode: write the value "0b01"
+                                                                                                                                                                                                                                  0xCFFF FFFF = 0b1100 1111 … 1111 (Mask)
+
+                                                                                                                                                                                                                              (2) AND
+                                                                                                                                                                                                                                  GPIOB_MODER bitwise AND Mask, clear bits [29:28], keep other bits unchanged.
+
+                                                                                                                                                                                                                              ORR (to Write [29:28])
+
+
+
+
+-
+
+
+
+
+                                                                                                                                                                                                                                  0x1000 0000 = 0b0001 0000 … 0000
+                                                                                                                                                                                                                                  Writes '0b01'.
+
+
+
+
+                                                                                  Q3. GPIO (Data) Registers
+                                                                                  Key Steps to Read Input Peripheral (BTN1, PA10) / Set Output Peripheral (LED, PB14) Logic Level
+                                                                                   (1) Plan pseudocode
+
+
+
+
+                                                                                   (2) Check BTN1 (PA10) Logic Level
+                                                                                       Register: GPIO Data Register -> Input Data Register -> GPIOA_IDR
+                                                                                                 GPIOA Registers -> Starting Addr.: 0x4800 0000
+                                                                                                 GPIOA_IDR Addr. = Base Addr. + Addr. Offset = 0x4800 0000 + 0x10 = 0x4800 0010
+                                                                                       PIN(s): GPIOA_IDR[10]
+
+                                                                                   (3) Set LED (PB14) Logic Level
+                                                                                       Registers: GPIO Data Register -> Output Data Register -> GPIOB_ODR
+                                                                                                                                                GPIOB_BSRR
+                                                                                                                                                GPIOB_BRR
+                                                                                                 * Set/Reset GPIOx_ODR through GPIOx_BSRR/BRR for better efficiency, directly writing to GPIOx_ODR requires reading 32 bits
+                                                                                                 and writing the updated 32 bits.
+                                                                                                 GPIOB_BSRR Addr. = 0x4800 0418
+                                                                                                 GPIOB_BRR Addr. = 0x4800 0428
+                                                                                       PIN(s):   GPIOB_BSRR[30] (Reset with '0b1') & GPIOB_BSRR[14] (Set with '0b1')
+                                                                                                 GPIOB_BRR[14] (Reset with '0b1')
+
+
+
+
+                                                                                  Type Casting
+                                                                                  In the first three lines, we created 3 pointers and have them pointing to the corresponding registers.
+
+                                                                                  unsigned int* GPIOA_IDR = (unsigned int*) 0x48000010;
+
+                                                                                  The highlighted type casting is applied to the value in GPIOA_IDR, this is to inform the compiler to treat the value as an
+                                                                                  unsigned integer.
+
+
+
+                                                                                  Q4. GPIO Initialization/Configuration (Through HAL Driver Functions), Understanding GPIO_InitTypeDef
+                                                                                  My "monkey see, monkey do approach": Analyze a sample code then adopt its style.
+
+                                                                                  Reference Code: Lab 1 demo code, blink_by_HAL. (Focus on highlighted configuration code)
+
+
+
+
+                                                                                  Understanding Structure
+                                                                                    - Recall OOP (Object-Oriented Programming) from CS1010E
+                                                                                    - In python: Class -> a blueprint, Instance -> an entity
+                                                                                    - In C: Structure -> a blueprint, Instance -> an entity
+                                                                                    - In the above example, GPIO_InitTypeDef -> the blueprint, GPIO_InitStruct -> the entity.
+
+                                                                                  Our Code:
+
+
+
+
+                                                                                  Output Mode: Push-Pull vs. Open-Drain
+                                                                                  PP: Sets pin logic level to HIGH -> Output sets to High Voltage (5V/ 3.3V/ 3V, etc.)
+                                                                                      Sets pin logic level to LOW -> Output sets to 0V.
+
+                                                                                  OD: Sets pin logic level to HIGH -> High impedance (Z), Disconnected.
+
+
+
+
+                                   Tut Page 26
+              Output Mode: Push-Pull vs. Open-Drain
+              PP: Sets pin logic level to HIGH -> Output sets to High Voltage (5V/ 3.3V/ 3V, etc.)
+                  Sets pin logic level to LOW -> Output sets to 0V.
+
+              OD: Sets pin logic level to HIGH -> High impedance (Z), Disconnected.
+                  Sets pin logic level to LOW -> Output sets to 0V.
+
+
+
+
+              Q5. Interpreting Sensor Output (Mathematic Calculation)
+              Key takeaway points:
+                - Sensitivity = Measurement Range/Bit Width
+                - Set up an expression in the form of
+                     ○ Where: m -> Sensitivity,
+                     ○ c -> Midway of the measurement range, if the value is signed (this question)
+                     ○ c -> Lower bound of the measurement range, if the value is unsigned
+
+
+
+
+              Q6. Interpreting Sensor Output (Code Implementation)
+              Please go through the answer on your own.
+
+
+
+
+              Interesting question asked:
+              void altitude_read(char*)
+              …
+              char altitude_val[2]
+
+              Why char* ?
+
+              From the implementation you can see that we are expecting a pointer to the data, which is
+              in form of 2 bytes. We thus need to make sure we reserved enough space.
+
+                - In C, a byte buffer is traditionally char* because char is the basic character type
+                  and is guaranteed to be size 1 byte (or 8 bits). Many legacy I²C/SPI APIs were written
+                  this way.
+                     ○ In that case, why don't we use uint_8?
+                - Corner case: on very odd devices where a “byte” isn’t 8 bits, uint8_t may not exist,
+                  but char always does.
+                - Core reason:
+                  In C’s strict-aliasing model, accessing the same memory through pointers of different,
+                  incompatible types can be undefined behaviour (UB) #: the compiler may assume
+                  they don’t overlap and optimize in ways that break your program.
+                  Character types are a special exception: the standard allows any object’s bytes to be
+                  accessed via char*, signed char*, or unsigned char*.
+                  Therefore, using a char* as the buffer type for raw sensor data is safe and cannot
+                  cause aliasing UB.
+                  It’s ideal for I²C/SPI reads where we treat values as raw bytes first, and only later
+                  reinterpret/assemble them into larger integers.
+
+                   #
+                    UB means the C standard imposes no requirements on the result—code may seem to
+                   work, fail intermittently, or change with compiler flags/optimizations.
+
+
+
+
+Tut Page 27
+Tutorial 05: Inter-Integrated Circuit (I2C) Interface
+2024年10月13日   15:37
+
+
+
+
+        [T]EE2028 Tutorial 5 I2C
+                                            [T]EE2028
+                                           Tutorial 5...
+
+                                                           Q1. I2C Hardware Readiness
+                                                           * L4S5VI-e03_schematic.pdf, Pg. 3 (Top diagram)
+                                                            STM32L4+ series Discovery kit.pdf. Pg 23 (Bottom table)
+
+
+
+
+                                                           Questions 2-6 are based on the HTS221_T_ReadTemp() function in hts221.c file.
+                                                           Q2. I2C Transaction Breakdown
+                                                           Compute the total number of (a) Bytes sent (b) Bytes received (c) START bits sent (d) STOP bits sent
+                                                           (e) Acknowledges sent (f) Not-Acknowledges sent by the STM32 chip while executing
+                                                           this function.
+
+                                                            (1) Identify the lines that involve I2C tx/rx:
+                                                                 i. SENSOR_IO_ReadMultiple(DeviceAddr, (HTS221_T0_DEGC_X8 | 0x80), buffer, 2);
+                                                                ii. tmp = SENSOR_IO_Read(DeviceAddr, HTS221_T0_T1_DEGC_H2);
+                                                               iii. SENSOR_IO_ReadMultiple(DeviceAddr, (HTS221_T0_OUT_L | 0x80), buffer, 4);
+                                                                iv. SENSOR_IO_ReadMultiple(DeviceAddr, (HTS221_TEMP_OUT_L_REG | 0x80), buffer, 2);
+
+                                                            (2) Determine the number of data frames (in bytes) to be transmitted:
+                                                                 i. SENSOR_IO_ReadMultiple(DeviceAddr, (HTS221_T0_DEGC_X8 | 0x80), buffer, 2);
+                                                                ii. tmp = SENSOR_IO_Read(DeviceAddr, HTS221_T0_T1_DEGC_H2); (1 byte)
+                                                               iii. SENSOR_IO_ReadMultiple(DeviceAddr, (HTS221_T0_OUT_L | 0x80), buffer, 4);
+                                                                iv. SENSOR_IO_ReadMultiple(DeviceAddr, (HTS221_TEMP_OUT_L_REG | 0x80), buffer, 2);
+
+                                                            (3) Draft the transaction timeline and calculate:
+                                                                (Here I provided a detailed solution for case i, please work out the rest after class)
+                                                                   i. SENSOR_IO_ReadMultiple(DeviceAddr, (HTS221_T0_DEGC_X8 | 0x80), buffer, 2);
+
+
+
+
+                                                                      From the master's (processor's) POV:
+                                                                      (a) Bytes sent      -> 3 (address frames)
+                                                                      (b) Bytes received -> 2 (data frames)
+                                                                      (c) START bits sent -> 2 (S & Sr)
+                                                                      (d) STOP bits sent -> 1
+                                                                      (e) ACK sent        -> 1
+                                                                      (f) NACK sent       -> 1
+
+                                                           Q3. I2C Read/Write Operation Control
+                                                           What is the significance of ‘| 0x80’ that appears at three different places in the function?
+
+                                                                 i. SENSOR_IO_ReadMultiple(DeviceAddr, (HTS221_T0_DEGC_X8 | 0x80), buffer, 2);
+                                                                ii. tmp = SENSOR_IO_Read(DeviceAddr, HTS221_T0_T1_DEGC_H2);
+                                                               iii. SENSOR_IO_ReadMultiple(DeviceAddr, (HTS221_T0_OUT_L | 0x80), buffer, 4);
+                                                                iv. SENSOR_IO_ReadMultiple(DeviceAddr, (HTS221_TEMP_OUT_L_REG | 0x80), buffer, 2);
+
+                                                           '| 0x80' is used as a part of the slave register address, and if you are unsure what its significance is, the
+                                                           best way to find it out is to read the datasheet. (Google 'HTS221 datasheet')
+
+                                                           To navigate the datasheet, use Ctrl + F and search for the keywords I2C/ Slave Address.
+
+                                                           On page 15, under section 5.1.1.:
+
+
+
+
+                                                           | 0x80 is equivalent to | 0b1000 0000, it sets the MSB of the sub -address to '1', and enables auto-
+                                                           increment for reading consecutive registers in a single operation.
+
+                                                           In the function call, we provided the register address of HTS221_T0_DEGC_X8 but it reads both HTS221
+                                                           _T0_DEGC_X8 and HTS221_T1_DEGC_X8.
+
+                                                           Q5. Sensor Data Interpretation from Register Values
+                                                           Assuming the following register contents, compute the temperature reading returned by the function.
+
+                                                           Again, the best way to gather information is to read the datasheet.
+
+                                                           To make sense of each register and its significance, read section 7, Register description.
+
+
+
+
+                                                           Now, if you reach the end of section 7, you should see section 8 is titled: ' Humidity and temperature
+                                                           data conversion'. This section introduced the use of the register values given.
+
+                                                            (1) Making sense of the calibration registers:
+
+                                                                                                                                                                           - Note that y1 and y2 values are not given directly.
+                                                                                                                                                                           - Join MSB of T0/T1 with T0/T1_degC_x8 to get the magnified (x8) full value.
+                                                                                                                                                                           - The precise y1 and y2 are given by (full value/8).
+                                                                                                                                                                           - The library file implemented an integer approach, which discards the 3 LSB
+                                                                                                                                                                             with '>>3'.
+
+
+                                                                                                                                                                           - We may make this implementation more accurate by declaring T0/T1_degC as
+                                                                                                                                                                             floats, and replacing'>> 3' with '/8'.
+
+
+
+
+                                                           (2) Find out x1, x2, y1, y2, and x
+
+
+
+
+                             Tut Page 28
+              (3) Find out y
+
+
+
+
+              Q4. Reconsider Library Efficiency
+              Is it possible to make the function more efficient with minimal effort (i.e., without venturing into
+              Interrupts, etc.), assuming that the temperature sensor is read repeatedly once a second from
+              the main program? A full function implementation is not expected, explaining the idea will do.
+
+                 - The calibration register contents are fixed for a particular sensor chip. There's no need to read it
+                   over and over again.
+                 - We may set a static flag within HTS221_T_ReadTemp() to indicate if this is the first time being called.
+                 - If yes, read the calibration registers and store the content as static variables.
+                 - If not, query the static variables stored from the first function call to reduce transaction overhead.
+
+              Q6. I2C Signal Timing and Condition Mapping
+              Please go through the answer on your own.
+
+
+
+
+Tut Page 29
+Tutorial 06: Interrupts and NVIC
+Saturday, 26 October 2024   10:25 am
+
+                                                                      ## The term "interrupt" used in my tutorial refers to both system exceptions (generated within the processor) and external interrupts.
+                                                                      Q1. Priority Group Settings
+            [T]EE2028 Tutorial 6 Interrupts           [T]EE2028
+                                                     Tutorial 6 ...
+
+
+
+
+                                                                         - IPR width -> Determines the number of bits that can be programmed.
+                                                                              ○ In our case: 2 bits
+                                                                         - If N bits are allocated to Preempt and M bits are allocated to Sub-priority:
+                                                                              ○      unique Preempt levels
+                                                                              ○      unique Sub-priority levels
+
+                                                                        a. IPR width = 2 bits; Priority Group 6: 2 preempt levels, and 2 sub-priority levels.
+
+
+
+
+                                                                           *Bits that are not implemented, always read as 0
+
+                                                                        b. IPR width = 2 bits; Priority Group 3: 4 preempt levels ( ), and 1 sub-priority level (        ).
+
+
+
+
+                                                                        c. IPR width = 2 bits; Priority Group 1: 4 preempt levels, and 1 sub-priority level.
+                                                                        d. IPR width = 2 bits; Priority Group 7: 1 preempt level, and 4 sub-priority levels.
+
+                                                                      Q2. Interrupt Priority Assignment
+
+                                                                         - Minimum inter-arrival time is usually used as an indicator of urgency:
+                                                                             ○ Timer: 10 ms
+                                                                             ○ EXTI1: 500 ms
+                                                                             ○ EXTI3: Unpredictable, but at least 300 ms
+                                                                         - Other aspects to consider:
+                                                                             ○ Worst-case execution time
+                                                                                  ▪ How long it takes to execute the handler (Callback function)
+                                                                                  ▪ We usually do not wish to have an interrupt with a long handler to interrupt one with shorter handler
+                                                                             ○ Long inter-arrival time but critical
+                                                                                  ▪ Example: Emergency button on MRT
+                                                                                  ▪ Some of such emergencies may not be activated in their entire lifetime, but we need to respond to them
+                                                                                    immediately despite the infinitely long inter-arrival time.
+
+                                                                      For this question, we assume the timer should have the highest priority, EXTI1 and EXTI3 are comparable. Hence:
+                                                                                 Preempt (Timer) < Preempt (EXTI1) = Preempt (EXTI3)
+
+                                                                      Now, it's time to decide the sub-priorities between EXTI1 and EXTI3, we need more assumptions regarding EXTI3 to proceed:
+                                                                        - If it comes with a short handler & requires a timely response:
+                                                                                 Sub (EXTI1) > Sub (EXTI3)
+                                                                        - If it comes with a long handler & requires a timely response:
+                                                                              ○ Then it depends on the expected frequency of arrival of EXTI3:
+                                                                                   ▪ Very often: Mabe not a good idea to have it put EXTI1 on pending
+                                                                                           Sub (EXTI1) < Sub (EXTI3)
+                                                                                   ▪ Very rarely: Probably okay to have it put EXTI1 on pending once in a while
+                                                                                           Sub (EXTI1) > Sub (EXTI3)
+                                                                        - If it doesn't require a very timely response at all:
+                                                                                 Sub (EXTI1) < Sub (EXTI3)
+
+
+
+                                                                      Summing up: we have 2 preempt levels and at least 2 sub-priority groups per preempt, we could choose:
+                                                                              IPR Width = 2, Priority Group = 6
+
+
+
+
+                                                                                 Timer: Preempt (Timer) = 0x00, Sub (Timer) = 0x00 or 0x40
+                                                                                 EXTI1: Preempt (EXTI1) = 0x80, Sub (EXTI1) = 0x80
+                                                                                 EXTI1: Preempt (EXTI1) = 0x80, Sub (EXTI1) = 0xC0
+                                                                           OR
+                                                                                 Timer: Preempt (Timer) = 0x00, Sub (Timer) = 0x00 or 0x40
+                                                                                 EXTI1: Preempt (EXTI1) = 0x80, Sub (EXTI1) = 0xC0
+                                                                                 EXTI1: Preempt (EXTI1) = 0x80, Sub (EXTI1) = 0x80
+
+
+
+
+                                                                      Q3. Interrupt and Exception Vector Table/ ISR (Interrupt Service Routine)/ Handler
+                                                                      When an incoming system exception or an external interrupt, depending on the architecture, there are two ways for a
+                                                                      processor to handle it:
+
+                                                                        1. No hardware-level classification, all interrupts are taken care of with a single handler, within the handler, software
+                                                                           implementation is used to identify which ISR should be called.
+                                                                        2. Hardware-level rough classification is implemented, and some interrupts (usually exceptions) are routed to NVIC directly
+                                                                           and individually. NVIC then calls the corresponding handler for each interrupt.
+
+                                                                      For ARM Cortex-M4, it mixed uses the two approaches: (Core > Src > stm32l4xx_it.c)
+                                                                        1. Two shared EXTI handlers are implemented in the library for external interrupts EXTI line [9:5] and EXTI line [15:10]
+                                                                        2. Dedicated handlers are implemented in the library for system exceptions. (e.g., BusFault, SysTick, NMI, etc.)
+                                                                        3. EXTI0 - EXTI4 are each handled by a dedicated handler, but the Handler function is not implemented in the library.
+
+                                                                      How does the NVIC know which handler to call? - It has to consult the vector table. (STM32L4+ Technical reference
+                                                                      manual.pdf)
+
+
+
+
+                                                                      Each entry here indicates a dedicated hardware connection from the source of the interrupt signals to NVIC.
+                                                                      NVIC identifies the corresponding handler to be called through this hash.
+
+                                                                      Example:
+                                                                        1. An interrupt signal is coming from the hardware connection position 40
+                                                                        2. NVIC consults the table and follows the address 0x0000 00E0
+                                                                        3. The address 0x0000 00E0 contains the starting address of the EXTI15_10 handler function (ISR).
+
+                                                                      But the above datasheet is not carefully designed (in my opinion), "Position" is not the same as "exception number", as the
+                                                                      system exceptions are listed without a specific position. Secondly, the "Priority" here is misleading, please ignore them and
+                                                                      except for the "fixed" type of priorities, the rest can always be set by the users.
+
+                                                                      Hence, to answer this question, we are specifically requesting the vector for interrupt exception 40, i.e., the 40th interrupt in
+                                                                      the table above. (Not including the reserved address at 0x00!)**
+
+
+                                                                      **The 1st address (0x00) is reserved for _estack, which store MSP starting value. The first instruction executed by the proce ssor is LDR
+                                                                      SP, _estack, when consulting the table. (This is just for your information)
+                                                                      For a complete ordered list of exceptions (including the exception stack pointer address, go to Core > Startup >
+                                                                      startup_stm32l4s5vitx.s, line 133+).
+
+
+
+
+                                                                                                                                                                                                                  Understanding Handler Functions
+                                                                      On a side note, if you find the term "handler function" completely strange to you, read the note here ->                                    As long as you have loaded the sample project demo_exti_print, you have used EXTI15_10_IRQHandler (../../Core/Src/stm32l4xx_it.c)
+                                                                                                                                                                                                                  PB interrupt is routed to EXTI line 13, thus when the interrupt comes in, NVIC will call EXTI15_10_IRQHandler( )
+
+
+
+
+                                                                      Q4. Interrupt Pending/Handler Execution
+                                                                                                                                                                                                                  Within EXTI15_10_IRQHandler( ), it calls 5 IRQs for every PIN it manages. But only GPIO_PIN_13 is the true source of the interrupt
+                                                                                                                                                                                                                  signal.
+
+                                                                                                                                                                                                                  In the HAL_GPIO_EXTI_IRQHandler(), line 517 is checking if the input pin is the source of the interrupt. When the input is
+                                                                                                                                                                                                                  GPIO_PIN_13, it verifies and confirms the source, then HAL_GPIO_EXTI_Callback() will be called and with line 519, the interrupt
+
+
+
+
+                                       Tut Page 30
+              Q4. Interrupt Pending/Handler Execution
+                                                                                                                                                  Within EXTI15_10_IRQHandler( ), it calls 5 IRQs for every PIN it manages. But only GPIO_PIN_13 is the true source of the interrupt
+                                                                                                                                                  signal.
+
+                                                                                                                                                  In the HAL_GPIO_EXTI_IRQHandler(), line 517 is checking if the input pin is the source of the interrupt. When the input is
+                                                                                                                                                  GPIO_PIN_13, it verifies and confirms the source, then HAL_GPIO_EXTI_Callback() will be called and with line 519, the interrupt
+                                                                                                                                                  pending signal is cleared.
+
+
+
+
+              Key takeaways from:
+              Period A: Observe Interrupt 2
+
+                 - Subsequent incoming interrupt requests will not "promote" the existing pending to a "super pending".
+                 - If the pending state of an interrupt is not cleared, any following interrupt request from the same peripheral will be
+                   ignored.
+                      ○ 3 requests, 1 pending state, 1 handler execution
+                 - Why are the interrupt requests being ignored? The processor is currently in thread mode, what stops the handler from
+                   being called?
+                      ○ The only explanation is that Interrupt 2 is not activated at the NVIC's end.
+                 - The activation is only done somewhere between the 3rd request and handler execution. Any problem here?
+                      ○ The system is responding to an interrupt from the past, which makes it not relevant anymore in most cases.
+                      ○ A crucial step is missing from the activation: clear any possible pending state.                                          Here before the HAL_GPIO_EXTI_Callback() it has a "__weak" symbol, this indicates this is a "default" implementation, and
+                                                                                                                                                  serves as a placeholder, if we are to specify what should happen within the ISR, we need to declare a "strong" version in the main.c
+              Period B: Observe Interrupt 1                                                                                                       to "overwrite" the weak version. Just like what we did in the demo code:
+
+                 - Execute (a properly implemented) handler only clears pending state, and does not clear the interrupts request state.
+                      ○ Hence, since the request stays high after the 1st handler execution, which cleared the 1st pending state, it sets the
+                        pending state immediately after the delay, and hence handler is executed again.
+                      ○ In STM32, the interrupt detection is triggered by raising/falling edges, hence if the pending state is set by raising
+                        edge, then we will never see the subsequent pending and handler execution at all.
+                      ○ But this question assumed the triggering to be HIGH on the request line (not stated but otherwise unable to explain
+                        the 2nd pending)
+                 - A strange observation: The source of Interrupt 1 had no problem clearing the request for the first time, what stops it
+                   from doing it now?
+                      ○ Could be multiple consecutive requests are raised, the next one coming in before the previous request is cleared.
+
+              Period C: Observe Interrupt 2
+
+                 - It doesn't matter if the interrupt handler is currently running, as long as the pending state is not set, and a new request
+                   coming, it sets the pending state again, which leads to another handler execution.
+                 - Compare with Period A, and see how the pending state affects the responsiveness to consecutive requests from the
+                   same interrupt source.
+
+
+
+
+              We will continue with Q5-7 as well as the UART tutorial next week.
+
+
+
+              Q5.Interrupt Pending/Handler Execution/Priority
+              Since: Preempt(#1) < Preempt(#2)
+                 - When interrupt #2 request comes in while interrupt #1 is pending, #2 has to wait
+                 - When interrupt #1 request comes in and pended while interrupt #2 handler is executing, interrupt #1 is attended first,
+                   during the wait, pay attention to the interrupt #2 active state: it is only reset when the interrupt #2 handler execution is
+                   one.
+
+
+
+
+              Q6. Worst-Case Execution Time
+                 - We assume ‘duration’ refers to the actual time spent by the processor in executing the ISR and not including the time
+                   the ISR is in a preempted state because of a higher priority handler (though the duration for which the interrupt is
+                   considered ‘active’ includes this time).
+                 - Simple answer to that is: No.
+                 - Depending on the exact condition within the device/peripheral that caused the interrupt to be raised, the time taken to
+                   deal with it could vary.
+                     ○ There could even be multiple conditions that needs to be dealt with simultaneously.
+                     ○ There could also be data-dependent if-else scenarios.
+                     ○ There is also a possibility that there are loops with variable number of iterations (for example, the number of new
+                         data points to be read from a device buffer).
+                 - All these could add to the uncertainty in the execution duration. However, in almost all practical designs, we calculate a
+                   certain worst-case execution time (WCET), which is an upper bound on the execution duration. We should endeavour to
+                   keep the WCET as low as possible by avoiding any heavy-duty processing of data within the handler. Any kind of wait
+                   (so-called blocking code), such as delays() or waiting for a certain condition/even should also be avoided.
+
+              Q7. Interrupt Configuration through Registers
+              Interrupt Configuration Registers:
+                 - ISER (Set Enable) & ICER (Clear Enable)
+                     ○ To enable or disable an interrupt. "Disabled" as in NVIC is not set to watch out for a specific interrupt, it does not
+                         mean the peripheral is disabled from generating an interrupt signal. (See Q4, Interrupt #2, during Period A)
+                 - ISPR (Set Pending) & ICPR (Clear Pending)
+                     ○ To set pending or clear pending state.
+                     ○ If a specific interrupt is already pending, write a "1" to the corresponding ISPR bit has no effect (See Q4, Interrupt #
+                         2, during Period A)
+                     ○ If a specific interrupt handler is currently executing, write a "1" to the corresponding ICPR does not stop it.
+
+                 - IPR (Priority)
+                     ○ Each 8 bits are used to set the preempt and sub-priority of an interrupt.
+
+                 - NVIC_IABR (Active Bit)
+                     ○ Read the corresponding bit to determine if the specific interrupt is currently active
+                     ○ You should understand "currently active" as: handler has started executing, but not done yet.
+                     ○ Active does not necessarily mean the interrupt handler is executing. It might be preempted by another interrupt
+                        with higher preempt. (See Q5, Interrupt #2 active state is set while the handler is interrupted by interrupt #1)
+                 - System Exceptions Registers
+                     ○ SHPRs (System Handler Priority)
+                     ○ ICSR (Interrupt control and state), used for non-error type system exceptions, set/clear pending states, determine
+                        the current executing exception number.
+                     ○ HCSR (System handler control and state), used for error/fault type system exceptions. Enable/disable, determine
+                        active state.
+                 - Exception-masking Registers
+                     ○ "Mask" as in "disguise" or "ignore"
+                     ○ These registers can be used if you wish to ignore selective interrupts based on their priority.
+
+              Let's now look at codes given:
+
+              (i). void NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
+
+                    The function sets the priority of an interrupt or exception.
+
+                    Hence, it writes to:
+                      ○ IPR for external interrupts
+                      ○ or SHPR for system exceptions
+
+
+
+
+              (ii). void NVIC_SetPriorityGrouping(uint32_t PriorityGroup);
+
+                    This function set the Priority Grouping in NVIC Interrupt Controller.
+
+                    Hence, it writes to:
+                      ○ PRIGROUP field in AIRCR (Application Interrupt and Reset Control Register)
+
+
+
+
+Tut Page 31
+                    ○
+
+
+
+
+              (iii). uint32_t NVIC_EncodePriority (uint32_t PriorityGroup, uint32_t PreemptPriority, uint32_t
+              SubPriority);
+
+                  This function encode the priority for an interrupt. The returned priority value can be used for NVIC_SetPriority(...)
+
+                  Hence, it does not write to any register, it simply processes some values.
+
+
+
+
+Tut Page 32
+Tutorial 07: Universal Asynchronous Receiver/Transmitter (UART)
+2024年11月11日           11:26
+
+
+
+
+      [T]EE2028
+     Tutorial 7 ...
+
+
+
+  UART Protocol Summary
+
+     - Send: each character is sent as a frame:
+
+
+
+
+       * LSB of the character is sent first.
+
+     - Receive: Varying sampling frequency:
+
+
+
+
+          ○ While idling, receiver sampling at 16x bit rate.
+          ○ Detects signal LOW for at least half-bit time -> START
+          ○ Reads signal around the middle of each bit
+          ○ Detects 1-bit time of HIGH -> STOP
+          ○ The receiver sampling rate increases again.
+
+
+
+
+                                                                     Q1. UART Transmission
+
+
+
+
+                                                                       - 0xF0 -> 0b 1111 0000
+                                                                       - UART sends LSB first
+                                                                       - Sending order: 0000 1111
+
+
+
+
+                                                                     Q2. Asynchronous vs Synchronous Protocols
+                                                                       - UART is an asynchronous communication mechanism. While the transmitter and receiver have identical settings
+                                                                         concerning how long a bit period is, the receiver does not know when exactly this bit period starts since there
+                                                                         is no shared clock.
+
+                                                                       - Hence, the high-to-low transition of the RX signal at the beginning of the START bit is the only way for the
+                                                                         receiver to know "that was the beginning of the bit period".
+
+                                                                       - To guarantee that the START bit causes a transition, the STOP bit should be of the opposite logic level, and the
+                                                                         default level of the RX (i.e., when idle) should also be the same logic level as STOP.
+                                                                           ○ If the STOP bit is the same logic level as START (LOW), the transition is not guaranteed when two
+                                                                              characters are transmitted back-to-back.
+
+
+
+
+                                                                           ○ If the default level is not the same logic level as STOP (STOP HIGH, idle LOW), a time gap between the two
+                                                                             characters will cause the beginning of the START bit to be indistinguishable.
+
+
+
+
+                                       Tut Page 33
+              Q3. Understanding Baud Rate
+              Given: Baud rate = 10,000. Word length = 8. Parity = None. Stop bits = 1:
+                 - Each Character is sent as a frame of:
+
+
+
+
+                - Size of a frame = 1 + 8 + 1 = 10
+                - The number of frames (characters) that can be sent per second = 10,000 / 10 = 1,000
+
+
+
+
+Tut Page 34
+

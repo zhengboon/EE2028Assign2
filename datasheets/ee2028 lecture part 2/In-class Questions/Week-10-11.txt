@@ -1,0 +1,48 @@
+1. The helper (driver) functions to conﬁgure NVIC can be found in (there could be more
+   than one correct answer)
+      a. CMSIS
+      b. HAL
+      c. BSP
+      d. Core
+
+2. The range of priority levels in ARM Cortex M4 can be up to
+      a. -3 to 240
+      b. -3 to 255
+      c. 0 to 240
+      d. 0 to 255
+
+3. The actual number of programmable/variable priority levels possible in STM32 Chip is
+      a. 255
+      b. 240
+      c. 95
+      d. 16
+
+4. The pressure sensor supports generation of interrupts when the pressure exceeds a
+   certain threshold. This causes the I2C interface (I2C2) to generate an interrupt.
+       a. False
+       b. True
+
+5. An interrupt which is active cannot be pended again until the handler has ﬁnished
+   execution
+       a. True
+       b. False
+
+6. The main() function in an ARM Cortex M4 based system does NOT start at the location
+   0x00000000
+      a. True
+      b. False
+
+7. The register to be written to disable all interrupts/exceptions except Reset, NMI and
+   Hard Fault in one action is
+      a. BASEPRI
+      b. PRIMASK
+      c. FAULTMASK
+      d. SHPR (System Handler Priority Register)
+
+
+
+8. Which are the priority groups that have the same effect on an ARM Cortex M4 based
+   system with an IPR width of 4? Explain your answer.
+   Hint: If the priority group setting is n, bits [n:0] are used for subpriority, and bits
+   [7:(n+1)] are used for preempt priority.
+

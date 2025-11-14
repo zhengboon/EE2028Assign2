@@ -1,0 +1,335 @@
+STM32 I2C – Sequence of Actions
+
+
+                    Ankit Srivastava
+                        EE2028
+                  STM32L4S5xx Datasheet
+              STM32L4+ User Manual RM0432
+            B-L4S5I-IOT01A User Manual UM2708
+                   HTS221 Datasheet
+ Acknowledgement: Slides adapted from Dr Rajesh Panicker
+                                                                                                                     1
+
+                                                ©
+                                                © Copyright
+                                                  Copyright National
+                                                            National University
+                                                                     University of
+                                                                                of Singapore.
+                                                                                   Singapore. All
+                                                                                              All Rights
+                                                                                                  Rights Reserved.
+                                                                                                         Reserved.
+OVERVIEW
+•   Sequence of Actions
+    •   Interplay between CR2 and ISR registers
+    •   Reading and Writing slave registers
+    •   Autoend and Reload modes
+•   Code Walkthrough
+
+
+
+
+                                                                                                                       2
+
+                                                  © Copyright National University of Singapore. All Rights Reserved.
+STM32 I2C: I2C_CR2 AND I2C_ISR
+                                                                            I2C_CR2: Control Register 2
+
+Address offset: 0x04,
+Default value: 0x0000 0000
+           read or set. Don’t clear
+           (self-clearing)
+
+
+
+
+                                                                   I2C_ISR: Interrupt and Status Register
+
+Address offset: 0x18,
+Default value: 0x0000 0001
+
+
+                                                                                                                                                                   3
+
+                                                                                              © Copyright National University of Singapore. All Rights Reserved.
+
+
+                      Ref. to RM0432 (STM32L4+ Technical reference manual) (pg. 1699)
+STM32 I2C: SEQUENCE OF ACTIONS                                                                                                             Status flag set by h/w, polled by s/w in red.
+                                                                                                                                           Action by s/w in response to flag in green.
+                                                                                                                                           SCL is stretched low by h/w while waiting for s/w action.
+ Writing 1 byte (AUTOEND)                                                                                                                  Auto-clearing action of control bits by h/w in orange.
+
+  BUSY                                   START=0          TXIS                                   STOPF                                     Master to Slave in black
+         S > DevAddress_W > A > WriteData > A > P                                                                                          Slave to Master in blue
+         START=1, SADD=DevAddress, RD_WRN=0,                     TXDR=WriteData                          STOPCF=1, Reset CR2
+         NBYTES=1, AUTOEND=1, RELOAD=0
+                                                                                                                                           Dev address = Device address =
+                                                                                                                                           Slave address = Target address
+
+                                                                                                                                           Software = User Program/Code
+Reading 1 byte (AUTOEND)                                                                                                                   Hardware = STM32 I2C hardware
+                                               START=0                                RXNE               STOPF
+     BUSY
+            S > DevAddress_R > A > ReadData > A’ > P                                                                                       I2C Master => STM32 I2C peripheral =
+            START=1, SADD=DevAddress, RD_WRN=1,                                              ReadData=RXDR       STOPCF=1, Reset CR2       STM32 I2C controller = STM32 I2C hardware
+            NBYTES=1, AUTOEND=1, RELOAD=0
+                                                                                                                                           *Note that STM32 I2C can be configured as
+                                                                                                                                           slave but we are not using STM32 I2C slave
+                                                                                                                                           mode in any of our examples
+
+Writing 1 slave register (AUTOEND)
+     BUSY                                       START=0      TXIS                                   TXIS                               STOPF
+
+            S > DevAddress_W > A > RegAddress > A > RegData > A > P
+            START=1, SADD=DevAddress, RD_WRN=0,                     TXDR=RegAddress                        TXDR=RegData                        STOPCF=1, Reset CR2
+            NBYTES=2, AUTOEND=1, RELOAD=0
+
+
+
+
+                                                                                                                                                                                                                     4
+
+                                                                                                                                                © Copyright National University of Singapore. All Rights Reserved.
+STM32 I2C: SEQUENCE OF ACTIONS
+Writing 1 slave register (AUTOEND=0, i.e., software end mode)
+                                                                                                                                 STOP=0
+ BUSY                                    START=0   TXIS                                   TXIS                            TC     STOPF
+
+         S > DevAddress_W > A > RegAddress > A > RegData > A > P
+         START=1, SADD=DevAddress, RD_WRN=0,              TXDR=RegAddress                         TXDR=RegData                 STOP=1   STOPCF=1, Reset CR2
+         NBYTES=2, AUTOEND=0, RELOAD=0
+
+ Using AUTOEND involves less software overhead; software end mode generally used
+ only when there is a potential of change of direction after the current read/write
+
+
+
+Reading 1 slave register
+  BUSY                                   START=0   TXIS
+         S > DevAddress_W > A > RegAddress > A >
+         START=1, SADD=DevAddress, RD_WRN=0,              TXDR=RegAddress
+         NBYTES=1, AUTOEND=0, RELOAD=0
+   TC                                    START=0                            RXNE           STOPF
+         Sr > DevAddress_R > A > RegData > A’ > P
+         START=1, SADD=DevAddress, RD_WRN=1,                                       RegData=RXDR     STOPCF=1, Reset CR2
+         NBYTES=1, AUTOEND=1, RELOAD=0
+
+
+
+
+                                                                                                                                               © Copyright National University of Singapore. All Rights Reserved.
+STM32 I2C: SEQUENCE OF ACTIONS
+Writing Size (<=255) bytes via autoincrement (Size excl. MemAddress byte)
+        •         RELOAD mode is used for the write below, but it could be done without RELOAD if Size <= 254, as 1 byte is
+                  needed for MemAddress byte (i.e., the slave register address)
+        •         Using RELOAD allows the driver functions for read and write to be similar
+ BUSY                                       START=0   TXIS
+
+         S > DevAddress_W > A > MemAddress > A >
+         START=1, SADD=DevAddress, RD_WRN=0,                 TXDR=MemAddress
+         NBYTES=1, AUTOEND=0, RELOAD=1
+  TCR                                                 TXIS                                        TXIS                                         STOPF
+
+                                                       > WriteByte_1 > A >….. > WriteByte_Size > A > P
+                                                             TXDR=*(pData+0)                             TXDR=*(pData+Size-1)                           STOPCF=1, Reset CR2
+         NBYTES=Size, AUTOEND=1, RELOAD=0
+
+
+
+
+Reading Size (<=255) bytes via autoincrement
+  BUSY                                      START=0   TXIS
+
+            S > DevAddress_W > A > MemAddress > A >
+            START=1, SADD=DevAddress, RD_WRN=0,              TXDR=MemAddress
+            NBYTES=1, AUTOEND=0, RELOAD=0
+   TC                                       START=0                            RXNE                                             RXNE            STOPF
+
+            Sr > DevAddress_R > A > ReadByte_1 > A >….. > ReadByte_Size > A’ > P
+            START=1, SADD=DevAddress, RD_WRN=1,                                       *(pData+0)=RXDR                                  *(pData+          STOPCF=1, Reset CR2
+            NBYTES=Size, AUTOEND=1, RELOAD=0                                                                                           Size-1)=RXDR
+
+
+                                                                                                                                       © Copyright National University of Singapore. All Rights Reserved.
+SENSOR IO READ
+
+
+
+
+                                                                                      7
+
+                 © Copyright National University of Singapore. All Rights Reserved.
+BUSY                                   START=0   TXIS
+
+       S > DevAddress_W > A > MemAddress > A >
+       START=1, SADD=DevAddress, RD_WRN=0,              TXDR=MemAddress
+       NBYTES=1, AUTOEND=0, RELOAD=0
+ TC                                    START=0                            RXNE                     RXNE           STOPF
+
+       Sr > DevAddress_R > A > ReadByte_1 > A >….. > ReadByte_Size > A’ > P
+       START=1, SADD=DevAddress, RD_WRN=1,                                       *(pData+0)=RXDR          *(pData+         STOPCF=1, Reset CR2
+       NBYTES=Size, AUTOEND=1, RELOAD=0                                                                   Size-1)=RXDR
+
+                                                                                                                                                     *Note that the code shown here
+                                                                                                                                                     is taken from the HAL library of
+                                                                                                                                                     another STM32 chip —
+                                                                                                                                                     specifically, the STM32L475.
+                                                                                                                                                     While there might be some
+                                                                                                                                                     minor differences when
+                                                                                                                                                     compared to the HAL library for
+                                                                                                                                                     the STM32L4S5 chip that we
+                                                                                                                                                     use in the lab, the core logic
+                                                                                                                                                     and initialization flow remain the
+                                                                                                                                                     same.
+
+                                                                                                                                                     Ideally, the HAL library should
+                                                                                                                                                     be portable across different
+                                                                                                                                                     STM32 chips. However, small
+                                                                                                                                                     variations can exist between
+                                                                                                                                                     versions. These are often
+                                                                                                                                                     introduced due to performance
+                                                                                                                                                     optimizations, software bug
+                                                                                                                                                     fixes, or feedback from
+                                                                                                                                                     developers in subsequent library
+                                                                                                                                                     releases
+
+
+
+
+                                                                                                                                                                                   8
+
+                                                                                                              © Copyright National University of Singapore. All Rights Reserved.
+BUSY                                   START=0   TXIS
+
+       S > DevAddress_W > A > MemAddress > A >
+       START=1, SADD=DevAddress, RD_WRN=0,              TXDR=MemAddress
+       NBYTES=1, AUTOEND=0, RELOAD=0
+ TC                                    START=0                            RXNE                     RXNE           STOPF
+
+       Sr > DevAddress_R > A > ReadByte_1 > A >….. > ReadByte_Size > A’ > P
+       START=1, SADD=DevAddress, RD_WRN=1,                                       *(pData+0)=RXDR          *(pData+         STOPCF=1, Reset CR2
+       NBYTES=Size, AUTOEND=1, RELOAD=0                                                                   Size-1)=RXDR
+
+
+
+
+                                                                                                                                                                                   9
+
+                                                                                                              © Copyright National University of Singapore. All Rights Reserved.
+BUSY                                   START=0   TXIS
+
+       S > DevAddress_W > A > MemAddress > A >
+       START=1, SADD=DevAddress, RD_WRN=0,              TXDR=MemAddress
+       NBYTES=1, AUTOEND=0, RELOAD=0
+ TC                                    START=0                            RXNE                     RXNE           STOPF
+
+       Sr > DevAddress_R > A > ReadByte_1 > A >….. > ReadByte_Size > A’ > P
+       START=1, SADD=DevAddress, RD_WRN=1,                                       *(pData+0)=RXDR          *(pData+         STOPCF=1, Reset CR2
+       NBYTES=Size, AUTOEND=1, RELOAD=0                                                                   Size-1)=RXDR
+
+
+
+
+                                                                                                                                                                                   10
+
+                                                                                                              © Copyright National University of Singapore. All Rights Reserved.
+SENSOR IO WRITE
+
+
+
+
+                                                                                       11
+
+                  © Copyright National University of Singapore. All Rights Reserved.
+BUSY                                      START=0   TXIS
+
+       S > DevAddress_W > A > MemAddress > A >
+       START=1, SADD=DevAddress, RD_WRN=0,                 TXDR=MemAddress
+       NBYTES=1, AUTOEND=0, RELOAD=1
+TCR                                                 TXIS                     TXIS                                STOPF
+
+                                                     > WriteByte_1 > A >….. > WriteByte_Size > A > P
+                                                           TXDR=*(pData+0)          TXDR=*(pData+Size-1)                  STOPCF=1, Reset CR2
+       NBYTES=Size, AUTOEND=1, RELOAD=0
+                                                                                                                                                  *Note that the code shown here
+                                                                                                                                                  is taken from the HAL library of
+                                                                                                                                                  another STM32 chip —
+                                                                                                                                                  specifically, the STM32L475.
+                                                                                                                                                  While there might be some
+                                                                                                                                                  minor differences when
+                                                                                                                                                  compared to the HAL library for
+                                                                                                                                                  the STM32L4S5 chip that we
+                                                                                                                                                  use in the lab, the core logic
+                                                                                                                                                  and initialization flow remain the
+                                                                                                                                                  same.
+
+                                                                                                                                                  Ideally, the HAL library should
+                                                                                                                                                  be portable across different
+                                                                                                                                                  STM32 chips. However, small
+                                                                                                                                                  variations can exist between
+                                                                                                                                                  versions. These are often
+                                                                                                                                                  introduced due to performance
+                                                                                                                                                  optimizations, software bug
+                                                                                                                                                  fixes, or feedback from
+                                                                                                                                                  developers in subsequent library
+                                                                                                                                                  releases
+
+
+
+
+                                                                                                                                                                                12
+
+                                                                                                           © Copyright National University of Singapore. All Rights Reserved.
+BUSY                                      START=0   TXIS
+
+       S > DevAddress_W > A > MemAddress > A >
+       START=1, SADD=DevAddress, RD_WRN=0,                 TXDR=MemAddress
+       NBYTES=1, AUTOEND=0, RELOAD=1
+TCR                                                 TXIS                     TXIS                                STOPF
+
+                                                     > WriteByte_1 > A >….. > WriteByte_Size > A > P
+                                                           TXDR=*(pData+0)          TXDR=*(pData+Size-1)                  STOPCF=1, Reset CR2
+       NBYTES=Size, AUTOEND=1, RELOAD=0
+
+
+
+
+                                                                                                                                                                                13
+
+                                                                                                           © Copyright National University of Singapore. All Rights Reserved.
+BUSY                                      START=0   TXIS
+
+       S > DevAddress_W > A > MemAddress > A >
+       START=1, SADD=DevAddress, RD_WRN=0,                 TXDR=MemAddress
+       NBYTES=1, AUTOEND=0, RELOAD=1
+TCR                                                 TXIS                     TXIS                                STOPF
+
+                                                     > WriteByte_1 > A >….. > WriteByte_Size > A > P
+                                                           TXDR=*(pData+0)          TXDR=*(pData+Size-1)                  STOPCF=1, Reset CR2
+       NBYTES=Size, AUTOEND=1, RELOAD=0
+
+
+
+
+                                                                                                                                                                                14
+
+                                                                                                           © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ •   Sequence of Actions
+     •   Interplay between CR2 and ISR registers
+     •   Reading and Writing slave registers
+     •   Autoend
+         •   Not enabled for Change of direction (Read after Write)
+         •   Enabled for all other cases
+     •   Reload
+         •   Memory (or Slave Register) Address and Bytes to be transferred
+         •   Bytes to be transferred > 255 bytes
+ •   Code Walkthrough
+
+
+                                                                                                                                            15
+
+                                                                       © Copyright National University of Singapore. All Rights Reserved.
+

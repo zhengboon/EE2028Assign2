@@ -1,0 +1,212 @@
+        I2C Sensor - HTS221
+
+
+                   Ankit Srivastava
+                       EE2028
+                 STM32L4S5xx Datasheet
+             STM32L4+ User Manual RM0432
+           B-L4S5I-IOT01A User Manual UM2708
+                  HTS221 Datasheet
+Acknowledgement: Slides adapted from Dr Rajesh Panicker
+                                                                                                                    1
+
+                                               ©
+                                               © Copyright
+                                                 Copyright National
+                                                           National University
+                                                                    University of
+                                                                               of Singapore.
+                                                                                  Singapore. All
+                                                                                             All Rights
+                                                                                                 Rights Reserved.
+                                                                                                        Reserved.
+OVERVIEW
+•   HTS221 Sensor
+•   Registers: Control & Data
+•   HTS221 BSP code walkthrough
+•   Hardware abstraction
+
+
+
+
+                                                                                                       2
+
+                                  © Copyright National University of Singapore. All Rights Reserved.
+HTS221: TEMPERATURE SENSOR
+ •   Measures 16-bit temperature and humidity
+ •   1 Hz to 12.5 Hz output data rate
+ •   SPI and I2C interfaces supported
+ •   Configured in I2C when CS pin is HIGH or unconnected
+     •   Standard mode and Fast mode
+     •   7-bit slave address = 1011111 (0x5F)
+         •   Read address : 10111111 (0xBF)
+         •   Write address : 10111110 (0xBE)
+         •   Hard-coded by the manufacturer. Cannot be changed
+
+
+
+                                                                                                                                      3
+
+                                                                 © Copyright National University of Singapore. All Rights Reserved.
+HTS221: TEMPERATURE SENSOR
+ •   Two different HTS221s could send different
+     values for the same temperature
+     (magnitude)!
+ •   Make use of calibration data to find the
+     actual temperature (magnitude)
+
+
+
+
+                                                                                                                       4
+
+                                                  © Copyright National University of Singapore. All Rights Reserved.
+HTS221 REGISTERS
+
+WHO_AM_I (Device Identification, Address: 0x0F)
+
+
+
+
+• This read-only register contains the device identifier, set to BCh
+     • Value hard-coded by the manufacturer, need not be the same as slave address
+• Read to ensure that we are talking to the correct device
+
+Note: These register addresses are not ‘offsets’, but actual addresses local to the specific I2C Device.
+Another I2C device can have a different register with the same address!
+
+
+
+                                                                                                                                                           5
+
+                                                                                      © Copyright National University of Singapore. All Rights Reserved.
+
+
+                                   Refer to HTS221 Datasheet, (pg. 21)
+ HTS221 REGISTERS
+
+   CTRL_REG1 (Control Register 1, Address: 0x20)
+
+
+• PD: power down control. The device is in power-down mode
+  when PD = 0 (default value after boot). The device is active
+  when PD is set to 1
+• BDU: block data update. 0 -> continuous update; 1 -> output
+  registers not updated until MSB and LSB are both ready with the
+  new value
+    •   Setting it to 1 prevents the reading of LSB and MSB related to
+        different samples
+    •   Not to be set when reading only the MSB to get an approximate
+        reading
+• ODR [1:0] : output data rate selection (see table 17 in page 22)
+    •   BSP library sets it to 01 during initialization, configuring temp.                                                                             6
+        measurement in 1 Hz mode                                                  © Copyright National University of Singapore. All Rights Reserved.
+
+
+                                       Refer to HTS221 Datasheet, (pg. 20 & 22)
+HTS221 REGISTERS
+TEMP_OUT_L (Temperature data [LSB], Address: 0x2A)
+
+
+
+TEMP_OUT_H (Temperature data [MSB], Address: 0x2B)
+
+
+• TOUT[15:0] is a signed (2’s complement) value
+• In HTS221, 7 LSB represents the actual register address while the MSB enables address
+  autoincrement. If the MSB of the 8-bit register address field is ‘1’, autoincrement is
+  enabled
+• Allows multiple sequential registers to be read/written in a single operation
+• We can write (1<<7)|0x2A, i.e., 0xAA, and read two bytes in one transaction to get TOUT                                            7
+
+
+                                                                © Copyright National University of Singapore. All Rights Reserved.
+
+
+                          Refer to HTS221 Datasheet, (pg. 25)
+HTS221 REGISTERS
+
+
+
+
+                                                                            Ta​ctual=T0d​egC+(TO​UT−T0O​UT)×(T1d​egC−T0d​egC)/(T1O​UT−T0O​UT)
+
+• Temperature (magnitude) can be computed by linear interpolation of T_OUT value using
+  calibration regs T0_OUT, T1_OUT, T0_degC_x8, T1_degC_x8 and T1/T0 msb regs
+   • T0_OUT is the value (signed) corresponding to the temperature (magnitude) T0_DegC given by
+       •   (T1/T0 msb[1:0]<<8 | T0_degC_x8[7:0] ) /8 °C                 (‘/8’ approximated as >>3 in BSP library)
+   • T1_OUT is the value (signed) corresponding to the temperature (magnitude) T1_DegC given by
+       •   (T1/T0 msb[3:2]<<8 | T1_degC_x8[7:0] ) /8 °C                                                                                                       8
+
+                                                                                         © Copyright National University of Singapore. All Rights Reserved.
+
+
+                            Refer to HTS221 Datasheet, Fig 9 (pg. 27)
+TEMPERATURE SENSOR CODE WALKTHROUGH
+
+
+
+
+                                                                                                      9
+
+                                 © Copyright National University of Singapore. All Rights Reserved.
+TEMPERATURE SENSOR CODE WALKTHROUGH
+
+
+
+
+                                                                                                      10
+
+                                 © Copyright National University of Singapore. All Rights Reserved.
+TEMPERATURE SENSOR CODE WALKTHROUGH
+
+
+
+
+       CTRL_REG1 (Control Register 1, Address: 0x20)                                                                        11
+
+                                                       © Copyright National University of Singapore. All Rights Reserved.
+TEMPERATURE SENSOR CODE WALKTHROUGH
+
+
+
+
+                                                                                                      12
+
+                                 © Copyright National University of Singapore. All Rights Reserved.
+ TEMPERATURE SENSOR CODE WALKTHROUGH
+SENSOR_IO_Read  Write of 1 byte followed by a read of 1 byte
+    •    Write: Total 2 bytes to be sent over the I2C bus
+           •   0xBE : slave address, to select HTS221 + W
+           •   0x20 : to select HTS221_CTRL_REG1
+    •    Read: Total 1 byte to be sent, and 1 byte to be received over the I2C bus
+           •   0xBF : slave address, to select HTS221 + R
+           •   0x?? : CTRL_REG1_content sent by the slave
+    •    The exact sequence on the bus is
+           •   S > 0xBE > A > 0x20 > A > Sr > 0xBF > A > 0x?? > A’ > P
+
+
+
+
+ SENSOR_IO_Write  A single write operation of 2 bytes
+     •   Total 3 bytes to be sent over the I2C bus
+           •   0xBE : slave address, to select HTS221 + W
+           •   0x20 : to select HTS221_CTRL_REG1
+           •   0b1xxxx101 : Content to be written into HTS221_CTRL_REG1                             Actions by slave in brown
+     •   The exact sequence on the bus is                                                           Actions by master in blue
+           •   S > 0xBE > A > 0x20 > A > 0b1xxxx101 > A > P                                                                                               13
+
+                                                                                     © Copyright National University of Singapore. All Rights Reserved.
+CONCLUSION
+ •   HTS221 Sensor
+ •   Registers: Control & Data
+ •   HTS221 BSP code walkthrough
+ •   Hardware abstraction
+
+
+
+
+                                                                                                        14
+
+                                   © Copyright National University of Singapore. All Rights Reserved.
+

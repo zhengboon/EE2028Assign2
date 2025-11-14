@@ -1,0 +1,804 @@
+                                                                                            SPBTLE-RF
+
+             Very low power network processor module for Bluetooth® low
+                                                            energy v4.1
+                                                                                         Datasheet - production data
+
+                                                                  • On-board chip antenna
+                                                                  • Operating supply voltage: from 1.7 to 3.6 V
+                                                                  • Operating temperature range: -40 °C to 85 °C
+
+                                                                  Applications
+                                                                  • Watches
+                                                                  • Fitness, wellness and sports
+                                                                  • Consumer medical
+                                                                  • Security/proximity
+                                                                  • Remote control
+                                                                  • Home and industrial automation
+Features                                                          • Assisted living
+
+• Bluetooth v4.1 compliant                                        • Mobile phone peripherals
+  – Supports master and slave modes                               • PC peripherals
+  – Multiple roles supported simultaneously
+• Embedded Bluetooth low energy protocol stack                    Description
+  – GAP, GATT, SM, L2CAP, LL, RFPHY                               The SPBTLE-RF is an easy to use Bluetooth® low
+• Bluetooth low energy profiles provided                          energy master/slave network processor module,
+  separately                                                      compliant with Bluetooth v4.1. The SPBTLE-RF
+                                                                  module supports multiple roles simultaneously,
+• Bluetooth radio performance:
+                                                                  and can act at the same time as Bluetooth low
+  – Embedded ST BlueNRG-MS                                        energy sensor and hub device.
+  – Tx power: + 4 dBm
+                                                                  The entire Bluetooth low energy stack and
+  – Rx sensitivity: - 88 dBm
+                                                                  protocols are embedded into SPBTLE-RF
+  – Provides up to 92 dB link budget with                         module. The external host application processor,
+     excellent link reliability                                   where the application resides, is connected to the
+• Host interface                                                  SPBTLE-RF module through a standard SPI
+  – SPI, IRQ, and RESET                                           interface.
+  – On-field stack upgrading available via SPI                    The SPBTLE-RF module provides a complete RF
+• AES security co-processor                                       platform in a tiny form factor. Radio, antenna, high
+                                                                  frequency and LPO oscillators are integrated to
+• Certification
+                                                                  offer a certified solution to optimize the time to
+  – CE qualified                                                  market of the final applications.
+  – FCC, IC modular approval certified
+                                                                  The SPBTLE-RF can be powered directly with a
+  – TELEC
+                                                                  standard 3 V coin cell battery, a pair of AAA
+  – BQE qualified                                                 batteries or any power source from 1.7 to 3.6 V.
+
+
+
+
+January 2021                                           DocID027851 Rev 11                                         1/24
+This is information on a product in full production.                                                         www.st.com
+Contents                                                                                                            SPBTLE-RF
+
+Contents
+
+1          General description . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 3
+
+2          Block diagram . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 4
+
+3          Software architecture . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+           3.1      Bluetooth firmware implementation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+
+4          Hardware specifications . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+           4.1      Absolute maximum ratings . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+           4.2      Recommended operating conditions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+           4.3      Current consumption . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+           4.4      Current consumption comparison . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+           4.5      Pin assignment . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+           4.6      Mechanical dimensions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .11
+
+5          Hardware design . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+           5.1      Reflow soldering . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+
+6          Regulatory compliance . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+           6.1      FCC certification . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+                    6.1.1       Labeling instructions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+                    6.1.2       Product manual instructions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+           6.2      IC certification . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+                    6.2.1       Labeling instructions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+                    6.2.2       Product manual instructions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+           6.3      CE certification . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+           6.4      Bluetooth certification . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+           6.5      TELEC certification . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+
+7          Ordering information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+
+8          Package information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+
+9          Traceability . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+
+
+2/24                                            DocID027851 Rev 11
+SPBTLE-RF                                                                                                Contents
+
+
+10          Revision history . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+
+
+
+
+                                              DocID027851 Rev 11                                                3/24
+                                                                                                                        24
+General description                                                                         SPBTLE-RF
+
+
+1          General description
+
+           The SPBTLE-RF is a single-mode Bluetooth low energy master/slave network processor
+           module compliant with Bluetooth® v4.1.
+           The SPBTLE-RF module integrates a 2.4 GHz RF radio the ST BlueNRG-MS on which a
+           complete power-optimized stack for Bluetooth single mode protocol runs, providing
+           •   Master, slave role support
+           •   GAP: central, peripheral, observer or broadcaster roles
+           •   ATT/GATT: client and server
+           •   SM: privacy, authentication and authorization
+           •   L2CAP
+           •   Link Layer: AES-128 encryption and decryption
+           The BlueNRG-MS radio embeds nonvolatile Flash memory allows on-field stack upgrading.
+           In addition, according the Bluetooth specification v4.1 the SPBTLE-RF module provides:
+           •   Multiple roles simultaneously support
+           •   Support simultaneous advertising and scanning
+           •   Support being slave of up to two masters simultaneously
+           •   Privacy V1.1
+           •   Low duty cycle directed advertising
+           •   Connection parameters request procedure
+           •   LE Ping
+           •   32 bits UUIDs
+           •   L2CAP connection oriented channels
+           The SPBTLE-RF module is equipped with Bluetooth low energy profiles in C source code,
+           available for the ST radio BlueNRG-MS.
+           The external host application processor, where the application resides, is interfaced with the
+           SPBTLE-RF module through an application controller interface protocol, which is based on
+           a standard SPI interface.
+           The SPBTLE-RF module enables wireless connectivity into electronic devices, not requiring
+           any RF experience or expertise for integration into the final product. The SPBTLE-RF
+           module provides a complete RF platform in a tiny form factor and being a certified solution
+           optimizes the time to market of the final applications.
+           The SPBTLE-RF module allows applications to meet of the tight advisable peak current
+           requirements imposed with the use of standard coin cell batteries. Optimized results are
+           obtained when the embedded high-efficiency DC-DC step-down converter is used.
+           SPBTLE-RF can be powered directly with a standard 3 V coin cell battery, a pair of AAA
+           batteries or any power source from 1.7 to 3.6 V.
+           ST may update the FW provided with the modules at any time. ST recommends that users
+           regularly check for documentation and the current FW version available at
+           www.st.com/bluemodules.
+
+
+
+
+4/24                                     DocID027851 Rev 11
+SPBTLE-RF                                                 Block diagram
+
+
+2           Block diagram
+
+                             Figure 1. HW block diagram
+
+
+
+
+                            DocID027851 Rev 11                     5/24
+                                                                          24
+Software architecture                                                   SPBTLE-RF
+
+
+3          Software architecture
+
+3.1        Bluetooth firmware implementation
+                        Figure 2. SPBTLE-RF application block diagram
+
+
+
+
+6/24                            DocID027851 Rev 11
+SPBTLE-RF                                                                                Hardware specifications
+
+
+4           Hardware specifications
+
+            General conditions (VIN= 3.3 V and 25 °C)
+
+
+4.1         Absolute maximum ratings
+
+                                           Table 1. Absolute maximum ratings
+                                  Rating                          Min             Typ.        Max         Unit
+
+            Storage temperature range                             -40              -          +85         °C
+            Supply voltage, VIN                                   -0.3             -          3.9          V
+            I/O pin Voltage (VIO five-volt tolerant pin)          -0.3             -          3.9          V
+            RF saturation input power                               -              8           -          dBm
+
+
+
+4.2         Recommended operating conditions
+
+                                     Table 2. Recommended operating conditions
+                                  Rating                          Min             Typ.        Max         Unit
+
+            Storage temperature range                             -40              -          +85         °C
+            Supply voltage, VIN                                   1.7             3.3         3.6          V
+            Signals & I/O pin voltage
+                                                                  1.7              -          3.6          V
+            (according supply voltage)
+            RF Frequency                                         2402              -         2480         MHz
+
+
+
+4.3         Current consumption
+
+                                        Table 3. Current consumption summary
+               Symbol              Parameter                     Test conditions                   Typ.   Unit
+
+                                                       Shutdown / STANDBY                          1.98    µA
+                                                       Peripheral in advertising (20 ms)        0.850      mA
+                                                       Peripheral in advertising (80 ms)        0.250      mA
+                 IDD              Supply current
+                                                       Peripheral in connection                 0.103      mA
+                                                       Central in scan mode                        7.72    mA
+                                                       Central in connection                    0.105      mA
+
+
+
+
+                                              DocID027851 Rev 11                                                 7/24
+                                                                                                                        24
+Hardware specifications                                                                  SPBTLE-RF
+
+
+4.4         Current consumption comparison
+            The measured values reported in table 3 have been compared with the value calculated
+            with the “BlueNRG current consumption estimation tool”, available on ST.com at:
+            http://www.st.com/web/en/catalog/tools/PF260405
+            The comparison between measured and calculated values is reported in following Table 4.
+
+
+                        Table 4. Current consumption comparison summary
+                                                                                        Calculated
+ Symbol    Parameter       Test conditions       Typ.     Peak    Calculated   Unit
+                                                                                      value reference
+
+                                                                                       BlueNRG-MS
+                         Shutdown /
+                                                 1.98                 2         µA    Datasheet Table
+                         STANDBY
+                                                                                            7
+                         Peripheral in                                                  Screenshot
+                                                 0.850     11.5     0.985       mA
+                         advertising (20 ms)                                             Figure 3
+                         Peripheral in                                                  Screenshot
+                                                 0.250     15.7     0.247       mA
+   IDD    Supply current advertising (80 ms)                                             Figure 4
+                         Peripheral in                                                  Screenshot
+                                                 0.103      15      0.119       mA
+                         connection                                                      Figure 5
+                         Central in scan                                                Screenshot
+                                                 7.72      8.5     7.1 - 7.4    mA
+                         mode                                                            Figure 6
+                         Central in                                                     Screenshot
+                                                 0.105    12.85     0.106       mA
+                         connection                                                      Figure 7
+
+
+            For each calculated value refer to the following screenshot
+
+                                      Figure 3. Peripheral in advertising (20 ms)
+
+
+
+
+8/24                                         DocID027851 Rev 11
+SPBTLE-RF                                            Hardware specifications
+
+
+            Figure 4. Peripheral in advertising (80 ms)
+
+
+
+
+                Figure 5. Peripheral in connection
+
+
+
+
+                  DocID027851 Rev 11                                    9/24
+                                                                               24
+Hardware specifications                                     SPBTLE-RF
+
+
+                          Figure 6. Central in scan mode
+
+
+
+
+                          Figure 7. Central in connection
+
+
+
+
+10/24                     DocID027851 Rev 11
+SPBTLE-RF                                                                  Hardware specifications
+
+
+4.5         Pin assignment
+                                     Figure 8. Pin connection
+
+
+
+
+                                      Table 5. Pin assignment
+                    Name   Type     Pin #                 Description              V max. Tolerant
+
+                                              SPI Interface
+                                            SPI IRQ (SLAVE has data for
+            SPI_IRQ          O        4                                                   Vin
+                                            MASTER)
+            SPI_CLK           I       7     SPI CLOCK (Max. 8 MHz)                        Vin
+            SPI_MISO         O        8     SPI MISO (MASTER in / SLAVE out)              Vin
+            SPI_MOSI          I       9     SPI MOSI (MASTER out SLAVE in)                Vin
+            SPI_CS            I      10     SPI “Chip select” (SPI slave select)          Vin
+                                            Power and ground
+            Vin                       5     Vin                                    (1.7V - 3.6V max.)
+            GND                       6     GND
+                                                  Reset
+            BT_RESET          I      11     Reset input (active low < 0.35 Vin)    (1.7V - 3.6V max.)
+                                                  LPO
+            EXT_LPCLK         I       1     Not connected
+            GPIO2            I/O      2     Not connected
+            ANA TEST 0        I       3     Not connected
+
+
+
+
+                                   DocID027851 Rev 11                                           11/24
+                                                                                                        24
+Hardware specifications                                      SPBTLE-RF
+
+
+4.6        Mechanical dimensions
+                           Figure 9. Mechanical dimensions
+
+
+
+
+12/24                       DocID027851 Rev 11
+SPBTLE-RF                                         Hardware specifications
+
+
+            Figure 10. Recommend land pattern top view
+
+
+
+
+                  DocID027851 Rev 11                                13/24
+                                                                            24
+Hardware design                                                                          SPBTLE-RF
+
+
+5         Hardware design
+
+          SPBTLE-RF module supports SPI hardware interfaces.
+Note:     - All unused pins should be left floating; do not ground.
+          - All GND pins must be well grounded.
+          - The area around the module should be free of any ground planes, power planes, trace
+          routings, or metal for 6 mm from the module antenna position, in all directions.
+          - Traces should not be routed underneath the module.
+
+
+5.1       Reflow soldering
+          The SPBTLE-RF is a high temperature strength surface mount Bluetooth® module supplied
+          on a 11 pin, 4-layer PCB. The final assembly recommended reflow profiles are indicated
+          here below.
+          Soldering phase has to be executed with care: in order to avoid undesired melting
+          phenomenon, particular attention has to be taken on the set up of the peak temperature.
+          Here following some suggestions for the temperature profile based on following
+          recommendations.
+
+                                                 Table 6. Soldering
+                            Profile feature                           PB-free assembly
+
+           Average ramp up rate (TSMAX to Tp)                           3°C/ sec max
+                                 Preheat
+           Temperature min (TS mn)                                         150 °C
+           Temperature max (TS max)                                        200 °C
+           Time (tS min to tS max) (tS)                                  60-100 sec
+                       Time maintained above:
+           Temperature TL                                                  217 °C
+           Time tL                                                        60-70 sec
+           Peak temperature (TP)                                         240 + 0 °C
+           Time within 5 °C of actual peak temperature (TP)               10-20 sec
+           Ramp down rate                                                 6 °C/sec
+           Time from 25 °C to peak temperature                          8 minutes max
+
+
+
+
+14/24                                      DocID027851 Rev 11
+SPBTLE-RF                                   Hardware design
+
+
+            Figure 11. Soldering profiles
+
+
+
+
+            DocID027851 Rev 11                        15/24
+                                                              24
+Regulatory compliance                                                                      SPBTLE-RF
+
+
+6         Regulatory compliance
+
+6.1       FCC certification
+          This module has been tested and found to comply with the FCC part 15 rules. These limits
+          are designed to provide reasonable protection against harmful interference in approved
+          installations. This equipment generates, uses, and can radiate radio frequency energy and,
+          if not installed and used in accordance with the instructions, may cause harmful interference
+          to radio communications.
+          However, there is no guarantee that interference may not occur in a particular installation.
+          This device complies with part 15 of the FCC rules. Operation is subject to the following two
+          conditions:
+          1.    This device may not cause harmful interference,
+          and
+          2.    this device must accept any interference received, including interference that may
+                cause undesired operation.
+          Modifications or changes to this equipment not expressly approved by STMicroelectronics
+          may render void the user's authority to operate this equipment.
+
+          Modular approval
+          FCC ID: S9NSPBTLERF
+          In accordance with FCC part 15, the SPBTLE-RF is listed as a modular transmitter device.
+          This module is evaluated for stand-alone use only. Finished products incorporating multiple
+          transmitters must comply with colocation and RF exposure requirements in accordance with
+          FCC multi-transmitter product procedures. Collocated transmitters operating in portable RF
+          Exposure conditions (e.g. <20 cm from persons including but not limited to body worn and
+          hand held devices) may require separate approval.
+
+6.1.1     Labeling instructions
+          When integrating the SPBTLE-RF into the final product, the OEM must ensure that the FCC
+          labeling requirements are satisfied. A statement must be included on the exterior of the final
+          product which indicates the product includes a certified module. The label should state the
+          following (or similar wording that conveys the same meaning):
+
+                                         Contains FCC ID: S9NSPBTLERF
+                        OR
+                                    This product contains FCC ID: S9NSPBTLERF
+
+
+          The OEM must include the following statements on the exterior of the final product unless
+          the product is too small (e.g. less than 4 x 4 inches):
+          This device complies with Part 15 of the FCC Rules. Operation is subject to the following
+          two conditions:
+
+
+
+
+16/24                                   DocID027851 Rev 11
+SPBTLE-RF                                                                        Regulatory compliance
+
+
+            1.    this device may not cause harmful interference,
+            and
+            2.    this device must accept any interference received, including any interference that may
+                  cause undesired operation.
+
+6.1.2       Product manual instructions
+            This section applies to OEM final products containing the SPBTLE-RF module, subject to
+            FCC compliance. The final product manual must contain the following statement (or a
+            similar statement that conveys the same meaning):
+
+
+                   Warning:     Changes or modifications not expressly approved by the
+                                party responsible for compliance could void the user's
+                                authority to operate the equipment. (Part. 15.21)
+
+
+            In the case where an OEM seeks Class B (residential) limits for the final product, the
+            following statement must be included in the final product manual:
+Note:       This equipment has been tested and found to comply with the limits for a Class B digital
+            device, pursuant to part 15 of the FCC Rules. These limits are designed to provide
+            reasonable protection against harmful interference in a residential installation. This
+            equipment generates, uses and can radiate radio frequency energy and, if not installed and
+            used in accordance with the instructions, may cause harmful interference to radio
+            communications. However, there is no guarantee that interference will not occur in a
+            particular installation. If this equipment does cause harmful interference to radio or
+            television reception, which can be determined by turning the equipment off and on, the user
+            is encouraged to try to correct the interference by one or more of the following measures:
+            •     Reorient or relocate the receiving antenna.
+            •     Increase the separation between the equipment and receiver.
+            •     Connect the equipment into an outlet on a circuit different from that to which the
+                  receiver is connected.
+            •     Consult the dealer or an experienced radio/TV technician for help.
+            In the case where an OEM seeks the lesser category of a Class A digital device for the final
+            product, the following statement must be included in the final product manual:
+Note:       This equipment has been tested and found to comply with the limits for a Class A digital
+            device, pursuant to part 15 of the FCC Rules. These limits are designed to provide
+            reasonable protection against harmful interference when the equipment is operated in a
+            commercial environment. This equipment generates, uses, and can radiate radio frequency
+            energy and, if not installed and used in accordance with the instruction manual, may cause
+            harmful interference to radio communications. Operation of this equipment in a residential
+            area is likely to cause harmful interference in which case the user will be required to correct
+            the interference at his expense.
+
+
+6.2         IC certification
+            The SPBTLE-RF module has been tested and found compliant with the IC RSS-210 rules.
+            These limits are designed to provide reasonable protection against harmful interference in
+
+
+                                           DocID027851 Rev 11                                          17/24
+                                                                                                               24
+Regulatory compliance                                                                      SPBTLE-RF
+
+
+          approved installations. This equipment generates, uses, and can radiate radio frequency
+          energy and, if not installed and used in accordance with the instructions, may cause harmful
+          interference to radio communications.
+          However, there is no guarantee that interference may not occur in a particular installation.
+          This device complies with RSS-210 of the IC rules. Operation is subject to the following two
+          conditions:
+          1.    this device may not cause harmful interference,
+          and
+          2.    this device must accept any interference received, including interference that may
+                cause undesired operation.
+          Modifications or changes to this equipment not expressly approved by STMicroelectronics
+          may render void the user's authority to operate this equipment.
+
+          Modular approval
+          IC: 8976C-SPBTLERF
+          In accordance with IC RSS-210, the SPBTLE-RF is listed as a modular transmitter device.
+          This module is evaluated for stand-alone use only. Finished products incorporating multiple
+          transmitters must comply with colocation and RF exposure requirements in accordance with
+          IC multi-transmitter product procedures. Collocated transmitters operating in portable RF
+          Exposure conditions (e.g. <20cm from persons including but not limited to body worn and
+          hand held devices) may require separate approval.
+
+6.2.1     Labeling instructions
+          When integrating the SPBTLE-RF into the final product, the OEM must ensure that the IC
+          labeling requirements are satisfied. A statement must be included on the exterior of the final
+          product which indicates that the product includes a certified module. The label should state
+          the following (or similar wording that conveys the same meaning):
+
+
+                                        Contains IC: 8976C-SPBTLERF
+                        OR
+                                  This product contains IC: 8976C-SPBTLERF
+
+
+          The OEM must include the following statements on the exterior of the final product unless
+          the product is too small (e.g. less than 4 x 4 inches):
+          This device complies with RSS-210 of the IC Rules. Operation is subject to the following two
+          conditions:
+          1.    this device may not cause harmful interference,
+          and
+          2.    this device must accept any interference received, including any interference that may
+                cause undesired operation.
+
+
+
+
+18/24                                   DocID027851 Rev 11
+SPBTLE-RF                                                                        Regulatory compliance
+
+
+6.2.2       Product manual instructions
+            This section applies to OEM final products containing the SPBTLE-RF module, subject to IC
+            compliance. The final product manual must contain the following statement (or a similar
+            statement that conveys the same meaning):
+
+
+                  Warning:      Changes or modifications not expressly approved by the
+                                party responsible for compliance could void the user's
+                                authority to operate the equipment. (RSS-210)
+
+
+            In the case where an OEM seeks Class B (residential) limits for the final product, the
+            following statement must be included in the final product manual:
+Note:       This equipment has been tested and found to comply with the limits for a Class B digital
+            device, pursuant to RSS-210 of the IC Rules. These limits are designed to provide
+            reasonable protection against harmful interference in a residential installation. This
+            equipment generates, uses and can radiate radio frequency energy and, if not installed and
+            used in accordance with the instructions, may cause harmful interference to radio
+            communications. However, there is no guarantee that interference will not occur in a
+            particular installation. If this equipment does cause harmful interference to radio or
+            television reception, which can be determined by turning the equipment off and on, the user
+            is encouraged to try to correct the interference by one or more of the following measures:
+            •    Reorient or relocate the receiving antenna.
+            •    Increase the separation between the equipment and receiver.
+            •    Connect the equipment into an outlet on a circuit different from that to which the
+                 receiver is connected.
+            •    Consult the dealer or an experienced radio/TV technician for help.
+            In the case where an OEM seeks the lesser category of a Class A digital device for the final
+            product, the following statement must be included in the final product manual:
+Note:       This equipment has been tested and found to comply with the limits for a Class A digital
+            device, pursuant to RSS-210 of the IC Rules. These limits are designed to provide
+            reasonable protection against harmful interference when the equipment is operated in a
+            commercial environment. This equipment generates, uses, and can radiate radio frequency
+            energy and, if not installed and used in accordance with the instruction manual, may cause
+            harmful interference to radio communications. Operation of this equipment in a residential
+            area is likely to cause harmful interference in which case the user will be required to correct
+            the interference at his expense.
+
+
+6.3         CE certification
+            The module has been certified according to the following certification rules:
+            •    ETSI EN 300 328 V 2.1.1 (2016-11)(a)
+            •    ETSI EN 301 489-17 V3.1.1 (2017-02)(b)
+            •    ETSI EN 301 489-1 V2.1.1 (2017-02)(c)
+            •    EN 62368-1:2020/A11:2020(d)
+            •    EN 62479:2010
+
+
+
+                                           DocID027851 Rev 11                                         19/24
+                                                                                                              24
+Regulatory compliance                                                                                       SPBTLE-RF
+
+
+          The module is provided by CE marking:
+
+
+
+
+          The module has obtained the RED certificate: No. 0051-RED-0011
+          The certified module production firmware release is: 7.X
+          For additional information please refer to:
+          STMicroelectronics Via C. Olivetti 2, Agrate Brianza 20864 (ITALY)
+
+
+6.4       Bluetooth certification
+          The module with embedded stack and profile has been qualified in accordance with SIG
+          qualification rules:
+          •     Declaration ID: D028766
+          •     Qualified design ID: 71984
+          •     Product type: End Product
+          •     Core spec version: 4.1
+          •     Product description: Bluetooth low energy v4.1 module
+
+
+6.5       TELEC certification
+          Module has been tested according to following TELEC certification rules:
+          Type of specified radio equipment
+                –     Radio equipment according to certification ordinance article 2-1-9
+          Sophisticated low power radio data communication system in 2.4 GHz band.
+          Class of emissions, assigned frequency, and antenna power
+                –     F1D, G1D 2441 MHz channel separation 2 MHz/40 channel, 0.0025 W
+          Certification number
+                –     006-000395
+          Design and manufacturing are certified based on Japan radio law 38-24.
+
+
+
+
+          a. ETSI EN 300 328 V 2.1.1 (2016 11): “electromagnetic compatibility and radio spectrum Matters (ERM);
+             Wideband transmission systems; data transmission equipment operating in the 2.4 GHZ ISM band and using
+             wideband modulation techniques; harmonized EN covering essential requirements under article 3.2 of the
+             R&TTE directive”.
+          b. ETSI EN 301 489-17 V 3.1.1 (2017 02): “electromagnetic compatibility and radio spectrum Matters (ERM);
+             electromagnetic compatibility (EMC) standard for radio equipment and services; part 17: specific condition for
+             2.4 GHz wideband transmission systems and 5 GHz high performance RLAN equipment”.
+          c. ETSI EN 301 489-1 V2.1.1 (2017 02): “electromagnetic compatibility and radio spectrum Matters (ERM);
+             electromagnetic compatibility (EMC) standard for radio equipment and services; part 1: Common technical
+             requirements”.
+          d. EN 62368-1:2020/A11:2020: “Audio/video, information and communication technology equipment - Part 1:
+             Safety requirements”.
+
+
+
+20/24                                          DocID027851 Rev 11
+SPBTLE-RF                                                                Ordering information
+
+
+7           Ordering information
+
+                                   Table 7. Ordering information
+              Order code             Description                   Packing         MOQ
+
+             SPBTLE-RFTR   Bluetooth® V4.1 low energy module   Tape and reel      1000 pcs
+
+
+
+
+                                   DocID027851 Rev 11                                    21/24
+                                                                                                 24
+Package information                                                                         SPBTLE-RF
+
+
+8         Package information
+
+          In order to meet environmental requirements, ST offers these devices in different grades of
+          ECOPACK packages, depending on their level of environmental compliance. ECOPACK
+          specifications, grade definitions and product status are available at: www.st.com.
+          ECOPACK is an ST trademark.
+
+
+
+
+9         Traceability
+
+          Each module is univocally identified by serial number stored in a 2D data matrix laser
+          marked on the bottom side of the module itself.
+          The serial number has the following format:
+
+                                         Table 8. Traceability information
+                  Letter                                        Meaning
+
+           WW                     Week
+           YY                     Year
+           D                      Product ID family
+           FF                     Production panel coordinate identification
+           NNN                    Progressive serial number.
+
+
+          Each module bulk is identified by a bulk ID.
+          BULK ID and module 2D data matrix are linked by a reciprocal traceability link.
+          The module 2D data matrix traces the lot number of any raw material used.
+
+
+
+
+22/24                                     DocID027851 Rev 11
+SPBTLE-RF                                                                     Revision history
+
+
+10          Revision history
+
+                             Table 9. Document revision history
+                 Date       Revision                            Changes
+
+              07-May-2015      1         Initial release.
+              09-Jul-2015      2         Inserted: Section 4.3 and Section 4.4.
+                                         – Document status promoted from preliminary data to
+              03-Nov-2015      3           production data.
+                                         – Added Section 6.4: Bluetooth certification.
+              17-Dec-2015      4         Updated figure on the cover page.
+              11-Jan-2016      5         Updated BQE feature on the cover page.
+                                         Added paragraph regarding firmware update in
+              08-Jun-2016      6
+                                         Section 1: General description.
+              27-Mar-2017      7         Added new paragraph Section 6.5: TELEC certification.
+              12-Apr-2017      8         Updated figure on the cover page.
+              07-Jul-2017      9         Updated Table 7.
+              04-Oct-2017      10        Updated Section 6.3: CE certification.
+              14-Jan-2021      11        Updated Section 6.3: CE certification.
+
+
+
+
+                               DocID027851 Rev 11                                         23/24
+                                                                                                  24
+                                                                                                                            SPBTLE-RF
+
+
+
+
+                                           IMPORTANT NOTICE – PLEASE READ CAREFULLY
+
+
+STMicroelectronics NV and its subsidiaries (“ST”) reserve the right to make changes, corrections, enhancements, modifications, and
+improvements to ST products and/or to this document at any time without notice. Purchasers should obtain the latest relevant information on
+ST products before placing orders. ST products are sold pursuant to ST’s terms and conditions of sale in place at the time of order
+acknowledgement.
+
+
+Purchasers are solely responsible for the choice, selection, and use of ST products and ST assumes no liability for application assistance or
+the design of Purchasers’ products.
+
+
+No license, express or implied, to any intellectual property right is granted by ST herein.
+
+
+Resale of ST products with provisions different from the information set forth herein shall void any warranty granted by ST for such product.
+
+
+ST and the ST logo are trademarks of ST. For additional information about ST trademarks, please refer to www.st.com/trademarks. All other
+product or service names are the property of their respective owners.
+
+
+Information in this document supersedes and replaces information previously supplied in any prior versions of this document.
+
+
+                                               © 2021 STMicroelectronics – All rights reserved
+
+
+
+
+24/24                                                     DocID027851 Rev 11
+Mouser Electronics
+
+Authorized Distributor
+
+
+
+Click to View Pricing, Inventory, Delivery & Lifecycle Information:
+
+
+
+STMicroelectronics:
+ SPBTLE-RFTR
+
