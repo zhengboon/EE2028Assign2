@@ -1,0 +1,4211 @@
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+2/273
+DS12024 Rev 4
+ 2x 12-bit DAC, low-power sample and hold 
+ 2x operational amplif
+iers with built-in PGA
+ 2x ultra-low-power comparators
+
+20x communication interfaces
+ USB OTG 2.0 full-speed, LPM and BCD
+ 2x SAIs (serial audio interface)
+4 x  I 2 C  F M + ( 1  M b i
+t/s), SMBus/PMBus
+ 6x USART s (ISO 7816, LIN, IrDA, modem)
+ 3x SPIs (5x SPIs with the dual Octo-SPI)
+ CAN (2.0B Ac
+tive) and SDMMC
+
+14-channel DMA controller
+
+True random number generator
+
+CRC calculation unit, 96-bit unique ID
+
+8- to 14-bit camera interface up to 32 MHz 
+(black and white) or 10 MHz (color)
+
+Encryption hardware accelerator: AES 
+(128/256-bit key), HASH (SHA-256)
+
+Development support: serial wire debug 
+(SWD), JTAG, Embedded Trace Macrocell
+
+ 
+(ETM)
+          
+          
+          
+T able 1. Device summary 
+Reference
+Part numbers
+STM32L4S5xx
+STM32L4S5VI, STM32L4S
+5QI, STM32L4S5ZI, STM32L4S5AI
+STM32L4S7xx
+STM32L4S7VI, STM32L4S7ZI, STM32L4S7AI
+STM32L4S9xx
+STM32L4S9VI, STM32L4S9ZI, STM32L4S9AI
+DS12024 Rev 4
+3/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Contents
+6
+Contents
+1
+Introduction . . . . . . . . . . . . 
+. . . . . . . . . . . . 
+. . . . . . . . . . . . 
+. . . . . . . . . . . 12
+2
+Description . . . . . . . . 
+. . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . 
+. . . . . . . . . . . . 13
+3
+Functional overview  . . . . . . 
+. . . . . . . . . . . . 
+. . . . . . . . . . . . 
+. . . . . . . . . . 17
+3.1
+Arm
+®
+ Cortex
+®
+-M4 core with FPU . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+3.2
+Adaptive real-time memory accelerator (ART Accelerator)  . . . . . . . . . . . 17
+3.3
+Memory protection unit . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+3.4
+Embedded Flash memory  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+3.5
+Embedded SRAM . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+3.6
+Multi-AHB bus matrix  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+3.7
+Firewall . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+3.8
+Boot modes  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+3.9
+Cyclic redundancy check calculation unit (CRC)  . . . . . . . . . . . . . . . . . . . 21
+3.10
+Power supply management  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+3.10.1
+Power supply schemes  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+3.10.2
+Power supply supervisor  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+3.10.3
+Voltage regulator  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+3.10.4
+Low-power modes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+3.10.5
+Reset mode . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+3.10.6
+VBA T operation  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+3.1 1
+Interconnect matrix . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+3.12
+Clocks and startup  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 37
+3.13
+General-purpose inputs/outputs (GPIOs) . . . . . . . . . . . . . . . . . . . . . . . . . 40
+3.14
+Direct memory access controller (DMA) . . . . . . . . . . . . . . . . . . . . . . . . . . 40
+3.15
+DMA request router (DMAMux)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+3.16
+Chrom-ART Accelerator (DMA2D) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+3.17
+Chrom-GRC (GFXMMU)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+3.18
+Interrupts and events  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 42
+3.18.1
+Nested vectored interrupt controller (NVIC)
+ . . . . . . . . . . . . . . . . . . . . . . 42
+3.18.2
+Extended interrupt/event controller (EXTI) 
+ . . . . . . . . . . . . . . . . . . . . . . 42
+3.19
+Analog-to-digital converter (ADC)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 43
+Contents
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+4/273
+DS12024 Rev 4
+3.19.1
+T emperature sensor . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . 43
+3.19.2
+Internal voltage reference (VREFINT) . . . . . . . . . . . . . . . . . . . . . . . . . . 44
+3.19.3
+VBA T battery voltage monitoring . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 44
+3.20
+Digital to analog converter (DAC) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 44
+3.21
+Voltage reference buffer (VREFBUF) . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45
+3.22
+Comparators (COMP)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 45
+3.23
+Operational amplifier (OP AMP)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46
+3.24
+T ouch sensing controller (TSC)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 46
+3.25
+LCD-TFT controller (L TDC)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 47
+3.26
+DSI Host (DSIHOST)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 47
+3.27
+Digital filter for sigma-delta modulators (D
+FSDM)  . . . . . . . . . . . . . . . . . . 49
+3.28
+Random number generator (RNG) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 50
+3.29
+Digital camera interface (DCMI) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 50
+3.30
+Advanced encryption standard hardware accelerator (AES) . . . . . . . . . . 51
+3.31
+HASH hardware accelerator (HASH) . . . . . . . . . . . . . . . . . . . . . . . . . . . . 51
+3.32
+Timers and watchdogs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 51
+3.32.1
+Advanced-control timer (TIM1, TIM8)  . . . . . . . . . . . . . . . . . . . . . . . . . . 52
+3.32.2
+General-purpose timers (TIM2, TIM3, TIM4, TIM5, TIM15, TIM16,
+ 
+TIM17) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 53
+3.32.3
+Basic timers (TIM6 and TIM7)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 53
+3.32.4
+Low-power timer (LPTIM1 and LPTIM2)  . . . . . . . . . . . . . . . . . . . . . . . . 53
+3.32.5
+Independent watchdog (IWDG) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 54
+3.32.6
+System window watchdog (WWDG)  . . . . . . . . . . . . . . . . . . . . . . . . . . . 54
+3.32.7
+SysTick timer . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 54
+3.33
+Real-time clock (RTC) and backup registers  . . . . . . . . . . . . . . . . . . . . . . 55
+3.34
+Inter-integrated circuit interface (I
+2
+C) . . . . . . . . . . . . . . . . . . . . . . . . . . . . 55
+3.35
+Universal synchronous/asynchronous re
+ceiver transmitter (USART)  . . . 57
+3.36
+Low-power universal asynchronous rece
+iver transmitter (LPUART)  . . . . 58
+3.37
+Serial peripheral interface (SPI) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 58
+3.38
+Serial audio interfaces (SAI) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 58
+3.39
+Controller area network (CAN) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 59
+3.40
+Secure digital input/output and MultiMediaCards Interface (SDMMC) . . . 60
+3.41
+Universal serial bus on-the-go full-speed (OTG_FS) . . . . . . . . . . . . . . . . 61
+3.42
+Clock recovery system (CRS)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 61
+DS12024 Rev 4
+5/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Contents
+6
+3.43
+Flexible static memory controller (FSMC)  . . . . . . . . . . . . . . . . . . . . . . . . 61
+3.44
+OctoSPI interface (OctoSPI)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 62
+3.45
+OctoSPI IO manager (OctoSPIIOM)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . 63
+3.46
+Development support . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 63
+3.46.1
+Serial wire JT AG debug port (SWJ-DP) . . . . . . . . . . . . . . . . . . . . . . . . . 63
+3.46.2
+Embedded Trace Macrocell . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 64
+4
+Pinouts and pin description . . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . 65
+5
+Memory mapping . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . 113
+6
+Electrical characteristi
+cs  . . . . . . . . . . . 
+. . . . . . . . . . . . . 
+. . . . . . . . . . . 114
+6.1
+Parameter conditions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .1 14
+6.1.1
+Minimum and maximum values . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 14
+6.1.2
+Typical values  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 14
+6.1.3
+Typical curves  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 14
+6.1.4
+Loading capacitor  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 14
+6.1.5
+Pin input voltage  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 14
+6.1.6
+Power supply scheme  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 15
+6.1.7
+Current consumption measurement  . . . . 
+. . . . . . . . . . . . . . . . . . . . . . 1 16
+6.2
+Absolute maximum ratings . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .1 16
+6.3
+Operating conditions  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .1 18
+6.3.1
+General operating conditions 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1 18
+6.3.2
+Operating conditions at power-up / powe
+r-down . . . . . . . . . . . . . . . . . 120
+6.3.3
+Embedded reset and power control bloc
+k characteristics . . . . . . . . . . 120
+6.3.4
+Embedded voltage reference . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 122
+6.3.5
+Supply current characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 124
+6.3.6
+Wakeup time from low-power modes and voltage scaling
+ 
+transition times . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 150
+6.3.7
+External clock source characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . 153
+6.3.8
+Internal clock source charac
+teristics  . . . . . . . . . . . . . . . . . . . . . . . . . . 158
+6.3.9
+PLL characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 165
+6.3.10
+MIPI D-PHY characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 165
+6.3.1 1
+MIPI D-PHY PLL characteristics  . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . 168
+6.3.12
+MIPI D-PHY regulator characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . 169
+6.3.13
+Flash memory characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 170
+6.3.14
+EMC characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 171
+Contents
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+6/273
+DS12024 Rev 4
+6.3.15
+Electrical sensitivity characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . 172
+6.3.16
+I/O current injection characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . 173
+6.3.17
+I/O port characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 174
+6.3.18
+NRST pin characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 180
+6.3.19
+Extended interrupt and event controller input (EXTI) characteristics . . 181
+6.3.20
+Analog switches booster  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 181
+6.3.21
+Analog-to-digital converter characteristic
+s . . . . . . . . . . . . . . . . . . . . . . 182
+6.3.22
+Digital-to-Analog converter characteristics  . . . . . . . . . . . . . . . . . . . . . 195
+6.3.23
+Voltage reference buffer ch
+aracteristics  . . . . . . . . . . . . . . . . . . . . . . . 200
+6.3.24
+Comparator characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 202
+6.3.25
+Operational amplifiers characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . 203
+6.3.26
+T emperature sensor characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . 207
+6.3.27
+V
+BA T 
+monitoring characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 207
+6.3.28
+DFSDM characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 208
+6.3.29
+Timer characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 209
+6.3.30
+Communication interfaces characteristics 
+. . . . . . . . . . . . . . . . . . . . . . 21 1
+6.3.31
+FSMC characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 220
+6.3.32
+OctoSPI characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 237
+6.3.33
+Camera interface (DCMI) timing specifications . . . . . . . . . . . . . . . . . . 244
+6.3.34
+LCD-TFT controller (L TDC) characteristics  . . . . . . . . . . . . . . . . . . . . . 245
+6.3.35
+SD/SDIO/MMC card host interfaces (SDMMC) . . . . . . . . . . . . . . . . . . 246
+7
+Package information . . . . . . . 
+. . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . 249
+7.1
+UFBGA169 package information  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 249
+7.2
+UFBGA144 package information  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 252
+7.3
+LQFP144 package information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 255
+7.4
+WLCSP144 package information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 259
+7.5
+UFBGA132 package information  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 262
+7.6
+LQFP100 package information . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 265
+7.7
+Thermal characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 268
+7.7.1
+Reference document . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 268
+7.7.2
+Selecting the product temperature range  . . . . . . . . . . . . . . . . . . . . . . 268
+8
+Ordering information  . . . . . 
+. . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 271
+9
+Revision history  . . . . . . . . . 
+. . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 272
+DS12024 Rev 4
+7/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+List of tables
+9
+List of tables
+Table 1.
+Device summary . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . . . 2
+Table 2.
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx 
+ 
+features and peripheral counts . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+Table 3.
+Access status versus readout protection level 
+and execution modes. . . . . . . . . . . . . . . . . 18
+Table 4.
+STM32L4S5xx modes overview . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+Table 5.
+Functionalities depending on the working mode. . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+Table 6.
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx 
+ 
+peripherals interconnect matrix. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+Table 7.
+DMA implementation  . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . 40
+Table 8.
+Temperature sensor calibration values . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 44
+Table 9.
+Internal voltage reference calibrati
+on values  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 44
+Table 10.
+Timer feature comparison . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . 52
+Table 11.
+I2C implementation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . 56
+Table 12.
+USART/UART/LPUART features  . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 57
+Table 13.
+SAI implementation. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . 59
+Table 14.
+Legend/abbreviations used in the pinout table . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 72
+Table 15.
+STM32L4Sxxx pin definitions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . 73
+Table 16.
+Alternate function AF0 to AF7. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . 95
+Table 17.
+Alternate function AF8 to AF15. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. 104
+Table 18.
+Voltage characteristics . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . 116
+Table 19.
+Current characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . 117
+Table 20.
+Thermal characteristics .
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . 118
+Table 21.
+General operating conditions  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . 118
+Table 22.
+Operating conditions at power-up / power-down  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 120
+Table 23.
+Embedded reset and power control block characteri
+stics. . . . . . . . . . . . . . . . . . . . . . . . . 120
+Table 24.
+Embedded internal voltage reference . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 122
+Table 25.
+Current consumption in Run 
+and Low-power run modes, code with data
+ 
+processing running from Flash in single Bank, ART enable (Cache ON Prefetch OFF)  . 125
+Table 26.
+Current consumption in Run 
+and Low-power run modes, code with data
+ 
+processing running from Flash in dual bank, ART enable (Cache ON Prefetch OFF) . . . 126
+Table 27.
+Current consumption in Run and Low-power run modes,
+ 
+code with data processing running from Flash in single bank, ART disable. . . . . . . . . . . 127
+Table 28.
+Current consumption in Run and Low-power run modes,
+ 
+code with data processing running from Flash in 
+dual bank, ART disable . . . . . . . . . . . . 128
+Table 29.
+Current consumption in Run and Low-power run modes,
+ 
+code with data processing running from
+ SRAM1 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 129
+Table 30.
+Typical current consumption in Run a
+nd Low-power run modes, with different codes 
+ 
+running from Flash, ART enable (Cache ON Prefetch 
+OFF)  . . . . . . . . . . . . . . . . . . . . . . 130
+Table 31.
+Typical current consumption in Run and Low-power run modes, 
+ 
+with different codes running from Flas
+h, ART disable  . . . . . . . . . . . . . . . . . . . . . . . . . . . 132
+Table 32.
+Typical current consumption in Run a
+nd Low-power run modes, with different codes 
+ 
+running from SRAM1  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 133
+Table 33.
+Current consumption in Sleep and Low-power sleep mode, Flash ON  . . . . . . . . . . . . . . 134
+Table 34.
+Current consumption in Low-power sleep mode, Flash in power-down . . . . . . . . . . . . . . 135
+Table 35.
+Current consumption in Stop 2 mode, SRAM3 disabl
+ed  . . . . . . . . . . . . . . . . . . . . . . . . . 136
+Table 36.
+Current consumption in Stop 2 mode, SRAM3 enabl
+ed . . . . . . . . . . . . . . . . . . . . . . . . . . 137
+Table 37.
+Current consumption in Stop 1 mode . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 138
+Table 38.
+Current consumption in Stop 0 mode . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 139
+List of tables
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+8/273
+DS12024 Rev 4
+Table 39.
+Current consumption in Standby mode  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 139
+Table 40.
+Current consumption in Shutdown
+ mode . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 141
+Table 41.
+Current consumption in VBAT mode  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 143
+Table 42.
+Peripheral current consumption  . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ 145
+Table 43.
+Low-power mode wakeup timings  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 150
+Table 44.
+Regulator modes transition times . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+152
+Table 45.
+Wakeup time using USART/LPUART . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 152
+Table 46.
+High-speed external user clock characteristics. . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 153
+Table 47.
+Low-speed external user clock characteristics . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 154
+Table 48.
+HSE oscillator characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . 155
+Table 49.
+LSE oscillator characteristics (f
+LSE
+ = 32.768 kHz)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 157
+Table 50.
+HSI16 oscillator characteristics. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . 158
+Table 51.
+MSI oscillator characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . . . . 160
+Table 52.
+HSI48 oscillator characteristics. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . 163
+Table 53.
+LSI oscillator characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . 164
+Table 54.
+PLL, PLLSAI1, PLLSAI2 characteri
+stics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 165
+Table 55.
+MIPI D-PHY characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . 166
+Table 56.
+MIPI D-PHY AC characteristics LP mode and HS
+/LP transitions . . . . . . . . . . . . . . . . . . . 167
+Table 57.
+DSI-PLL characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . 168
+Table 58.
+DSI regulator characteristics. . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . 169
+Table 59.
+Flash memory characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. 170
+Table 60.
+Flash memory endurance and data retention . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 170
+Table 61.
+EMS characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . 171
+Table 62.
+EMI characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . . 172
+Table 63.
+ESD absolute maximum ratings . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+2
+Table 64.
+Electrical sensitivities  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . . . 173
+Table 65.
+I/O current injection susceptibility . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . 174
+Table 66.
+I/O static characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . . 174
+Table 67.
+Output voltage characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . 177
+Table 68.
+I/O AC characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . 178
+Table 69.
+NRST pin characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . 180
+Table 70.
+EXTI input characteristics . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . 181
+Table 71.
+Analog switches booster characteristics . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 181
+Table 72.
+ADC characteristics   . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . 182
+Table 73.
+Maximum ADC RAIN  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . 184
+Table 74.
+ADC accuracy - limited test
+ conditions 1  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 186
+Table 75.
+ADC accuracy - limited test
+ conditions 2  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 188
+Table 76.
+ADC accuracy - limited test
+ conditions 3  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 190
+Table 77.
+ADC accuracy - limited test
+ conditions 4  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 192
+Table 78.
+DAC characteristics  . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . 195
+Table 79.
+DAC accuracy . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . 198
+Table 80.
+VREFBUF characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . 200
+Table 81.
+COMP characteristics . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . 202
+Table 82.
+OPAMP characteristics . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . 203
+Table 83.
+TS characteristics . . . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . 207
+Table 84.
+V
+BAT
+ monitoring characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 207
+Table 85.
+V
+BAT
+ charging characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 207
+Table 86.
+DFSDM characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . 208
+Table 87.
+TIMx characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . . 210
+Table 88.
+IWDG min/max timeout period at 32 kHz (LSI) . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 210
+Table 89.
+WWDG min/max timeout value at 120 MHz (PCLK). . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . 210
+Table 90.
+I2C analog filter characteristics. . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . 211
+DS12024 Rev 4
+9/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+List of tables
+9
+Table 91.
+SPI characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . 212
+Table 92.
+SAI characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . 216
+Table 93.
+USB electrical characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . 218
+Table 94.
+USB OTG electrical characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2
+19
+Table 95.
+USB BCD DC electrical characteristics. . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 219
+Table 96.
+Asynchronous non-multiplexed SRAM/PSRAM/NOR
+ read timings  . . . . . . . . . . . . . . . . . 222
+Table 97.
+Asynchronous non-multiplexed SRAM/PSRAM
+/NOR read-NWAIT timings . . . . . . . . . . . 222
+Table 98.
+Asynchronous non-multiplexed SRAM/PSRAM/NOR
+ write timings . . . . . . . . . . . . . . . . . 223
+Table 99.
+Asynchronous non-multiplexed SRAM/PSRAM
+/NOR write-NWAIT timings . . . . . . . . . . . 224
+Table 100. Asynchronous multiplexed PSRAM/NOR read timings.
+ . . . . . . . . . . . . . . . . . . . . . . . . . . 225
+Table 101. Asynchronous multiplexed PSRAM/NOR read-NWAI
+T timings  . . . . . . . . . . . . . . . . . . . . 225
+Table 102. Asynchronous multiplexed PSRAM/NOR write timings  . . . . . . . . . . . . . . . . . . . . . . . . . . 226
+Table 103. Asynchronous multiplexed PSRAM/NOR write-NW
+AIT timings . . . . . . . . . . . . . . . . . . . . 227
+Table 104. Synchronous multiplexed NOR/
+PSRAM read timings  . . . . . . . . . . . . . . . . . . . . . . . . . . . 229
+Table 105. Synchronous multiplexed PSRAM write timings . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 231
+Table 106. Synchronous non-multiplexed NOR/PSRAM
+ 
+read timings  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . 232
+Table 107. Synchronous non-multiplexed PS
+RAM write timings  . . . . . . . . . . . . . . . . . . . . . . . . . . . . 234
+Table 108. Switching characteristics for NAND Flash read cycles . . . . . . . . . . . . . . . . . . . . . . . . . . . 236
+Table 109. Switching characteristics for NAND Flash write cycl
+es . . . . . . . . . . . . . . . . . . . . . . . . . . . 236
+Table 110. OctoSPI characteristics in SDR mode  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 237
+Table 111. OctoSPI characteristics in DTR mode (no DQS)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 238
+Table 112. OctoSPI characteristics in DTR mode (with 
+DQS)/Octal and HyperBus . . . . . . . . . . . . 239
+Table 113. DCMI characteristics. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . . 244
+Table 114. LTDC characteristics  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . 246
+Table 115. Dynamics characteristics: 
+ 
+SD / eMMC characteristics at VDD = 2.7 V to 3.6 V  . . . . . . . . . . . . . . . . . . . . . . . . . . . . 246
+Table 116. Dynamics characteristics: 
+ 
+eMMC characteristics at VDD = 1.71 V to 1.9 V . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 247
+Table 117. UFBGA169 mechanical data  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+249
+Table 118. UFBGA169 recommended PCB design rules (0.5
+ mm pitch BGA)  . . . . . . . . . . . . . . . . . 250
+Table 119. UFBGA144 mechanical data  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+252
+Table 120. UFBGA144 recommended PCB design rules (0.
+80 mm pitch BGA)  . . . . . . . . . . . . . . . . 253
+Table 121. LQFP144 mechanical data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. 256
+Table 122. WLCSP144 mechanical data  . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+260
+Table 123. WLCSP144 recommended PCB design rules  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 261
+Table 124. UFBGA132 mechanical data  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+262
+Table 125. UFBGA132 recommended PCB design rules (0.5
+ mm pitch BGA)  . . . . . . . . . . . . . . . . . 263
+Table 126. LQPF100 mechanical data . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. 265
+Table 127. Package thermal characteristics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. 268
+Table 128. STM32L4Sxxx ordering information scheme  . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . 271
+Table 129. Document revision history  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . 272
+List of figures
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+10/273
+DS12024 Rev 4
+List of figures
+Figure 1.
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx 
+block diagram . . . . . . . . . . . . . . . . . . 16
+Figure 2.
+Multi-AHB bus matrix  . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . . 20
+Figure 3.
+STM32L4S5xx and STM32L4S7xx power supply over
+view . . . . . . . . . . . . . . . . . . . . . . . . 23
+Figure 4.
+STM32L4S9xx power supply overview . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+Figure 5.
+Power-up/down sequence  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . 25
+Figure 6.
+Clock tree . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . . . . . . 39
+Figure 7.
+Voltage reference buffer . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . 45
+Figure 8.
+STM32L4S5xx and STM32L4S7xx UFBGA169 ballout
+(1)
+ . . . . . . . . . . . . . . . . . . . . . . . . . 65
+Figure 9.
+STM32L4S9xx UFBGA169 ballout
+(1)
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 65
+Figure 10.
+STM32L4S5xx and STM32L4S7xx LQFP144 pinout
+(1)
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . 66
+Figure 11.
+STM32L4S9xx LQFP144 pinout
+(1)
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 67
+Figure 12.
+STM32L4S9xx UFBGA144 ballout
+(1)
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 68
+Figure 13.
+STM32L4S9xx WLCSP144 ballout
+(1)
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 68
+Figure 14.
+STM32L4S5xx WLCSP144 ballout
+(1)
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69
+Figure 15.
+STM32L4S5xx UFBGA132 ballout
+(1)
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 69
+Figure 16.
+STM32L4S5xx and STM32L4S7xx LQFP100 pinout
+(1)
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . 70
+Figure 17.
+STM32L4S9xx LQFP100 pinout
+(1)
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 71
+Figure 18.
+Pin loading conditions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . . 114
+Figure 19.
+Pin input voltage . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . 114
+Figure 20.
+Power supply scheme. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . 115
+Figure 21.
+Current consumption measurement . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 116
+Figure 22.
+VREFINT versus temperature  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+123
+Figure 23.
+High-speed external clock source AC timing diag
+ram  . . . . . . . . . . . . . . . . . . . . . . . . . . . 153
+Figure 24.
+Low-speed external clock source AC timing diagra
+m . . . . . . . . . . . . . . . . . . . . . . . . . . . . 154
+Figure 25.
+Typical application with an 8 MHz crystal . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+6
+Figure 26.
+Typical application with a 32.768 kHz crystal . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 157
+Figure 27.
+HSI16 frequency versus temperature . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 159
+Figure 28.
+Typical current consumption versus MSI frequency
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 162
+Figure 29.
+HSI48 frequency versus temperature . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 164
+Figure 30.
+MIPI D-PHY HS/LP clock lane transition timing di
+agram  . . . . . . . . . . . . . . . . . . . . . . . . . 168
+Figure 31.
+MIPI D-PHY HS/LP data lane transition timing di
+agram . . . . . . . . . . . . . . . . . . . . . . . . . . 168
+Figure 32.
+I/O input characteristics  . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . . 176
+Figure 33.
+I/O AC characteristics definition
+(1)
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 180
+Figure 34.
+Recommended NRST pin protection  . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 181
+Figure 35.
+ADC accuracy characteristics . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . 194
+Figure 36.
+Typical connection diagram using the ADC  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 194
+Figure 37.
+12-bit buffered / non-buffered DAC. . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ 197
+Figure 38.
+SPI timing diagram - slave mode and CPHA = 0  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 213
+Figure 39.
+SPI timing diagram - slave mode and CPHA = 1  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 214
+Figure 40.
+SPI timing diagram - master mode . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 2
+14
+Figure 41.
+SAI master timing waveforms . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. 217
+Figure 42.
+SAI slave timing waveforms  . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . 217
+Figure 43.
+USB OTG timings  definition of data signal ri
+se and fall time . . . . . . . . . . . . . . . . . . . . . 219
+Figure 44.
+Asynchronous non-multip
+lexed SRAM/PSRAM/NOR 
+read waveforms  . . . . . . . . . . . . . . 221
+Figure 45.
+Asynchronous non-multip
+lexed SRAM/PSRAM/NOR write wavefo
+rms . . . . . . . . . . . . . . 223
+Figure 46.
+Asynchronous multiplexed PSRAM/NOR read wavefo
+rms. . . . . . . . . . . . . . . . . . . . . . . . 224
+Figure 47.
+Asynchronous multiplexed PSRAM/NOR write wave
+forms  . . . . . . . . . . . . . . . . . . . . . . . 226
+Figure 48.
+Synchronous multiplexed NOR/
+PSRAM read timings  . . . . . . . . . . . . . . . . . . . . . . . . . . . 228
+DS12024 Rev 4
+1 1/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+List of figures
+11
+Figure 49.
+Synchronous multiplexed PSRAM write timings . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . 230
+Figure 50.
+Synchronous non-multiplexed NOR/PSRAM read ti
+mings . . . . . . . . . . . . . . . . . . . . . . . . 232
+Figure 51.
+Synchronous non-multiplexed PSRAM write timings  
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . 233
+Figure 52.
+NAND controller waveforms for read access  . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 235
+Figure 53.
+NAND controller waveforms for wr
+ite access . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 235
+Figure 54.
+NAND controller waveforms for common memory 
+read access . . . . . . . . . . . . . . . . . . . . 235
+Figure 55.
+NAND controller waveforms for common memory 
+write access . . . . . . . . . . . . . . . . . . . . 236
+Figure 56.
+OctoSPI timing diagram - SDR mode . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 241
+Figure 57.
+OctoSPI timing diagram - DDR mode . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 241
+Figure 58.
+OctoSPI HyperBus clock . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. 241
+Figure 59.
+OctoSPI HyperBus read  . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. 242
+Figure 60.
+OctoSPI HyperBus read with 
+double latency  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 242
+Figure 61.
+OctoSPI HyperBus write . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. 243
+Figure 62.
+DCMI timing diagram  . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . 244
+Figure 63.
+SDIO high-speed mode  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . 248
+Figure 64.
+SD default mode . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . 248
+Figure 65.
+DDR mode  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . . 248
+Figure 66.
+UFBGA169 outline  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . 249
+Figure 67.
+UFBGA169 recommended footprint .
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 250
+Figure 68.
+UFBGA169 marking (package top vi
+ew)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 251
+Figure 69.
+UFBGA144 outline  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . 252
+Figure 70.
+UFBGA144 recommended footprint .
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 253
+Figure 71.
+UFBGA144 marking (package top vi
+ew)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 254
+Figure 72.
+LQFP144 outline . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . 255
+Figure 73.
+LQFP144 recommended footprint  . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 257
+Figure 74.
+LQFP144 marking (package top view) . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 258
+Figure 75.
+WLCSP144 outline . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+ . . . 259
+Figure 76.
+WLCSP144 recommended footprint . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 260
+Figure 77.
+WLCSP144 marking (package top view)  . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 261
+Figure 78.
+UFBGA132 outline  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . 262
+Figure 79.
+UFBGA132 recommended footprint .
+ . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 263
+Figure 80.
+UFBGA132 marking (package top vi
+ew)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 264
+Figure 81.
+LQFP100 outline . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+. . . . . 265
+Figure 82.
+LQFP100 recommended footprint  . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 266
+Figure 83.
+LQFP100 marking (package top view) . . . . . . . . . 
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 267
+Introduction
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+12/273
+DS12024 Rev 4
+1 Introduction
+This datasheet provides the ordering informat
+ion and mechanical device characteristics of 
+the STM32L4Sxxx microcontrollers.
+This document should be read in conjunct
+ion with the STM32L4Sxxx reference manual 
+(RM0432). The reference manual is available from the STMicroelectronics website 
+www.st.com
+.
+For information on the Arm
+®
+(a)
+ Cortex
+®
+-M4 core, refer to the Cortex
+®
+-M4 T echnical 
+Reference Manual, available from the www.arm.com website.
+          
+a. Arm is a registered trademark of Arm Limited (o
+r its subsidiaries) in the US and/or elsewhere.
+DS12024 Rev 4
+13/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Description
+64
+2 Description
+The STM32L4S5xx, STM32L4S7xx and STM32L4S9xx devices are an ultra-low-power 
+microcontrollers family (STM32L4+ Se
+ries) based on the high-performance 
+ 
+Arm
+®
+ Cortex
+®
+-M4 32-bit RISC core. They operate at a frequency of up to 120
+ 
+MHz. 
+The Cortex-M4 core features a single-precision
+ floating-point unit (F
+PU), which supports all 
+the Arm
+®
+ single-precision data-processing instructions and all the data types. The Cortex-
+M4 core also implements a full set of DSP (d
+igital signal processing) instructions and a 
+memory protection unit (MPU) which enhances the applications security .
+These devices embed hi
+gh-speed memories (2
+ 
+Mbytes of Flash memory and 640
+ 
+Kbytes of 
+SRAM), a flexible external memory controller (F
+SMC) for static memori
+es (for devices with 
+packages of 100 pins and more), two OctoSP
+I Flash memories interface (available on all 
+packages) and an extensive r
+ange of enhanced
+ I/Os and peripherals connected to two APB 
+buses, two AHB buses and a 32-bit multi-AHB bus matrix.
+The STM32L4Sxxx devices embed several protection mechanisms for embedded Flash 
+memory and SRAM: readout protection, wr
+ite protection, proprietary code readout 
+protection and a firewall.
+These devices offer a fast 12-bit ADC (5 
+Msps), two comparators, two operational 
+amplifiers, two DAC channels, an internal vo
+ltage reference buffer , a low-power RTC, two 
+general-purpose 32-bit timer, two 16-bit PW
+M timers dedicated to motor control, seven 
+general-purpose 16-bit timers, and two 16-bit
+ low-power timers. The devices support four 
+digital filters for external sigma delta modulator
+s (DFSDM). In addition, up to 24 capacitive 
+sensing channels are available. 
+They also feature standard and advanc
+ed communication interfaces such as:
+
+Four I2Cs
+
+Three SPIs
+
+Three USART s, two UART s and one low-power UART
+
+Two SAIs 
+
+One SDMMC
+
+One CAN
+
+One USB OTG full-speed
+
+Camera interface
+
+DMA2D controller
+The STM32L4S5xx, STM32L4
+S7xx and STM32L4S9xx de
+vices embed an AES and a 
+HASH hardware accelerator.
+The devices operate in the -40 to +85
+ 
+°C (+105
+ 
+°C junction) and -40 to +125
+ 
+°C (+130
+ 
+°C 
+junction) temperature ranges from a 1.71 to 3.6
+ 
+V power supply . A comprehensive set of 
+power-saving modes allows the design of low-power applications.
+Some independent power supplies are suppor
+ted like an analog independent supply input 
+for ADC, DAC, OP AMPs and comparators, a 3.3
+ 
+V dedicated supply input for USB and up to 
+14 I/Os, which can be supplied independently down to 1.08
+ 
+V . A VBA T input allows to 
+backup the RTC and backup the registers. 
+The STM32L4Sxxx family offers six packages from 100-pin to 169-pin.
+Description
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+14/273
+DS12024 Rev 4
+          
+T able 2. STM32L4S5xx, STM32L4S7xx and STM32L4S9xx 
+features and peripheral counts 
+Peripheral
+S5VI
+S7VI
+S9VI
+S5QI
+S5ZI
+S7ZI
+S9ZI
+S5AI
+S7AI
+S9AI
+Flash memory 
+2 Mbytes
+SRAM 
+System
+640 (192 + 64 + 384) Kbytes
+Backup
+128 bytes
+External memory 
+controller for static 
+memories (FSMC)
+Ye s
+(1)
+Ye s
+OctoSPI
+1
+2
+Timers
+Advanced 
+control
+2 (16-bit)
+General 
+purpose
+5 (16-bit)
+2 (32-bit)
+Basic
+2 (16-bit)
+Low-power
+2 (16-bit)
+SysTick timer
+1
+Watchdog 
+timers 
+(independent, 
+window)
+2
+Comm. 
+interfaces
+SPI
+3
+I
+2
+C4
+USART/UART
+ 
+UART
+ 
+LPUART
+3
+2
+1
+SAI
+2
+CAN
+1
+USB OTG FS
+Y es
+SDMMC
+Y es
+Digital filters for sigma-
+delta modulators
+Y es (4 filters)
+Number of channels
+8
+RTC
+Y es
+T amper pins
+3
+Camera interface
+Y es
+Chrom-ART Accelerator
+Y es
+Chrom-GRC
+
+N o
+Ye s
+N o
+Ye s
+N o
+Ye s
+LCD - TFT
+No
+Y es
+No
+No
+Y es
+No
+Y es
+MIPI DSI Host
+(2)
+No
+Y es
+No
+Y es
+No
+Y es
+DS12024 Rev 4
+15/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Description
+64
+Random number 
+generator
+Ye s
+AES + HASH
+Y es
+GPIOs
+Wakeup pins
+Nb of I/Os down to 1.08 V
+83
+5
+0
+77
+4
+0
+11 0
+5
+14
+11 5
+5
+14
+11 2
+(3)
+5
+11
+140
+5
+14
+131
+4
+13
+Capacitive sensing 
+Number of channels
+21
+18
+24
+12-bit ADCs
+ 
+Number of channels
+1
+16
+14
+16
+14
+12-bit DAC 
+ 
+Number of channels
+2
+2
+Internal voltage reference 
+buffer
+Ye s
+Analog comparator
+2
+Operational amplifiers
+2
+Max. CPU frequency
+120 MHz
+Operating voltage
+1.71 to 3.6 V
+Operating temperature
+Ambient
+ operating temperature: -40 to 85 °C / -40 to 125 °C
+Packages
+LQFP100
+UFBGA
+132
+LQFP
+144
+WLCS
+P144
+LQFP
+144
+LQFP
+144,
+UFBGA
+144 
+WLCSP
+144
+UFBGA169
+Bootloader
+USART
+1
+USART
+2
+USART
+3
+SPI1
+SPI2
+I2C1
+I2C2
+I2C3 CAN1
+USB 
+through 
+DFU
+1. For the LQFP100 package, only FMC bank1 and NAND bank ar
+e available. Bank1 can only support a multiplexed 
+NOR/PSRAM memory using the NE1 chip select.
+2. The DSI Host interface is only available on the STM32L4S9xx sales types.
+3. 1 10 GPIOs available for 
+WLCSP144 and LQFP144 packages.
+T able 2. STM32L4S5xx, STM32L4S7xx and STM32L4S9xx 
+features and peripheral counts (continued)
+Peripheral
+S5VI
+S7VI
+S9VI
+S5QI
+S5ZI
+S7ZI
+S9ZI
+S5AI
+S7AI
+S9AI
+Description
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+16/273
+DS12024 Rev 4
+Figure 1. STM32L4S5xx, STM32L4S7xx and STM32L4S9xx block diagram
+1. AF: alternate function on I/O pins.
+MSv38487V4
+ USBOTG Flashup to2 MB Flexible static memory controller (FSMC):SRAM, PSRAM, NOR Flash, NAND Flash GPIO PORT A
+AHB/APB2
+EXT IT . WKUP
+1 14 AF  
+P A[15:0]
+TIM1 / PWM
+3 compl. channels (TIM1_CH[1:3]N),
+4 channels (TIM1_CH[1:4]),
+ETR, BKIN, BKIN2 as AF
+USART1
+RX, TX, CK,CTS, 
+RTS as AF
+SPI1
+MOSI, MISO,
+SCK, NSS as AF
+APB2
+60 M Hz
+APB1 30MH z
+MOSI, MISO, SCK, NSS as AF
+DAC1_OUT
+ITF
+WWDG
+RTC_TS
+OSC32_IN
+OSC32_OUT
+VDDA, VSSA
+VDD, VSS, NRST
+smcard
+irDA
+16b
+VBA T = 1.55 to 3.6 V
+SCL, SDA, SMBA as AF
+JT AG & SW
+Arm Cortex-M4
+120 MHz
+FPU 
+NVIC
+ETM
+MPU
+TRACECLK
+TRACED[3:0]
+ART 
+ACCEL/
+CACHE
+CLK, NE[4:1], NL, NBL[1:0],
+A[25:0], D[15:0], NOE, NWE,
+NWAIT, NCE, INT as AF, FRAM
+RNG
+DP
+DM
+ID, VBUS, SOF
+@ VDDA
+BOR
+Supply
+supervision
+PVD, PVM
+Int
+reset
+XT AL 32 kHz
+MA N AGT
+RTC
+FCLK
+Standby
+interface
+IWDG
+@VBA T
+@ VDD
+@VDD
+AWU
+Reset & clock
+control
+PCLKx
+VDD = 1.71 to 3.6 V
+VSS
+Voltage
+regulator
+3.3 to 1.2 V
+VDD
+Power management
+@ VDD
+RTC_T AMPx
+Backup register
+AHB bus-matrix
+TIM15
+2 channels,
+1 compl. channel, BKIN as AF
+DAC1
+DAC2
+TIM6
+TIM7
+TIM2
+TIM3
+TIM4
+TIM5
+USART2
+USART3
+I2C1/SMBUS
+D-BUS
+APB1 120 MHz (max)
+SRAM1 192 KB
+SRAM2 64 KB
+NJTRST , JTDI,
+JTCK/SWCLK
+JTDO/SWD, JTDO
+I-BUS
+S-BUS
+PB[15:0]
+PC[15:0]
+PD[15:0]
+PE[15:0]
+PF[15:0]
+PG[15:0]
+PH[15:0]
+GPIO PORT B
+GPIO PORT C
+GPIO PORT D
+GPIO PORT E
+GPIO PORT F
+GPIO PORT G
+GPIO PORT H
+TIM8 / PWM
+16b
+16b
+TIM16
+16b
+TIM17
+16b
+3 compl. Channels (TIM1_CH[1:3]N),
+4 channels (TIM1_CH[1:4]),
+ ETR, BKIN, BKIN2 as AF
+1 channel,
+1 compl. channel, BKIN as AF
+1 channel,
+1 compl. channel, BKIN as AF
+DAC2_OUT
+16b
+16b
+SCL, SDA, SMBA as AF
+SCL, SDA, SMBA as AF
+MOSI, MISO, SCK, NSS as AF
+RX, TX, CTS, RTS as AF
+RX, TX, CTS, RTS as AF  
+RX, TX, CK, CTS, RTS as AF
+RX, TX, CK, CTS, RTS as AF
+smcard
+irDA
+smcard
+irDA
+32b
+16b
+16b
+32b
+4 channels, ETR as AF
+4 channels, ETR as AF
+4 channels, ETR as AF
+4 channels, ETR as AF
+AHB/APB1
+OSC_IN
+OSC_OUT
+HCLKx
+XT AL OSC
+4- 16MHz
+8 analog inputs common to the ADC
+VREF+
+USA R T 2MBp s
+T emperature sensor
+SAI1
+MCLK_A, SD_A, FS_A, SCK_A, EXTCLK
+MCLK_B, SD_B, FS_B, SCK_B as AF
+SAI2
+MCLK_A, SD_A, FS_A, SCK_A, EXTCLK
+MCLK_B, SD_B, FS_B, SCK_B as AF
+DFSDM
+SDCKIN[7:0], SDDA TIN[7:0],
+SDCKOUT,SDTRIG as AF
+T ouch sensing controller
+8 Groups of 4 channels max as AF
+OUT , INN, INP
+LPUART1
+LPTIM1
+LPTIM2
+RX, TX, CTS, RTS as AF
+IN1, IN2, OUT , ETR as AF
+IN1, OUT , ETR as AF
+RC HSI
+RC LSI
+PLL 1&2&3
+MSI
+OctoSPI1 memory interface
+IO[7:0],
+CLK, NCS. DQS
+@ VDDUSB
+COMP1
+INP , INN, OUT
+COMP2
+INP , INN, OUT
+@ VDDA
+RTC_OUT
+VDDIO, VDDUSB
+FIFO
+PHY
+AHB1 120 MHz
+CRC
+OUT , INN, INP
+I2C2/SMBUS
+I2C3/SMBUS
+OpAmp1
+SPI3
+SPI2
+UART5
+UART4
+APB2 120MHz
+AHB2 120 MHz
+OpAmp2
+@VDDA
+AES
+Firewall
+VREF Buffer
+@ VDDA
+@ VDD
+HASH
+Camera Interface
+FIFO
+HSYNC, VSYNC,
+PIXCLK, D[13:0]
+PI[1 1:0]
+GPIO PORT I
+FIFO
+TX, RX as AF
+bxCAN1
+SCL, SDA, SMBA as AF
+I2C4/SMBUS
+OctoSPI2 memory interface
+SRAM3 384 KB
+ITF
+ADC1
+@ VDDA
+DSI Host
+DSI
+PHI
+DSIHOST_D0 P/N
+DSIHOST_D1 P/N
+DSIHOST_CK P/N
+VDD12DSI, VDDSI, VSSDSI
+VCAPDSI
+DSIHOST_TE
+DMA2
+DMA1
+CHROM-ART
+DMA2D
+FIFO
+FIFO
+LCD - TFT
+LCD_R[7:0], LCD_G[7:0], LCD_B[7:0], 
+LCD_HSYNC, LCD_VSYNC, LCD_DE, 
+LCD_CLK
+Chrom-GRC 
+(GFXMMU)
+FIFO
+SDIO / MMC
+D[7:0]
+CMD, CK as AF
+FIFO
+DS12024 Rev 4
+17/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+3 Functional overview
+3.1 Arm
+®
+ Cortex
+®
+-M4 core with FPU
+The Arm
+®
+ Cortex
+®
+-M4 with FPU processor is the latest generation of Arm
+®
+ processors for 
+embedded systems. It was developed to provide a low-cost platform that meets the needs of 
+the MCU implementation, with a reduced pin co
+unt and with low-power consumption, while 
+delivering outstanding computational performance and an advanced response to interrupts.
+The Arm
+®
+ Cortex
+®
+-M4 with FPU 32-bit RISC processo
+r features an exceptional code-
+efficiency , delivering the expected high-performance from an Arm
+®
+ core in a memory size 
+usually associated with 8-bit and 16-bit devices.
+The processor supports a set of DSP instructions
+ which allows an efficient signal processing 
+and a complex algorithm execution. Its sing
+le precision FPU speeds up the software 
+development by using metalanguage development tools to avoid saturation.
+With its embedded Arm
+®
+ core, the STM32L4Sxxx family
+ is compatible with all Arm
+®
+ tools 
+and software.
+Figure
+ 
+1
+ shows the general block diagram 
+of the STM32L4Sxxx family devices.
+3.2 
+Adaptive real-time memory 
+accelerator (ART Accelerator)
+The ART Accelerator is a memory accelerator 
+that is optimized for the STM32 industry-
+standard Arm
+®
+Cortex
+®
+-M4 processors. It balances the inherent performance advantage of 
+the Arm
+® 
+Cortex
+®
+-M4 over Flash memory technologies, which normally requires the 
+processor to wait for the Flash memory at higher frequencies.
+T o release the processor near 150 DMIPS performance at 120
+ 
+MHz, the accelerator 
+implements an instruction prefetch queue 
+and a branch cache, which increases the 
+programs execution speed from the Flash me
+mory . Based on CoreMark benchmark, the 
+performance achieved thanks to the ART accele
+rator is equivalent to 0 wait state program 
+execution from the Flash memory at a CPU frequency of up to 120
+ 
+MHz.
+3.3 
+Memory protection unit
+The memory protection unit (MPU) is used to
+ manage the CPU accesses to the memory 
+and to prevent one task to accidentally corrupt the memory or the resources used by any 
+other active task. This memory area is organize
+d into up to eight prot
+ected areas, which can 
+be divided in up into eight subareas each. The protection area sizes range between 32 
+bytes and the whole 4 gigabytes of addressable memory .
+The MPU is especially helpful for 
+applications where some critical or certified code has to be 
+protected against the misbehavior of other task
+s. It is usually managed by an RTOS (real-
+time operating system). If a prog
+ram accesses a memory location
+ that is prohibited by the 
+MPU, the RTOS can detect it and take action
+. In an RTOS environment, the kernel can 
+dynamically update the MPU area setting 
+based on the process to be executed.
+The MPU is optional and can be bypasse
+d for applications that do not need it.
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+18/273
+DS12024 Rev 4
+3.4 
+Embedded Flash memory
+The STM32L4Sxxx devices feature 2
+ 
+Mbytes of embedded Flash me
+mory which is available 
+for storing programs and data. 
+The Flash interface features:
+
+Single or dual bank operating modes
+
+Read-while-write (RWW) in dual bank mode
+This feature allows to perform a read operation from one bank while an erase or program 
+operation is performed to the other bank. The d
+ual bank boot is also supported. Each bank 
+contains 256 pages of 4 or 8
+ 
+Kbytes (depending on the read access width).
+Flexible protections can be configured thanks to the option bytes:
+
+Readout protection (RDP) to 
+protect the whole memory. Thre
+e levels of protection are 
+available:
+ Level 0: no readout protection
+ Level 1: memory readout protection; the Flas
+h memory cannot be read from or written 
+to if either the debug features are connect
+ed or the boot in RAM or bootloader are 
+selected
+ Level 2: chip readout protection; the d
+ebug features (Cortex
+-M4 JT AG and serial 
+wire), the boot in RAM and the bootloader se
+lection are disabled (JT AG fuse). This 
+selection is irreversible.
+          
+
+Write protection (WRP): the protected ar
+ea is protected against erasing and 
+programming:
+
+In single bank mode, four areas can be selected with 8-Kbyte granularity .
+
+In dual bank mode, two areas per bank 
+can be selected with 4-Kbyte granularity .
+T able 3. Access status versus readout protection level and execution modes 
+Area
+Protection 
+level
+User execution
+Debug, boot from RAM or boot 
+from system memory (loader)
+Read
+Write
+Erase
+Read
+Write
+Erase
+Main 
+memory
+1
+Y es
+Y es
+Y es
+No
+No
+No
+2
+Y es
+Y es
+Y es
+N/A
+N/A
+N/A
+System 
+memory
+1
+Y es
+No
+No
+Y es
+No
+No
+2
+Y es
+No
+No
+N/A
+N/A
+N/A
+Option 
+bytes
+1
+Y es
+Y es
+Y es
+Y es
+Y es
+Y es
+2
+Y es
+No
+No
+N/A
+N/A
+N/A
+Backup 
+registers
+1Y e s Y e s N / A
+(1)
+1. Erased when RDP change from Level 1 to Level 0.
+No
+No
+N/A
+(1)
+2
+Y es
+Y es
+N/A
+N/A
+N/A
+N/A
+SRAM2
+1
+Y es
+Y es
+Y es
+(1)
+No
+No
+No
+(1)
+2
+Y es
+Y es
+Y es
+N/A
+N/A
+N/A
+DS12024 Rev 4
+19/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+
+Proprietary code readout protection (PCROP): a part of the Flash memory can be 
+protected against read and write from third pa
+rties. The protected area is execute-only 
+and it can only be reached by the STM32 CPU as an instruction code, while all other 
+accesses (DMA, debug and CPU data read, wr
+ite and erase) are strictly prohibited:
+
+In single bank mode, two areas can be selected with 128-bit granularity .
+
+In dual bank mode, one area per bank can be selected with 64-bit granularity .
+An additional option bit (PCROP_RDP) allows to
+ select if the PCROP area is erased or 
+not when the RDP protection is changed from Level 1 to Level 0.
+The whole non-volatile memory embeds the error correction code (ECC) feature supporting:
+
+Single error detection and correction
+
+Double error detection
+
+The address of the ECC fail can be read in the ECC register.
+3.5 Embedded SRAM
+The STM32L4S5xx, STM32L4S7xx and STM32L4S9xx devices feature 640
+ 
+Kbytes of 
+embedded SRAM. This SRAM is split into three blocks: 
+
+192 Kbytes mapped at address 0x2000 0000 (SRAM1).
+
+64 Kbytes located at address 0x1000 0000 with hardware parity check (SRAM2).
+ 
+This memory is also mapped at address 0x2003 0000 offering a contiguous address 
+space with the SRAM1.
+ 
+This block is accessed through the ICode/DCode buses for maximum performance. 
+These 64 Kbytes SRAM can also be retained in Standby mode.
+ 
+The SRAM2 can be write-protec
+ted with 1 Kbyte granularity .
+
+384 Kbytes mapped at address 0x2004 0000 - (SRAM3).
+The memory can be accessed in read/writ
+e at CPU clock speed with 0 wait states.
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+20/273
+DS12024 Rev 4
+3.6 Multi-AHB bus matrix
+The 32-bit multi-AHB 
+bus matrix interconne
+cts all the masters (CPU, DMAs, DMA2D, 
+SDMMC1, LCD-TFT and GFXMMU) and the slaves
+ (Flash memory , RAM, FMC, OctoSPI, 
+AHB and APB peripherals). It also ensures a 
+seamless and efficient operation even when 
+several high-speed periphe
+rals work simultaneously .
+Figure 2. Multi-AHB bus matrix
+3.7 Firewall
+These devices embed a firewall which protects 
+code sensitive and secure data from any 
+access performed by a code executed
+ outside of the protected areas.
+Each illegal access generates 
+a reset which kills immediat
+ely the detected intrusion.
+MSv38490V1
+ Cortex ® -M4with FPU DMA1 DMA2 FSMC AHB2peripherals AHB1peripherals SRAM2 SRAM1 FLASH2 MB ACCEL S-busD-bus ICodeDCode OCTOSPI2
+DMA2D
+I-bus
+BusMatrix-S
+LCD-TFT
+SDMMC1
+GFXMMU
+SRAM3
+GFXMMU
+OCTOSPI1
+DS12024 Rev 4
+21/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+The main features of the firewall are the following:
+
+Three segments can be protected and def
+ined thanks to the firewall registers:
+
+Code segment (located in Flash or SRAM
+1 if defined as ex
+ecutable protected 
+area)
+
+Non-volatile data segment (located in Flash)
+
+Volatile data segment (located in SRAM1)
+
+The start address and the length of each segment are configurable:
+
+Code segment: up to 2048 Kbytes with granularity of 256 bytes
+
+Non-volatile data segment: up to 2048 Kbytes with granularity of 256 bytes
+
+Volatile data segment: up to 192 Kbytes
+ of SRAM1 with a granularity of 64 bytes
+
+Specific mechanism implemented to open the firewall to get access to the protected 
+areas (call gate entry sequence)
+
+Volatile data segment can be shared or not with the non-protected code
+
+Volatile data segment can be executed or 
+not depending on the firewall configuration
+The Flash readout protection must be set to le
+vel 2 in order to reach the expected level of 
+protection.
+3.8 Boot modes
+At startup, a BOOT0 pin and an
+ nBOOT1 option bit are used to select one of three boot 
+options:
+
+Boot from user Flash
+
+Boot from system memory
+
+Boot from embedded SRAM
+The BOOT0 value may come from the PH3-BOOT0 pin or from an option bit depending on 
+the value of a user option bit to free the GPIO pad if needed.
+A Flash empty-check mechanism is implemented to
+ force the boot from system Flash if the 
+first Flash memory location is not programmed and 
+if the boot selection is configured to boot 
+from main Flash.
+The boot loader is located in the system memory
+. It is used to reprogram the Flash memory 
+by using USART , I2C, SPI, CAN or USB OTG FS in device mode through the DFU (device 
+firmware upgrade).
+3.9 Cyclic redundancy che
+ck calculation unit (CRC)
+The CRC (cyclic redundancy check) calculati
+on unit is used to get a CRC code using a 
+configurable generator with polynomial value and size.
+Among other applications, the CRC-based techniques are used to verify data transmission 
+or storage integrity . In the scope of the EN/IEC 
+60335-1 standard, they offer a mean to verify 
+the Flash memory integrity . 
+The CRC calculation unit helps to compute a sign
+ature of the software during runtime, which 
+can be ulteriorly compared with a reference si
+gnature generated at link-time and which can 
+be stored at a given memory location.
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+22/273
+DS12024 Rev 4
+3.10 Power supply management
+3.10.1 
+Power supply schemes
+The STM32L4x devices require a 1.71
+ 
+V to 3.6
+ 
+V V
+DD 
+operating voltage supply . Several 
+independent supplies can be provided for specific peripherals:
+
+V
+DD
+ = 1.71 V to 3.6 V
+V
+DD 
+is the external power supply for the I/Os
+, the internal regula
+tor and the system 
+analog such as reset, power management and internal clocks. It is provided externally 
+through the VDD pins.
+ 
+V
+DDA 
+= 1.62 V (ADCs/COMPs) / 1.8 V (DACs/OP AMPs) to 2.4 V (VREFBUF) to 3.6 V
+ 
+V
+DDA 
+is the external analog power supply for A/D converters, D/A converters, voltage 
+reference buffer, operational amplifiers and comparators. The V
+DDA
+ 
+voltage level is 
+independent from the V
+DD
+ 
+voltage and should preferably be connected to V
+DD
+ when 
+these peripherals are not used.
+
+VDDUSB = 3.0 V to 3.6 V
+ 
+VDDUSB is the external independent powe
+r supply for USB transceivers. The 
+VDDUSB voltage level is independent from 
+the VDD voltage and should preferably be 
+connected to VDD when the USB is not used.
+
+VDDIO2 = 1.08 V to 3.6 V 
+
+VDDIO2 is the external power supply for 
+14 I/Os (port G[15:2]). The VDDIO2 voltage 
+level is independent from the VDD voltage and should preferably be connected to VDD 
+when PG[15:2] are not used.
+
+VDDDSI is an independent DSI power supply d
+edicated for is used to supply the DSI 
+regulator and MIPI D-PHY . This supply must be connected to the global VDD.
+
+VCAPDSI pin is the output of DSI regulator (1.2 V) which must be connected externally 
+to VDD12DSI.
+
+VDD12DSI pin is used to supply the MIPI 
+D-PHY , and to supply clock and data lanes 
+pins. An external capacitor of 2.2 uF 
+must be connected on the VDD12DSI pin.
+
+V
+BA T
+ 
+= 1.55 V to 3.6 V
+V
+BA T
+ is the power supply for RT
+C, external clock 32 kHz os
+cillator and backup registers 
+(through power switch) when V
+DD
+ 
+is not present.
+
+V
+REF-
+, V
+REF+
+V
+REF+
+ is the input reference voltage for ADCs 
+and DACs. It is also the output of the 
+internal voltage reference buffer when enabled.
+When V
+DDA
+ < 2 V V
+REF+
+ must be equal to V
+DDA
+.
+When V
+DDA
+ 
+ 2 V V
+REF+
+ must be between 2 V and V
+DDA
+.
+V
+REF+
+ can be grounded when ADC and DAC are not active.
+The internal voltage reference buffer su
+pports two output voltages, which are 
+configured with VRS bit in the VREFBUF_CSR register:
+V
+REF+
+ around 2.048 V . This requires V
+DDA
+ equal to or higher than 2.4 V .
+V
+REF+
+ around 2.5 V . This requires V
+DDA
+ equal to or higher than 2.8 V .
+VREF- and VREF+ pins are not available on a
+ll packages. When not available, they are 
+bonded to VSSA and VDDA, respectively . 
+ 
+When the VREF+ is double-bonded with VDDA in a package, the internal voltage 
+reference buffer is not available and must be kept disable (refer to datasheet for 
+DS12024 Rev 4
+23/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+packages pinout description).
+ 
+V
+REF-
+ must always be equal to V
+SSA
+.
+An embedded linear voltage-regulator is used to supply the internal digital power V
+CORE
+. 
+V
+CORE 
+is the power supply for digital peripher
+als, SRAM1, SRAM2 and SRAM3. The Flash 
+is supplied by V
+CORE
+ and V
+DD
+.
+Figure 3. STM32L4S5xx and STM32L4S7xx power supply overview
+MSv38489V1
+ V DDA  domainBackup domain Standby circuitry  (Wakeup logic,
+IWDG)
+Voltage regulator
+Low voltage detector
+LSE crystal 32 K osc
+BKP registers
+RCC BDCR register
+RTC  
+I/O ring
+V
+CORE
+ domain
+T emp. sensor
+Reset block
+3 x PLL, HSI, MSI
+Flash memory
+USB transceivers
+V
+DDUSB
+V
+DDIO2
+V
+DDIO1
+I/O ring
+PG[15:2]
+V
+DDIO2
+V
+DDA
+V
+SSA
+V
+SS
+V
+SS
+V
+DDIO2
+ domain
+V
+DD
+ domain
+V
+CORE
+V
+SS
+V
+DD
+V
+BA T
+Core
+SRAM1 
+SRAM2
+SRAM3
+Digital
+peripherals
+2 x D/A converters
+3 x A/D converters
+2 x comparators
+2 x operational amplifiers
+Voltage reference buffer
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+24/273
+DS12024 Rev 4
+Figure 4. STM32L4S9xx 
+power supply overview
+During power-up and power-down phases, the following power sequence requirements 
+must be respected:
+
+When V
+DD 
+is below 1 V , other power supplies (V
+DDA
+, V
+DDIO2
+, V
+DDUSB 
+and V
+LCD
+) must 
+remain below VDD +300 mV .
+
+When V
+DD
+ is above 1 V , all power supplies are independent.
+
+During the power-down phase, V
+DD
+ can temporarily become lower than other supplies 
+only if the energy provided to the MCU re
+mains below 1 mJ; this allows external 
+decoupling capacitors to be discharged with 
+different time constants during the power-
+down transient phase. 
+MSv38488V1
+ V DDA  domainBackup domain 2 x D/A converters
+3 x A/D converters
+Standby circuitry  
+(Wakeup logic,
+IWDG)
+Voltage regulator
+Low voltage detector
+LSE crystal 32 K osc
+BKP registers
+RCC BDCR register
+RTC  
+2 x comparators
+2 x operational amplifiers
+Voltage reference buffer
+I/O ring
+V
+CORE
+ domain
+T emp. sensor
+Reset block
+3 x PLL, HSI, MSI
+Flash memory
+DSI PHY
+V
+DD12DSI
+USB transceivers
+V
+DDUSB
+V
+DDIO2
+V
+DDIO1
+I/O ring
+PG[15:2]
+V
+DDIO2
+V
+DDA
+V
+SSA
+V
+SS
+V
+SS
+V
+DDIO2
+ domain
+V
+DD
+ domain
+V
+CORE
+V
+SS
+V
+DD
+V
+BA T
+DSI 
+voltage regulator
+V
+CAPDSI
+V
+DDDSI
+Core
+SRAM1 
+SRAM2
+SRAM3
+Digital
+peripherals
+DS12024 Rev 4
+25/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+Figure 5. Power-up/down sequence
+1. V
+DDX
+ refers to any power supply among V
+DDA
+, V
+DDIO2
+, V
+DDUSB
+ and V
+LCD.
+3.10.2 
+Power supply supervisor
+The STM32L4S5xx, STM32L4S7xx and STM32L4S9xx devices have an integrated ultra-
+low-power Brownout reset (BOR) active in all modes (except for Shutdown mode). The BOR 
+ensures proper operation of the devices after power-on and during power-down. The 
+devices remain in reset mode when the monitored supply voltage V
+DD
+ is below a specified 
+threshold, without the need fo
+r an external reset circuit.
+The lowest BOR level is 1.71
+ 
+V at power on, and other higher
+ thresholds can be selected 
+through option bytes.The devices feature an embedded programmable voltage detector 
+(PVD) that monitors the V
+DD
+ power supply and compares it to the VPVD threshold. 
+An interrupt can be generated when V
+DD
+ drops below the VPVD threshold and/or when V
+DD
+ 
+is higher than the VPVD threshold. The in
+terrupt service routin
+e can then generate a 
+warning message and/or put the MCU into a safe state. The PVD is enabled by software.
+In addition, the devices embed a peripher
+al voltage monitor which compares the 
+independent supply voltages V
+DDA
+, V
+DDUSB
+, V
+DDIO2
+ with a fixed threshold in order to ensure 
+that the peripheral is in its functional supply range.
+3.10.3 V oltage regulator
+Two embedded linear voltage regulators supply most of the digital circuitries: the main 
+regulator (MR) and the low-power regulator (LPR).
+
+The MR is used in the Run and Sleep modes and in the Stop 0 mode.
+
+The LPR is used in Low-power run, Low-power sleep, Stop 1 and Stop 2 modes. It is 
+also used to supply the 64 Kbytes SRAM2 in standby with RAM2 retention.
+
+Both regulators are in power-down while they are in standby and Shutdown modes: the 
+regulator output is in high impedance, and 
+the kernel circuitry is powered down thus 
+inducing zero consumption. 
+MSv47490V1
+ 0.31V BOR0 3.6 Operating modePower-on
+Power-down
+time
+V
+ V DDX(1) V DD Invalid supply area
+V
+DDX
+ < V
+DD
+ + 300 mV
+V
+DDX
+ independent from V
+DD
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+26/273
+DS12024 Rev 4
+The ultra-low-power STM32L4Sxxx devices supp
+ort dynamic voltage scaling to optimize its 
+power consumption in Run mode. The voltage from the main regulator that supplies the 
+logic (VCORE) can be adjusted according to 
+the systems maximum operating frequency . 
+The main regulator operates in the following ranges:
+
+Range 1 boost mode with the CPU running at up to 120 MHz. 
+
+Range 1 normal mode with the CPU running at up to 80 MHz.
+
+Range 2 with a maximum CPU frequency of 26 MHz. All peripheral clocks are also 
+limited to 26 MHz.
+The VCORE can be supplied by the low-power r
+egulator, the main regulator being switched 
+off. The system is then in Low-power run mode.
+
+Low-power run mode with the CPU running at up to 2 MHz. Peripherals with 
+independent clock can be clocked by the HSI16.
+Note:
+The USB and DSIHOST can only be used when the main regulator is in range1 boost mode.
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+DS12024 Rev 4
+27/273
+3.10.4 Low-power modes
+The ultra-low-power STM32L4Sxxx devices support seven low-powe
+r modes to achieve the best compromise between low-power 
+consumption, short startup time, available 
+peripherals and available wake-up sources. 
+Ta b l e
+ 
+4
+ shows the related STM32L4Sxxx 
+modes overview.
+          
+T able 4. STM32L4S5xx modes overview 
+Mode
+Regulator
+(1)
+CPU
+Flash
+SRAM
+Clocks
+DMA & Peripherals
+(2)
+Wakeup source
+Run
+ Range 1
+Ye s
+O N
+(3)
+ON
+Any
+All
+N/A
+ Range2
+All except 
+OTG_FS, RNG, LCD-TFT
+LPRun
+LPR
+Y es
+ON
+(3)
+ON
+Any except 
+PLL
+All except 
+OTG_FS, RNG, LCD-TFT
+N/A
+Sleep
+ Range 1
+No
+ON
+(3)
+ON
+(4)
+Any
+All
+Any interrupt or event
+ Range 2
+All except 
+OTG_FS, RNG, LCD-TFT
+LPSleep
+LPR
+No
+ON
+(3)
+ON
+(4)
+Any
+except PLL
+All except OTG_FS, RNG, LCD-TFT
+Any interrupt or event
+Stop 0
+Range 1
+No
+Off
+ON
+LSE
+LSI
+BOR, PVD, PVM 
+RTC, IWDG 
+COMPx (x=1,2) 
+DACx (x=1,2)
+OP AMPx (x=1,2)
+USARTx (x=1...5)
+(5)
+LPUART1
+(5)
+I2Cx (x=1...4)
+(6)
+LPTIMx (x=1,2)
+***
+All other peripherals are frozen
+Reset pin, all I/Os
+BOR, PVD, PVM 
+RTC, IWDG
+COMPx (x=1..2)
+USARTx (x=1...5)
+(5)
+LPUART1
+(5)
+I2Cx (x=1...4)
+(6)
+LPTIMx (x=1,2)
+OTG_FS
+(7)
+Range 2
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+28/273
+DS12024 Rev 4
+Stop 1
+LPR
+No
+Off
+ON
+LSE
+LSI
+BOR, PVD, PVM 
+RTC, IWDG 
+COMPx (x=1,2) 
+DACx (x=1,2)
+OP AMPx (x=1,2)
+USARTx (x=1...5)
+(5)
+LPUART1
+(5)
+I2Cx (x=1...4)
+(6)
+LPTIMx (x=1,2)
+***
+All other peripherals are frozen
+Reset pin, all I/Os
+BOR, PVD, PVM 
+RTC, IWDG
+COMPx (x=1..2)
+USARTx (x=1...5)
+(5)
+LPUART1
+(5)
+I2Cx (x=1...4)
+(6)
+LPTIMx (x=1,2)
+OTG_FS
+(7)
+Stop 2
+LPR
+No
+Off
+ON
+LSE
+LSI
+BOR, PVD, PVM 
+RTC, IWDG 
+COMPx (x=1..2)
+I2C3
+(6)
+LPUART1
+(5)
+LPTIM1
+***
+All other peripherals are frozen
+Reset pin, all I/Os
+BOR, PVD, PVM
+RTC, IWDG
+COMPx (x=1..2)
+I2C3
+(6)
+LPUART1
+(5)
+LPTIM1
+Standby
+LPR
+Powered 
+Off
+Off
+SRAM2 ON
+LSE
+LSI
+BOR, RTC, IWDG
+***
+All other peripherals are powered off
+***
+I/O configuration can be floating, pull-
+up or pull-down
+Reset pin 
+5 I/Os (WKUPx)
+(8)
+BOR, RTC, IWDG
+OFF
+Powered
+Off
+Shutdown
+OFF
+Powered 
+Off
+Off
+Powered
+Off
+LSE
+RTC
+***
+All other peripherals are powered off
+***
+I/O configuration can be floating, pull-
+up or pull-down
+(9)
+Reset pin 
+5 I/Os (WKUPx)
+(8)
+RTC
+T able 4. STM32L4S5xx modes overview (continued)
+Mode
+Regulator
+(1)
+CPU
+Flash
+SRAM
+Clocks
+DMA & Peripherals
+(2)
+Wakeup source
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+DS12024 Rev 4
+29/273
+1. LPR means Main regulator is OFF and Low-power regulator is ON.
+2. All peripherals can be active or cl
+ock gated to save power consumption.
+3. The Flash memory can be put in power-down and it
+s clock can be gated off when executing from SRAM.
+4. The SRAM1, SRAM2 and SRAM3 clocks can be gated on or off independently .
+5. U(S)ART and LPUART reception is functional in Stop mode, 
+and generates a wakeup interrupt on Start, address match or received
+ frame event. 
+6. I2C address detection is functional in Stop mode, and g
+enerates a wakeup interrupt in case of address match. 
+7. OTG_FS wakeup by resume from suspend and attach detection protocol event.
+8. The I/Os with wakeup from Standby/Shutdown capability are: P A0, PC13, PE6, P A2, PC5.
+9. I/Os can be configured with internal pull-
+up, pull-down or floating in Shutdown mode 
+but the configuration is lost when exiti
+ng the Shutdown mode.
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+30/273
+DS12024 Rev 4
+By default, the microcontroller is in Run mode af
+ter a system or a power reset. It is up to the 
+user to select one of the low-power modes described below:
+
+Sleep
+ mode
+In Sleep mode, only the CPU is stopped. All peripherals continue to operate and can 
+wake up the CPU when an interrupt/event occurs.
+
+Low-power run
+ mode
+This mode is achieved with VCORE supplied 
+by the low-power regu
+lator to minimize 
+the regulator's operating current. The code ca
+n be executed from SRAM or from Flash, 
+and the CPU frequency is limited to 2 MHz. 
+The peripherals with independent clock can 
+be clocked by HSI16.
+
+Low-power sleep
+ mode
+This mode is entered from the Low-power r
+un mode. Only the CPU clock is stopped. 
+When wakeup is triggered by an event or an interrupt, the system reverts to the Low-
+power run mode.
+
+Stop 0, Stop 1 and Stop 2
+ modes
+Stop mode achieves the lowest power consumption while retaining the content of 
+SRAM and registers. All clocks in the VC
+ORE domain are stopped, the PLL, the MSI 
+RC, the HSI16 RC and the HSE crystal oscilla
+tors are disabled. The LSE or LSI is still 
+running. 
+The RTC can remain active (Stop mode with RTC, Stop mode without RTC).
+Some peripherals with wake
+-up capability can enable the 
+HSI16 RC during Stop mode 
+to detect their wake-up condition.
+Three Stop modes are available: Stop 0, 
+Stop 1 and Stop 2 modes. In Stop 2 mode, 
+most of the VCORE domain is put in a lower leakage mode. 
+Stop 1 offers the largest number of active peripherals and wakeup sources, a smaller 
+wakeup time but a higher consumption than St
+op 2. In Stop 0 mode, the main regulator 
+remains ON, allowing a very fast wakeup
+ time but with much higher consumption.
+The system clock when exiting from Stop 0, 
+Stop 1 or Stop 2 modes can be either MSI 
+up to 48 MHz or HSI16, depending on software configuration.
+
+Standby
+ mode
+The Standby mode is used to achieve the lo
+west power consumpt
+ion with BOR. The 
+internal regulator is 
+switched off so that the VCORE 
+domain is powered off. The PLL, 
+the MSI RC, the HSI16 RC and the HSE crys
+tal oscillators are also switched off.
+The RTC can remain active (Standby mode
+ with RTC, Standby mode without RTC).
+The Brownout reset (BOR) always remains active in Standby mode.
+The state of each I/O during Standby mo
+de can be selected by software: I/O with 
+internal pull-up, internal pull-down or floating.
+After entering Standby mode, SRAM1, SRAM3 and register contents are lost except for 
+registers in the Backup domain and Sta
+ndby circuitry . Optionally , SRAM2 can be 
+DS12024 Rev 4
+31/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+retained in Standby mode, supplied by th
+e low-power regulator (standby with RAM2 
+retention mode).
+The device exits Standby mode when an ex
+ternal reset (NRST pin), an IWDG reset, 
+WKUP pin event (configurable rising or fallin
+g edge), or an RTC event occurs (alarm, 
+periodic wakeup, timestamp, tamper) or a 
+failure is detected on LSE (CSS on LSE).
+The system clock after wake
+up is MSI up to 8 MHz.
+
+Shutdown
+ mode
+The Shutdown mode allows to achieve the 
+lowest power consumption. The internal 
+regulator is switched off so that the VC
+ORE domain is powered off. The PLL, the 
+HSI16, the MSI, the LSI and the HSE 
+oscillators are also switched off.
+The RTC can remain active (Shutdown mode with RTC, Shutdown mode without RTC).
+The BOR is not available in Shutdown mode. 
+No power voltage monitoring is possible 
+in this mode, therefore the switch 
+to Backup domain is not supported. 
+SRAM1, SRAM2, SRAM3 and register contents
+ are lost except for registers in the 
+Backup domain. 
+The device exits Shutdown mode when an ex
+ternal reset (NRST pin), a WKUP pin 
+event (configurable rising or
+ falling edge), or an RTC ev
+ent occurs (alarm, periodic 
+wakeup, timestamp, tamper). 
+The system clock after wakeup is MSI at 4 MHz.
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+32/273
+DS12024 Rev 4
+          
+T able 5. Functionalities depending on the working mode
+(1)
+ 
+Peripheral
+Run
+Sleep
+Low-
+power 
+run
+Low-
+power 
+sleep
+Stop 0/1
+Stop 2
+Standby Shutdown
+VBA T
+-
+Wakeup capability
+-
+Wakeup capability
+-
+Wakeup capability
+-
+Wakeup capability
+CPU
+Y
+-
+Y
+-
+-
+--
+--
+--
+--
+Flash memory 
+(2 Mbytes)
+O
+(2)
+O
+(2)
+O
+(2)
+O
+(2)
+-
+--
+--
+--
+--
+SRAM1 
+(192 Kbytes)
+YY
+(3)
+YY
+(3)
+Y
+-Y
+--
+--
+--
+SRAM2 (64 Kbytes)
+Y
+Y
+(3)
+YY
+(3)
+Y
+-Y
+-O
+(4)
+--
+--
+SRAM3 
+(384 Kbytes)
+YY
+(3)
+YY
+(3)
+Y
+-Y
+(3)
+--
+--
+--
+F S M C
+OOOO -
+--
+--
+--
+--
+OctoSPIs
+O
+O
+O
+O
+-
+--
+--
+--
+--
+Backup Registers
+Y
+Y
+Y
+Y
+Y
+-Y
+-Y
+-Y
+-Y
+Brownout reset 
+(BOR)
+YYYY Y
+YY
+YY
+Y-
+--
+Programmable 
+Voltage Detector 
+(PVD) 
+OOOO O
+OO
+O-
+--
+--
+Peripheral Voltage 
+Monitor (PVMx; 
+x=1,2,3,4)
+OOOO O
+OO
+O-
+--
+--
+D M A
+OOOO -
+--
+--
+--
+--
+D M A 2 D
+OOOO -
+--
+--
+--
+--
+High speed internal 
+(HSI16)
+OOOO
+(5)
+-
+(5)
+--
+--
+--
+Oscillator HSI48
+O
+O
+-
+-
+-
+-
+-
+--
+--
+--
+High speed external 
+(HSE)
+OOOO -
+--
+--
+--
+--
+Low speed internal 
+(LSI)
+OOOO O
+-O
+-O
+--
+--
+Low speed external 
+(LSE)
+OOOO O
+-O
+-O
+-O
+-O
+Multi speed internal 
+(MSI)
+OOOO -
+--
+--
+--
+--
+Clock security 
+system (CSS)
+OOOO -
+--
+--
+--
+--
+DS12024 Rev 4
+33/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+Clock security 
+system on LSE
+OOOO O
+OO
+OO
+O-
+--
+RTC / Auto wakeup
+O
+O
+O
+O
+O
+OO
+OO
+OO
+OO
+Number of RTC 
+T amper pins
+3333 3
+O3
+O3
+O3
+O3
+Camera interface
+O
+O
+O
+O
+-
+--
+--
+--
+--
+LCD-TFT
+O
+O
+-
+-
+-
+--
+--
+--
+--
+G F X M M U
+OOOO -
+--
+--
+--
+--
+DSIHOST
+O
+O
+-
+-
+-
+--
+--
+--
+--
+USB OTG FS
+O
+(8)
+O
+(8)
+-- -
+O-
+--
+--
+--
+USARTx 
+(x=1,2,3,4,5)
+OOOO O
+(6)
+O
+(6)
+-
+--
+--
+--
+Low-power UART 
+(LPUART)
+OOOO O
+(6)
+O
+(6)
+O
+(6)
+O
+(6)
+-
+--
+--
+I2Cx (x=1,2,4)
+O
+O
+O
+O
+O
+(7)
+O
+(7)
+-
+--
+--
+--
+I 2 C 3
+OOOO O
+(7)
+O
+(7)
+O
+(7)
+O
+(7)
+-
+--
+--
+SPIx (x=1,2,3)
+O
+O
+O
+O
+-
+--
+--
+--
+--
+CAN(x=1,2)
+O
+O
+O
+O
+-
+--
+--
+--
+--
+S D M M C 1
+OOOO -
+--
+--
+--
+--
+SAIx (x=1,2)
+O
+O
+O
+O
+-
+--
+--
+--
+--
+D F S D M 1
+OOOO -
+--
+--
+--
+--
+A D C
+OOOO -
+--
+--
+--
+--
+DACx (x=1,2)
+O
+O
+O
+O
+O
+--
+--
+--
+--
+VREFBUF
+O
+O
+O
+O
+O
+--
+--
+--
+--
+OP AMPx (x=1,2)
+O
+O
+O
+O
+O
+--
+--
+--
+--
+C O M P x  ( x = 1 , 2 ) OOOO O
+OO
+O-
+--
+--
+T emperature sensor
+O
+O
+O
+O
+-
+--
+--
+--
+--
+Timers (TIMx)
+O
+O
+O
+O
+-
+--
+--
+--
+--
+Low-power timer 1 
+(LPTIM1)
+OOOO O
+OO
+O-
+--
+--
+Low-power timer 2 
+(LPTIM2)
+OOOO O
+O-
+--
+--
+--
+T able 5. Functionalities depending on the working mode
+(1)
+ (continued)
+Peripheral
+Run
+Sleep
+Low-
+power 
+run
+Low-
+power 
+sleep
+Stop 0/1
+Stop 2
+Standby Shutdown
+VBA T
+-
+Wakeup capability
+-
+Wakeup capability
+-
+Wakeup capability
+-
+Wakeup capability
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+34/273
+DS12024 Rev 4
+Independent 
+watchdog (IWDG)
+OOOO O
+OO
+OO
+O-
+--
+Window watchdog 
+(WWDG)
+OOOO -
+--
+--
+--
+--
+SysTick timer
+O
+O
+O
+O
+-
+--
+--
+--
+--
+T ouch sensing 
+controller (TSC)
+OOOO -
+--
+--
+--
+--
+Random number 
+generator (RNG)
+O
+(8)
+O
+(8)
+-- -
+--
+--
+--
+--
+AES hardware 
+accelerator
+OOOO -
+--
+--
+--
+--
+HASH hardware 
+accelerator
+OOOO -
+--
+--
+--
+--
+CRC calculation 
+unit
+OOOO -
+--
+--
+--
+--
+G P I O s
+OOOO O
+OO
+O
+(9)
+5 
+pins
+(10)
+(1 1)
+5 
+pins
+(10)
+-
+1. Legend: Y = yes (enable). O = optional (disable by def
+ault, can be enabled by software). - = not available.
+Gray cells highlight the wak
+eup capability in each mode.
+2. The Flash can be configured in power-down m
+ode. By default, it is not in power-down mode.
+3. The SRAM clock can be gated on or off. In Stop 2 mode, t
+he content of SRAM3 is preserved or not depending on the 
+RRSTP bit in PWR_CR1 register.
+4. SRAM2 content is preserved when the 
+bit RRS is set in PWR_CR3 register.
+5. Some peripherals with wakeup from Stop capability can reque
+st HSI16 to be enabled. In this case, HSI16 is woken up by 
+the peripheral, and only feeds the peripheral which requested it. 
+HSI16 is automatically put of
+f when the peripheral does not 
+need it anymore.
+6. UART and LPUART reception is functional in Stop mode,
+ and generates a wakeup interrupt on Start, address match or 
+received frame event.
+7. I2C address detection is functional in Stop mode, and 
+generates a wakeup interrupt in case of address match.
+8. Voltage scaling range 1 only .
+9. I/Os can be configured with internal pul
+l-up, pull-down or floating in Standby mode.
+10. The I/Os with wakeup from standby/shutdown 
+capability are: P A0, PC13, PE6, P A2, PC5.
+11. I/Os can be configured with internal pul
+l-up, pull-down or floating in Shutdown mode but the configuration is lost when 
+exiting the Shutdown mode.
+T able 5. Functionalities depending on the working mode
+(1)
+ (continued)
+Peripheral
+Run
+Sleep
+Low-
+power 
+run
+Low-
+power 
+sleep
+Stop 0/1
+Stop 2
+Standby Shutdown
+VBA T
+-
+Wakeup capability
+-
+Wakeup capability
+-
+Wakeup capability
+-
+Wakeup capability
+DS12024 Rev 4
+35/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+3.10.5 Reset mode 
+In order to improve the consumption under re
+set, the I/Os state under and after reset is 
+analog state (the I/O schmitt trigger is disabl
+e). In addition, the internal reset pull-up is 
+deactivated when the reset source is internal.
+3.10.6 VBA T operation
+The VBA T pin allows to power the device VBA T dom
+ain from an external battery , an external 
+supercapacitor, or from V
+DD
+ when there is no external battery and when an external 
+supercapacitor is present. The VBA T pin supplies the RTC with LSE and the backup 
+registers. Three anti-tamper detect
+ion pins are available in VBA T mode.
+The VBA T operation is automatically activated when V
+DD
+ is not present. An internal VBA T 
+battery charging circuit is embedded and can be activated when V
+DD
+ is present.
+Note:
+When the microcontroller is supplied from VBA T , neither external interrupts nor RTC 
+alarm/events exit the microcontroller from the VBA T operation.
+3.11 Interconnect matrix
+Several peripherals have direct connections between them, which allow autonomous 
+communication between them and support the saving of CPU resources (thus power supply 
+consumption). In addition, these hardware co
+nnections allow fast and predictable latency .
+Depending on the peripherals, these interco
+nnections can operate in Run, Sleep, Low-
+power run and Sleep, Stop 0, Stop 1 and Stop 2 modes. See 
+Ta b l e
+ 
+6
+ for more details.
+          
+T able 6. STM32L4S5xx, STM32L4S7xx and STM32L4S9xx 
+peripherals interconnect matrix 
+ Interconnect source
+Interconnect 
+destination
+Interconnect action
+Run
+Sleep
+Low-power run
+Low-power sleep
+Stop 0 / Stop 1
+Stop 2
+TIMx 
+TIMx
+Timers synchronization or chaining
+Y
+Y
+Y
+Y
+-
+-
+ADC
+DACx
+DFSDM1
+Conversion triggers
+Y
+Y
+Y
+Y
+-
+-
+DMA
+Memory to memory transfer trigger
+Y
+Y
+Y
+Y
+-
+-
+COMPx
+Comparator output blanking
+Y
+Y
+Y
+Y
+-
+-
+COMPx 
+TIM1, 8
+TIM2, 3
+Timer input channel, trigger, break from 
+analog signals comparison
+YYYY - -
+LPTIMERx
+Low-power timer triggered by analog 
+signals comparison 
+YYYYY
+Y
+(1)
+ADCx
+TIM1, 8
+Timer triggered by analog watchdog 
+Y
+Y
+Y
+Y
+-
+-
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+36/273
+DS12024 Rev 4
+RTC
+TIM16
+Timer input channel from RTC events
+Y
+Y
+Y
+Y
+-
+-
+LPTIMERx
+Low-power timer triggered by RTC alarms 
+or tampers 
+YYYYY
+Y
+(1)
+All clocks sources (internal 
+and external)
+TIM2
+TIM15, 16, 17
+Clock source used as input channel for 
+RC measurement and trimming
+YYYY - -
+USB
+TIM2
+Timer triggered by USB SOF 
+Y
+Y
+-
+-
+-
+-
+CSS
+CPU (hard fault)
+RAM (parity error)
+Flash memory (ECC error)
+COMPx
+PVD
+DFSDM1 (analog 
+watchdog, short circuit 
+detection)
+TIM1,8
+TIM15,16,17
+Timer break 
+Y
+Y
+Y
+Y
+-
+-
+GPIO
+TIMx
+External trigger
+Y
+Y
+Y
+Y
+-
+-
+LPTIMERx
+External trigger
+Y
+Y
+Y
+Y
+Y
+Y
+(1)
+ADC
+DACx
+DFSDM1
+Conversion external trigger
+Y
+Y
+Y
+Y
+-
+-
+1. LPTIM1 only .
+T able 6. STM32L4S5xx, STM32L4S7xx and STM32L4S9xx 
+peripherals interconnect matrix (continued)
+ Interconnect source
+Interconnect 
+destination
+Interconnect action
+Run
+Sleep
+Low-power run
+Low-power sleep
+Stop 0 / Stop 1
+Stop 2
+DS12024 Rev 4
+37/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+3.12 
+Clocks and startup
+The clock controller (see 
+Figure
+ 
+6
+) distributes the clocks coming from the different 
+oscillators to the core and to 
+the peripherals. It also manages 
+the clock gating for low-power 
+modes and ensures the clock robustness. It features:
+
+Clock prescaler:
+ to get the best trade-off between speed and current consumption, 
+the clock frequency to the CPU and peripherals can be adjusted by a programmable 
+prescaler .
+
+Safe clock switching:
+ clock sources can be changed safely on the fly in Run mode 
+through a configuration register.
+
+Clock management:
+ to reduce the power consumptio
+n, the clock controller can stop 
+the clock to the core, individual peripherals or memory .
+
+System clock source:
+ four different clock sources can be used to drive the master 
+clock SYSCLK:
+
+4 to 48 MHz high-speed external crystal or ceramic resonator (HSE), that can 
+supply a PLL. The HSE can also be configured in bypass mode for an external 
+clock. 
+
+16 MHz high-speed internal RC oscillator (H
+SI16), trimma
+ble by software, that can 
+supply a PLL
+
+Multispeed internal RC oscillator (MSI), tr
+immable by software, 
+able to generate 
+12 frequencies from 100 kHz to 48 MHz.
+ When a 32.768 kHz clock source is 
+available in the system (LSE), the MSI fr
+equency can be automatically trimmed by 
+hardware to reach better than ±0.25% accuracy . In this mode the MSI can feed the 
+USB device, saving the need of an exte
+rnal high-speed crystal (HSE). The MSI 
+can supply a PLL.
+
+System PLL which can be fed by HSE, 
+HSI16 or MSI, with a maximum frequency 
+at 120 MHz.
+
+RC48 with clock recovery system (HSI48): 
+internal 48 MHz clock source (HSI48)can 
+be used to drive the USB, the SDMMC or the RNG peripherals. This clock can be 
+output on the MCO.
+
+Auxiliary clock source:
+ two ultra-low-power clock sources that can be used to drive 
+the real-time clock:
+
+32.768 kHz low-speed exte
+rnal crystal (LSE), support
+ing four drive capability 
+modes. The LSE can also be configured in bypass mode for an external clock.
+
+32 kHz low-speed internal RC (LSI), also used to drive the independent watchdog. 
+The LSI clock accura
+cy is ±5% accuracy .
+
+Peripheral clock sources:
+ several peripherals (USB, SDMMC, RNG, SAI, USART s, 
+I2Cs, LPTimers, ADC) have their own indepe
+ndent clock whatever the system clock. 
+Three PLLs, each having three 
+independent outputs allowing 
+the highest flexibility , can 
+generate independent clocks for the ADC,
+ the USB/SDMMC/RNG, the two SAIs, LCD-
+TFT and DSI-HOST . When using DSI-HOST peripheral, the high-speed external crystal 
+(HSE) must be available. 
+
+Startup clock:
+ after reset, the microcontroller restarts by default with an internal 4 MHz 
+clock (MSI). The prescaler ratio and clock source can be changed by the application 
+program as soon as the code execution starts.
+
+Clock security system (CSS):
+ this feature can be enabled by software. If a HSE clock 
+failure occurs, the master cl
+ock is automatically switched to HSI16 and a software 
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+38/273
+DS12024 Rev 4
+interrupt is generated if enabled. LSE failure can also be detected and generated an 
+interrupt.
+
+Clock-out capability: 
+
+MCO (microcontroller clock output):
+ it outputs one of the internal clocks for 
+external use by the application
+
+LSCO (low-speed clock output):
+ it outputs LSI or LSE 
+in all low-power modes 
+(except VBA T).
+Several prescalers allow to 
+configure the AHB fr
+equency , the high 
+speed APB (APB2) and 
+the low-speed APB (APB1) domains. The ma
+ximum frequency of 
+the AHB and the APB 
+domains is 120
+ 
+MHz.
+DS12024 Rev 4
+39/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+Figure 6. Clock tree
+MSv38434V7
+ SYSCLKMCOLSCOPLLSAI2_EXTCLK48 MHz clock to USB, RNGto ADC to IWDGto RTC
+to PWR
+HCLK
+to AHB bus, core, memory and DMA
+FCLK Cortex free running clock
+to Cortex system timer
+to APB1 peripherals
+to APB2 peripherals
+PCLK1
+PCLK2
+to SAI1
+to SAI2
+LSE
+HSI16
+SYSCLK
+to USARTx
+X=2..5
+to LPUART1
+to I2Cx
+x=1,2,3,4
+to LPTIMx
+x=1,2
+SAI1_EXTCLK
+to TIMx
+x=2..7
+OSC32_OUT
+OSC32_IN
+MSI
+HSI16
+HSE
+HSE
+MSI
+HSI16
+MSI
+SYSCLK
+LSE OSC
+32.768 kHz
+/32
+AHB PRESC
+/ 1,2,..512
+/ 8
+APB1 PRESC
+/ 1,2,4,8,16
+x1 or x2
+HSI16
+SYSCLK
+LSI
+LSE
+HSI16
+APB2 PRESC
+/ 1,2,4,8,16
+to TIMx
+x=1,8,15,16,17
+x1 or x2
+to 
+USART1
+LSE
+HSI16
+SYSCLK
+/ P
+/ Q
+/ R
+PLLSAI1
+/ P
+/ Q
+/ R
+/ M
+MSI RC
+100 kHz  48 MHz
+HSI RC
+16 MHz
+HSE OSC
+4-48 MHz
+Clock 
+detector
+OSC_OUT
+OSC_IN
+/ 116
+LSI RC 32 kHz
+Clock 
+source 
+control
+PLLSAI3CLK
+PLL48M1CLK
+PLLCLK
+PLLSAI1CLK
+PLL48M2CLK
+PLLADC1CLK
+PLLSAI2CLK
+PLLLCDCLK
+HSI16
+HSI16
+HSI16
+PLLSAI2
+/ P
+/ Q
+/ R
+HSI16
+LSI
+LSE
+HSE
+SYSCLK
+PLLCLK
+HSI48
+MSI
+OCTOSPI clock
+MSI
+MSI
+HSI16
+DFSDM 
+audio clock
+SDMMC clock
+PLLSAI2DIVR
+L TDC clock
+ DSIPLLDSI - PHY HSE PLLDSICLK  62.5 MHz 20 MHz< 62.5 MHz DSIHOSTbyte lane clockDSIHOSTrxclkesc clock / M / M RC 48 MHz
+CRS clock
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+40/273
+DS12024 Rev 4
+3.13 General-purpose in
+puts/outputs (GPIOs)
+Each of the GPIO pins can be configured by so
+ftware as output (push-pull or open-drain), as 
+input (with or without pull-up or pull-down) or 
+as peripheral alternate function. Most of the 
+GPIO pins are shared with digital or analog 
+alternate functions. Fast I/O toggling can be 
+achieved thanks to their mapping on the AHB2 bus.
+The I/Os alternate function configuration c
+an be locked if needed following a specific 
+sequence in order to avoid spurious writing to the I/Os registers.
+3.14 
+Direct memory a
+ccess controller (DMA)
+The device embeds 2 DMAs. Refer to 
+Ta b l e
+ 
+7: DMA implementation
+ for the features 
+implementation.
+Direct memory access (DMA) is used in order to provide a high-speed data transfer 
+between peripherals and memory as well as from memory to memory . Data can be quickly 
+moved by DMA without any CPU actions. This
+ keeps the CPU resources free for other 
+operations.
+The two DMA controllers have 14 channels in total, each one dedicated to manage memory 
+access requests from one or more peripherals. Each controller has an arbiter for handling 
+the priority between DMA requests. 
+The DMA supports:
+
+14 independently configurable channels (requests)
+
+Each channel is connected to a dedicated hardware DMA request, a software 
+trigger is also supported on each channel. This configuration is done by software.
+
+Priorities between requests from channels of one DMA are both software 
+programmable (4 levels: very high, high, medium, low) or hardware programmable in 
+case of equality (request 1 has 
+priority over request 2, etc.)
+
+Independent source and destination transfer
+ size (byte, half word, word), emulating 
+packing and unpacking. Source/destination a
+ddresses must be aligned on the data size
+
+Support for circular buffer management
+
+3 event flags (DMA half transfer, DMA tr
+ansfer complete and 
+DMA transfer error) 
+logically ORed together in a single interrupt request for each channel
+
+Memory-to-memory transfer
+
+Peripheral-to-memory , memory-to-peripheral, and peripheral-to-peripheral transfers 
+
+Access to Flash, SRAM, APB and AHB 
+peripherals as source and destination
+
+Programmable number of data to be transferred: up to 65536
+          
+T able 7. DMA implementation 
+DMA features
+DMA1
+DMA2
+Number of regular channels
+7
+7
+DS12024 Rev 4
+41/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+3.15 
+DMA request router (DMAMux)
+When a peripheral indicates a request for DMA 
+transfer by setting its DMA request line, the 
+DMA request is pending until it is served a
+nd the corresponding DMA request line is reset. 
+The DMA request router allows to route the 
+DMA control lines betwee
+n the peripherals and 
+the DMA controllers of the product. 
+An embedded multi-channel DMA request gener
+ator can be considered as one of such 
+peripherals. The routing function is ensured by a multi-channel DMA request line 
+multiplexer. Each channel sele
+cts a unique set of DMA control lines, unconditionally or 
+synchronously with events on synchronization inputs.
+For simplicity , the functional description is
+ limited to DMA request
+ lines. The other DMA 
+control lines are not shown in figures or described in the text. The DMA request generator 
+produces DMA requests following events on DMA request trigger inputs.
+3.16 Chrom-ART Accelerator (DMA2D)
+Chrom-ART Accelerator (DMA2D) is a graphic accelerator that offers an advanced bit 
+blitting, row data copy and pixel format conversion. It supports the following functions:
+
+Rectangle filling wit
+h a fixed color
+
+Rectangle copy
+
+Rectangle copy with pixel format conversion
+
+Rectangle composition with blending and pixel format conversion.
+V arious image format coding are supported, from indirect 4
+ 
+bpp color mode up to 32
+ 
+bpp 
+direct color. It embeds a dedicated memory to store color lookup tables.
+An interrupt can be generated when an operation is complete or at a programmed 
+watermark.
+All the operations are fully automatized and are running independently from the CPU or the 
+DMAs.
+3.17 Chrom-GRC (GFXMMU)
+The Chrom-GRC (GFXMMU) is a graphical oriented memory management unit aimed to:
+
+Optimize memory usage according to the display shape
+
+Manage packing/unpacking for 24 bpp frame buffers
+The Chrom-GRC features:
+
+Fully programmable display shape to phys
+ically store only the visible pixel
+
+Up to four virtual buffers
+
+Each virtual buffer have 4096 bytes per line and 1024 lines
+
+Each virtual buffer ca
+n be physically mapped to any system memory
+
+24 bpp packing unit to store unpacked 24bpp data in a packed 24 bpp
+
+Packing/un-packing management per buffer
+
+Interrupt in case of buffer overflow (1 per buffer)
+
+Interrupt in case of 
+memory transfer error
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+42/273
+DS12024 Rev 4
+3.18 Interrupts and events
+3.18.1 
+Nested vectored inte
+rrupt controller (NVIC)
+The STM32L4S5xx, STM32L4S7xx and STM32L4S9xxdevices embed a nested vectored 
+interrupt controller which is able to manage 16 priority levels, and to handle up to 95 
+maskable interrupt channels plus the 16 interrupt lines of the Cortex
+®
+-M4.
+The NVIC benefits are the following:
+
+Closely coupled NVIC gives lo
+w latency interrupt processing
+
+Interrupt entry vector table address passed directly to the core
+
+Allows early processing of interrupts
+
+Processing of late arriving higher priority interrupts
+
+Support for tail chaining
+
+Processor state automatically saved
+
+Interrupt entry restored on interrupt exit with no instruction overhead
+The NVIC hardware block provides flexible 
+interrupt management features with minimal 
+interrupt latency .
+3.18.2 
+Extended interrupt/event controller (EXTI)
+The extended interrupt/event cont
+roller consists of 36 edge de
+tector lines used to generate 
+interrupt/event requests and to wake-up the system from the Stop mode. Each external line 
+can be independently configured
+ to select the trigger event 
+(rising edge, falling edge, both) 
+and can be masked independently .
+A pending register maintains the status of th
+e interrupt requests. The internal lines are 
+connected to peripherals with 
+wakeup from Stop mode capabilit
+y . The EXTI can detect an 
+external line with a pulse width shorter than the internal clock period. Up to 1 14 GPIOs can 
+be connected to the 16 external interrupt lines.
+DS12024 Rev 4
+43/273
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+Functional overview
+64
+3.19 
+Analog-to-digital converter (ADC)
+The device embeds a successive approximati
+on analog-to-digital converters with the 
+following features:
+
+12-bit native resolution
+, with built-in calibration
+
+5.33 Msps maximum conversion rate with full resolution
+
+Down to 18.75 ns sampling time
+
+Increased conversion rate for lower resolution (up to 8.88 Msps for 6-bit 
+resolution)
+
+Up to 16 external channels
+
+5 internal channels: internal reference vo
+ltage, temperature sensor, VBA T/3, DAC1 and 
+DAC2 outputs
+
+One external reference pin is available on 
+some package, allowing the input voltage 
+range to be independent from the power supply
+
+Single-ended and differential mode inputs
+
+Low-power design
+
+Capable of low-current operation at low conversion rate (consumption decreases 
+linearly with speed)
+
+Dual clock domain architecture: ADC speed independent from CPU frequency
+
+Highly versatile digital interface
+
+Single-shot or continuous/discontinuous
+ sequencer-based scan mode: 2 groups 
+of analog signals conversions can be programmed to differentiate background and 
+high-priority real-time conversions
+
+Each ADC support multiple 
+trigger inputs for synchronization with on-chip timers 
+and external signals
+
+Results stored into a data register or in RAM with DMA controller support
+
+Data pre-processing: left/right alignment and per channel offset compensation
+
+Built-in oversampling unit for enhanced SNR
+
+Channel-wise programmable sampling time
+
+Analog watchdog for automatic voltage 
+monitoring, generating interrupts and 
+trigger for selected timers
+
+Hardware assistant to prepare the context of the injected channels to allow fast 
+context switching
+3.19.1 T emperature sensor
+The temperature sensor (TS) generates a voltage V
+TS
+ that varies linearly with temperature. 
+The temperature sensor is internally connec
+ted to the ADC1_IN17 input channels which is 
+used to convert the sensor output voltage into a digital value.
+The sensor provides good linearity but it has to be calibrated to obtain good overall 
+accuracy of the temperature measurement. As th
+e offset of the temperature sensor varies 
+from chip to chip due to process variation, the uncalibrated internal temperature sensor is 
+suitable for applications that detect temperature changes only .
+T o improve the accuracy of the temperature sensor measurement, each device is 
+individually factory-calibrated by ST . The te
+mperature sensor factory calibration data are 
+stored by ST in the system memory area, accessible in read-only mode.
+Functional overview
+STM32L4S5xx, STM32L4S7xx and STM32L4S9xx
+44/273
+DS12024 Rev 4
+          
+3.19.2 
+Internal voltage reference (V
+REFINT
+)
+The internal voltage reference (VREFINT) pr
+ovides a stable (bandgap) voltage output for 
+the ADC and the comparators. The VREFINT is 
+internally connected to the 

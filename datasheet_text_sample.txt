@@ -1,0 +1,3964 @@
+STM3
+2L4
+S
+5
+x
+x
+,
+ STM3
+2L4
+S
+7xx
+ 
+a
+nd STM3
+2L4
+S
+9xx
+2
+/
+273
+DS12
+024
+ Rev 
+4
+
+2
+x 
+1
+2
+-
+b
+it DAC, 
+lo
+w-
+po
+we
+r samp
+le an
+d hol
+d 
+
+2
+x op
+er
+at
+ion
+a
+l
+ 
+a
+m
+p
+lif
+iers with built-in PGA
+
+2
+x ultr
+a
+-
+lo
+w-p
+o
+w
+er
+ 
+c
+o
+m
+p
+ar
+at
+or
+s
+
+2
+0
+x
+ co
+m
+m
+u
+n
+i
+cat
+i
+on
+ in
+te
+rf
+ac
+es
+
+U
+SB OT
+G 2.0 fu
+ll-spe
+e
+d
+,
+ LPM a
+nd BCD
+
+2
+x SAIs (
+s
+eri
+a
+l 
+aud
+io 
+inter
+f
+ace\
+4
+x
+ I
+2
+C
+ 
+F
+M
++
+(
+1
+ M
+b
+i
+t/s\
+
+6
+x 
+USAR
+T
+s
+ (ISO 78
+16
+, LIN, IrDA, 
+m
+ode
+m\
+
+3
+x 
+SPIs 
+(5x SP
+Is w
+i
+th the dual O
+c
+to-SPI
+\
+
+C
+AN (2.0B 
+Ac
+tive
+\
+d SDMMC
+
+14
+-cha
+nn
+el DM
+A con
+t
+r
+o
+lle
+r
+
+Tr
+ue
+ r
+a
+n
+dom
+ n
+u
+mb
+er 
+g
+ene
+ra
+to
+r
+
+CRC calculatio
+n unit, 
+9
+6
+-
+b
+it uniq
+ue ID
+
+8-
+ to
+ 
+1
+4
+-
+b
+it 
+ca
+mer
+a
+ inter
+f
+a
+c
+e up to 32 M
+H
+z 
+(b
+la
+ck an
+d wh
+ite
+\
+ 
+o
+r
+ 10
+ MHz
+ 
+(c
+olo
+r
+\
+
+Encr
+yp
+tio
+n
+ ha
+rdwa
+re a
+c
+cele
+ra
+to
+r: AES 
+(
+128
+/2
+56
+-bit key\
+(
+S
+HA-
+2
+5
+6
+\
+
+De
+ve
+lop
+m
+en
+t su
+pp
+or
+t: se
+ria
+l
+ 
+wir
+e de
+b
+u
+g
+ 
+(S
+WD\
+,
+ JT
+AG
+, 
+Em
+b
+e
+d
+d
+e
+d
+ T
+r
+ac
+e 
+Ma
+cr
+oc
+el
+l
+
+ 
+(ET
+M
+\
+ 
+  
+    
+   
+ 
+  
+    
+   
+ 
+  
+    
+   
+T
+a
+ble 1. De
+vice su
+mma
+r
+y 
+Reference
+P
+art numbers
+STM32
+L4S5xx
+S
+T
+M
+3
+2L4
+S5
+VI, STM32L
+4S
+5QI, STM32L
+4S5Z
+I, STM32L
+4S5AI
+STM32
+L4S7xx
+S
+T
+M
+3
+2L4
+S7
+VI, STM32L
+4S7Z
+I, STM32L
+4S7AI
+STM32
+L4S9xx
+S
+T
+M
+3
+2L4
+S9
+VI, STM32L
+4S9Z
+I, STM32L
+4S9AI
+DS12
+024
+ Rev 
+4
+3
+/2
+73
+STM
+32L4
+S
+5x
+x, STM
+32L
+4S7x
+x 
+and
+ STM
+32L
+4S9x
+x
+C
+on
+te
+nts
+6
+Co
+nten
+ts
+1
+I
+ntroduction 
+. . . . . . . . . . . . 
+. . . . . . . . . . . . 
+. . . . . . . . . . . . 
+. . . . . . . . . . . 
+12
+2
+D
+esc
+ription . . . . . . . . 
+. . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . 
+. . . . . . . . . . . . 
+13
+3
+Functional overview 
+ . . . . . . 
+. . . . . . . . . . . . 
+. . . . . . . . . . . . 
+. . . . . . . . . . 
+17
+3.
+1
+A
+rm
+®
+ Cortex
+®
+-M4
+ core
+ with FPU 
+. .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+17
+3.
+2
+A
+daptive rea
+l
+-time memo
+ry accelerator 
+(AR
+T
+ 
+Accele
+rator
+\
+ 
+ . . .
+ . . . . . 
+. . . 
+17
+3.
+3
+M
+emory 
+protection 
+unit 
+. . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+17
+3.
+4
+E
+mbed
+ded Flash
+ memory 
+ . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+18
+3.
+5
+E
+mbed
+ded SRAM 
+. . . 
+. . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+19
+3.
+6
+M
+ulti-AHB bus matrix  
+. . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+20
+3.
+7
+F
+irewall 
+.
+ . . . . .
+ . . . . . 
+. . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+20
+3.
+8
+B
+oot modes 
+ . .
+ . . . . . 
+. . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+21
+3.
+9
+C
+yclic 
+redund
+ancy ch
+eck calculation
+ unit (CRC\
+ 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+21
+3.
+10
+Power sup
+p
+ly man
+agement 
+ 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+22
+3.10.1
+P
+ower s
+u
+pply sc
+hemes
+ 
+ .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 22
+3.10.2
+P
+ower s
+u
+pply supervisor 
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+25
+3.10.3
+V
+oltage regulator 
+ .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+25
+3.10.4
+L
+ow
+-pow
+er modes 
+. 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+27
+3.10.5
+R
+eset mode 
+. .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+35
+3.10.6
+VBA
+T
+ operation 
+ 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 35
+3.
+1
+1
+Interconnect matrix 
+. . 
+. . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+35
+3.
+12
+Clocks a
+nd startup 
+ . . 
+. . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+37
+3.
+13
+Gen
+e
+ral-p
+u
+rpose inp
+u
+ts/o
+utputs (GPIOs\
+.
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+40
+3.
+14
+Direct
+ memory 
+access con
+t
+roller (DMA\
+. .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+40
+3.
+15
+DMA
+ requ
+est ro
+uter (DMAMux\
+ . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+41
+3.
+16
+Ch
+rom-AR
+T
+ 
+Accelera
+tor (
+D
+MA2D\
+.
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+41
+3.
+17
+Ch
+rom-GRC 
+(GFXMMU\
+ . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+41
+3.
+18
+Interrup
+t
+s an
+d events 
+ 
+. . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+42
+3.18.1
+N
+este
+d vecto
+r
+e
+d
+ inter
+r
+u
+p
+t 
+co
+ntro
+ller (
+N
+VIC\
+ 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+42
+3.18.2
+E
+xte
+nde
+d inter
+r
+u
+p
+t/event co
+ntro
+ller
+ 
+(
+EXTI\
+ 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 42
+3.
+19
+Analog
+-to
+-
+digital con
+v
+erte
+r (ADC\
+ .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+43
+Cont
+ent
+s
+STM3
+2L4
+S
+5
+x
+x
+,
+ STM3
+2L4
+S
+7xx
+ 
+a
+nd STM3
+2L4
+S
+9xx
+4
+/
+273
+DS12
+024
+ Rev 
+4
+3.19.1
+T
+emperature s
+e
+nsor 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. 
+.
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+43
+3.19.2
+I
+nternal voltage ref
+e
+rence (VREFIN
+T
+\
+.
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 44
+3.19.3
+V
+BA
+T
+ bat
+t
+ery 
+voltage monitoring 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+44
+3.
+20
+Digita
+l to a
+nalo
+g
+ con
+v
+erte
+r (DAC\
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+44
+3.
+21
+V
+o
+ltag
+e refere
+nce 
+buf
+fe
+r (VREFBUF\
+. . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+45
+3.
+22
+Co
+mpar
+ators 
+(COMP\
+ . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+45
+3.
+23
+Ope
+r
+ation
+a
+l amplifier 
+(OP
+A
+MP\
+ . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+46
+3.
+24
+T
+ouch sensing controller (T
+SC\
+ . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+46
+3.
+25
+LCD-T
+F
+T
+ controller (L
+TDC\
+ 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+47
+3.
+26
+DSI 
+Ho
+st (DSIHOST\
+ 
+. . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+47
+3.
+27
+Digita
+l filter fo
+r sig
+m
+a-d
+e
+lta 
+modulators (D
+FSDM\
+ . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+49
+3.
+28
+Ra
+ndom number gen
+erator (
+R
+NG\
+.
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+50
+3.
+29
+Digita
+l camera
+ inter
+f
+ace 
+(DCMI\
+. . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+50
+3.
+30
+Advan
+c
+ed e
+n
+cryptio
+n
+ sta
+ndard h
+a
+rdware a
+cce
+lerato
+r (AES\
+. .
+ . . . . . 
+. . . 
+51
+3.
+31
+HASH hard
+w
+a
+r
+e accelerator (HASH\
+. . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+51
+3.
+32
+T
+i
+me
+rs an
+d watchd
+ogs 
+. . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+51
+3.32.1
+A
+dvanc
+e
+d-c
+o
+ntrol 
+timer (TI
+M
+1, 
+TI
+M8\
+ .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+52
+3.32.2
+G
+e
+n
+e
+r
+al-
+p
+u
+r
+p
+o
+se 
+ti
+mer
+s
+ 
+(
+T
+IM
+2, T
+I
+M
+3
+, T
+I
+M
+4
+, T
+I
+M5
+, TIM1
+5, T
+I
+M
+16,
+ 
+TIM17\
+.
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 53
+3.32.3
+B
+asic 
+timers (TIM6 
+and 
+TIM7\
+ 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 53
+3.32.4
+L
+ow
+-pow
+er timer (LP
+T
+I
+M
+1 and 
+LPTIM2\
+ .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 53
+3.32.5
+I
+ndependent 
+wat
+c
+hdog (I
+WDG
+\
+ 
+. 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 54
+3.32.6
+S
+ys
+tem 
+window w
+a
+t
+c
+hdog 
+(WW
+D
+G
+\
+ 
+ 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 54
+3.32.7
+S
+ys
+T
+i
+c
+k
+ t
+i
+mer 
+.
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 54
+3.
+33
+Re
+al-time clock (R
+T
+C
+\
+and ba
+cku
+p registers 
+ . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+55
+3.
+34
+Inter-integra
+t
+ed circu
+i
+t in
+terface (I
+2
+C\
+. . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+55
+3.
+35
+Un
+ive
+r
+sal synchro
+nous/asynch
+r
+onous re
+ceiver transmitter (USAR
+T\
+ 
+. . . 
+57
+3.
+36
+Low-power u
+n
+iversal asynchronous rece
+iver transmitter (LPUAR
+T\
+ . 
+. . . 
+58
+3.
+37
+Serial perip
+heral inte
+rface 
+(SPI\
+. . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+58
+3.
+38
+Serial audio int
+e
+rface
+s
+ (SAI\
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+58
+3.
+39
+Co
+ntroller are
+a
+ network (CAN\
+. . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+59
+3.
+40
+Secure
+ digital input/
+output
+ and MultiMed
+iaCards Interf
+ace (SDMMC\
+. . . 
+60
+3.
+41
+Un
+ive
+r
+sal serial b
+u
+s on
+-the-go
+ full-spee
+d (OTG_FS\
+. . .
+ . . . . .
+ . . . . . 
+. . . 
+61
+3.
+42
+Clock recovery syste
+m
+ (CRS\
+ . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+61
+DS12
+024
+ Rev 
+4
+5
+/2
+73
+STM
+32L4
+S
+5x
+x, STM
+32L
+4S7x
+x 
+and
+ STM
+32L
+4S9x
+x
+C
+on
+te
+nts
+6
+3.
+43
+Flexible sta
+t
+ic memory 
+contro
+lle
+r (FSMC\
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+61
+3.
+44
+OctoSPI inte
+rface
+ (OctoSPI\
+ . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+62
+3.
+45
+OctoSPI IO 
+mana
+ger (OctoSPIIOM\
+ . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+63
+3.
+46
+De
+velopme
+n
+t su
+pport 
+. . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . 
+63
+3.46.1
+S
+erial wire 
+JT
+AG 
+debug port (SWJ-DP\
+. .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+63
+3.46.2
+E
+mbedded 
+T
+r
+ace Mac
+r
+ocell
+ 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+64
+4
+P
+inouts and pin description 
+. . . 
+. . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . 
+65
+5
+M
+emory ma
+ppin
+g
+ . . . . . . . . . . 
+. . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . 
+1
+1
+3
+6
+E
+lectrical ch
+aracteristi
+cs 
+ . . . . . . . . . . . 
+. . . . . . . . . . . . . 
+. . . . . . . . . . . 
+1
+1
+4
+6.
+1
+P
+arame
+t
+er co
+nditions 
+. . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . .
+1
+14
+6.1.1
+M
+inimum and max
+i
+mum values
+ 
+. 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+1
+1
+4
+6.1.2
+T
+ypical 
+values 
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+1
+1
+4
+6.1.3
+T
+ypical 
+curves 
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+1
+1
+4
+6.1.4
+L
+oading capacit
+o
+r 
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+1
+1
+4
+6.1.5
+P
+in input 
+volt
+age 
+ .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+1
+1
+4
+6.1.6
+P
+ower s
+u
+pply sc
+heme 
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+1
+1
+5
+6.1.7
+C
+ur
+re
+nt 
+con
+s
+u
+m
+ptio
+n mea
+s
+u
+r
+e
+m
+en
+t 
+ 
+. . . . 
+. 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+1
+1
+6
+6.
+2
+A
+bsolute maximum ratings 
+. 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . .
+1
+16
+6.
+3
+O
+pe
+rating
+ con
+d
+itions 
+ 
+. . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . .
+1
+18
+6.3.1
+G
+e
+n
+e
+r
+al o
+per
+ating
+ 
+con
+d
+ition
+s
+ 
+. 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+1
+1
+8
+6.3.2
+O
+p
+e
+r
+a
+ting
+ 
+con
+d
+ition
+s
+ at powe
+r
+-
+up / 
+p
+o
+we
+r-down 
+.
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+120
+6
+.
+3
+.
+3
+E
+m
+b
+ed
+de
+d
+ 
+re
+se
+t an
+d po
+we
+r co
+ntr
+o
+l 
+blo
+c
+k
+ characteris
+t
+ics 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+120
+6.3.4
+E
+mbedded voltage ref
+e
+rence 
+. 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+122
+6.3.5
+S
+upply 
+current c
+h
+aract
+e
+ristics
+ 
+ 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+124
+6.3.6
+W
+akeu
+p ti
+me from
+ 
+lo
+w-
+po
+we
+r mo
+des an
+d vo
+lta
+g
+e
+ 
+scalin
+g
+ 
+transit
+i
+on times 
+. 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+150
+6.3.7
+E
+xt
+ernal c
+l
+oc
+k source c
+h
+aract
+e
+ristic
+s 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+153
+6.3.8
+I
+nter
+nal clock 
+sou
+r
+ce cha
+r
+ac
+terist
+ics 
+ 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+158
+6.3.9
+P
+LL
+ 
+charact
+e
+ristic
+s 
+. 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+165
+6.3.10
+MIPI
+ D-PHY
+ c
+h
+aract
+e
+ristic
+s 
+.
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+165
+6.3.1
+1
+MIPI
+ D-PHY
+ PLL
+ charac
+terist
+ics 
+ 
+. .
+ . 
+. .
+ 
+. .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+168
+6.3.12
+MIPI
+ D-PHY
+ regulat
+or characteris
+t
+ics 
+ .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+169
+6.3.13
+Flas
+h 
+memory c
+h
+aract
+e
+ristic
+s 
+ 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+170
+6.3.14
+EMC c
+h
+aract
+e
+ristic
+s 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+171
+Cont
+ent
+s
+STM3
+2L4
+S
+5
+x
+x
+,
+ STM3
+2L4
+S
+7xx
+ 
+a
+nd STM3
+2L4
+S
+9xx
+6
+/
+273
+DS12
+024
+ Rev 
+4
+6.3.15
+Electrical sensitivit
+y c
+h
+aracteristics
+ 
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+172
+6.3.16
+I/
+O 
+current injec
+t
+ion 
+charac
+teristic
+s 
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+173
+6.3.17
+I/
+O 
+port
+ characterist
+ics 
+. .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+174
+6.3.18
+NR
+ST
+ 
+pin c
+h
+aract
+e
+ristics
+ 
+. 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+180
+6.3.19
+Exte
+nde
+d inter
+r
+u
+p
+t and
+ 
+e
+v
+e
+n
+t co
+ntro
+ller
+ 
+in
+put (EXTI\
+ 
+cha
+r
+a
+c
+ter
+i
+stics 
+. . 
+181
+6.3.20
+Analog swit
+ches
+ booster 
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+181
+6.3.21
+Ana
+l
+og-
+to-di
+g
+ital con
+v
+e
+r
+ter
+ 
+ch
+ara
+c
+te
+ristic
+s 
+. 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+182
+6.3.22
+Digital-t
+o-Analog 
+convert
+e
+r characteris
+t
+ics
+ 
+ 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+195
+6.3.23
+V
+o
+ltag
+e re
+fere
+nce bu
+f
+f
+e
+r
+ ch
+aracteristics
+ 
+ .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+200
+6.3.24
+Comparator 
+charac
+terist
+ics 
+ .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+202
+6.3.25
+O
+p
+erational amplif
+iers c
+h
+aract
+e
+ristic
+s 
+ .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+203
+6.3.26
+T
+e
+mperature s
+e
+nsor 
+charact
+e
+ristic
+s 
+. 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+207
+6.3.27
+V
+BA
+T
+ 
+monitoring characteris
+t
+ics  . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+207
+6.3.28
+D
+F
+SDM 
+charact
+e
+ristic
+s 
+ .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+208
+6.3.29
+T
+i
+mer 
+charac
+terist
+ics 
+ .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+209
+6
+.
+3
+.
+3
+0
+Co
+m
+m
+u
+n
+i
+ca
+tion
+ in
+te
+rf
+ac
+es
+ ch
+ar
+ac
+te
+rist
+ics 
+. 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+21
+1
+6.3.31
+FSMC c
+h
+aracteristics
+ 
+.
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+220
+6.3.32
+O
+c
+toSPI 
+charac
+terist
+ics 
+.
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+237
+6.3.33
+Camera 
+int
+e
+rface (D
+CMI\
+timing s
+p
+ecific
+at
+ions 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+244
+6.3.34
+LCD-TFT
+ c
+o
+ntroller 
+(L
+TDC
+\
+ c
+h
+aract
+e
+ristic
+s 
+ 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+245
+6.3.35
+S
+D
+/
+S
+DIO
+/
+MMC c
+a
+rd 
+host
+ int
+e
+rfaces (SDMMC\
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+246
+7
+P
+ackage inform
+at
+ion 
+. . . . . . . 
+. . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . 
+249
+7.
+1
+U
+F
+B
+GA169 
+package informatio
+n  . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . 
+249
+7.
+2
+U
+F
+B
+GA144 
+package informatio
+n  . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . 
+252
+7.
+3
+L
+QF
+P1
+44 packag
+e
+ inf
+o
+rmat
+ion . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . 
+255
+7.
+4
+W
+LCSP144 pa
+cka
+ge in
+forma
+t
+ion 
+. .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . 
+259
+7.
+5
+U
+F
+B
+GA132 
+package informatio
+n  . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . 
+262
+7.
+6
+L
+QF
+P1
+00 packag
+e
+ inf
+o
+rmat
+ion . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . 
+265
+7.
+7
+Thermal characteristics 
+ . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . . . . .
+ . . . . .
+ . . . . . 
+. . 
+268
+7.7.1
+R
+eference 
+document 
+.
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+268
+7.7.2
+S
+elec
+ting t
+h
+e produc
+t
+ t
+e
+mperat
+ure 
+range 
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+268
+8
+O
+rdering inform
+at
+ion 
+ . . . . . 
+. . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+271
+9
+R
+evision history 
+ . . . . . . . . . 
+. . . . . . . . . . . . . . . . . 
+. . . . . . . . . . . . . . . . 
+272
+DS12
+024
+ Rev 
+4
+7
+/2
+73
+STM
+32L4
+S
+5x
+x, 
+STM
+32L
+4S7x
+x and
+ 
+STM
+32L
+4S9x
+x
+L
+ist
+ of t
+a
+bles
+9
+List of tables
+Table 
+1.
+Device summary
+. 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. .
+ 
+2
+Ta
+ble
+ 2
+.
+STM
+32L
+4S5xx, 
+STM
+32L
+4S7xx a
+n
+d
+ STM
+32L
+4S9xx 
+ 
+feat
+ures
+ and peripheral counts
+. .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+14
+Ta
+ble
+ 3
+.
+Access 
+sta
+t
+us ver
+s
+us r
+e
+a
+dou
+t p
+r
+ote
+c
+tion
+ le
+vel 
+and 
+execution modes
+.
+ .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+18
+Table 
+4.
+STM32L4S5xx 
+modes 
+ov
+erview
+.
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 27
+Ta
+ble
+ 5
+.
+Fu
+nctiona
+lities d
+epe
+nd
+ing 
+on
+ 
+th
+e 
+wo
+rking
+ m
+ode
+. . 
+. . 
+.
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+32
+Ta
+ble
+ 6
+.
+STM
+32L
+4S5xx, 
+STM
+32L
+4S7xx a
+n
+d
+ STM
+32L
+4S9xx 
+ 
+peripherals
+ interconnect 
+matrix
+. .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+35
+Table 
+7.
+DMA implementation
+ 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 40
+T
+a
+b
+l
+e 
+8.
+T
+e
+m
+p
+er
+at
+ur
+e 
+sen
+s
+o
+r
+ 
+ca
+libr
+a
+t
+i
+on
+ v
+a
+lu
+es
+. .
+ . .
+ . 
+. .
+ . 
+. 
+. 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+44
+Ta
+ble
+ 9
+.
+Inter
+n
+a
+l
+ volta
+ge 
+r
+e
+fer
+ence 
+calib
+rati
+on v
+a
+lues
+ 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 44
+T
+a
+b
+l
+e 10
+.
+T
+ime
+r
+ fe
+at
+ur
+e com
+p
+ar
+iso
+n
+.
+ 
+. . 
+.
+ 
+. 
+.
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 52
+Table 
+11.
+I
+2C implement
+a
+tion
+.
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. 
+.
+ . 
+. . 
+. 56
+T
+a
+b
+l
+e 
+12
+.
+U
+SAR
+T/
+UART
+/L
+PUAR
+T
+ fe
+at
+ur
+es
+ . 
+. .
+ 
+. 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . 
+. . 
+. 
+57
+Table 
+13.
+SAI 
+implementat
+ion
+.
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. .
+ . .
+ . 
+. .
+ . 
+. . 
+. .
+ . 
+. .
+ . .
+ . 

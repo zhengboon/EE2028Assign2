@@ -1,0 +1,3001 @@
+Q1: Which PDF in the repository provides the STM32L4S series data sheet?
+A1: `STM32L4Sxxx Data-sheet.pdf` at the repository root.
+
+Q2: Where can you find the full schematic for the B-L4S5I-IOT01A discovery board?
+A2: In `L4S5VI-e03_schematic.pdf` located at the repository root.
+
+Q3: Which document explains the STM32L4+ series discovery kit hardware?
+A3: `STM32L4+ series Discovery kit.pdf`.
+
+Q4: Which PDF would you open for the MCU technical reference manual?
+A4: `STM32L4+ Technical reference manual.pdf`.
+
+Q5: Where is the ARMv7-M architecture reference stored?
+A5: `ARMv7-M Architecure Ref Manual.pdf` in the project root.
+
+Q6: Which document covers the official I2C-bus specification?
+A6: `UM10204 I2C-bus specification and user manual.pdf`.
+
+Q7: Where is the STM32CubeIDE getting-started material located?
+A7: Look at `STM32CubeIDE_Quick_Start_Guide.pdf`.
+
+Q8: Which PDF in the repo is the assignment brief?
+A8: `S1AY2526 Assignment 2 _ EE2028 Microcontroller Programming and Interfacing [2510].pdf`.
+
+Q9: What file outlines pseudo-code guidance for the assignment?
+A9: `pesudocode.txt` at the repository root.
+
+Q10: Where are the assignment instructions summarized?
+A10: In `instruction.txt` at the repository root.
+
+Q11: Which directory contains the STM32 board support drivers?
+A11: `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01`.
+
+Q12: Where are the CMSIS core header files located?
+A12: Under `Assignment2-AY2526S1/Drivers/CMSIS/Include`.
+
+Q13: Which source file controls the SSD1306 OLED driver logic?
+A13: `Assignment2-AY2526S1/Core/Src/ssd1306.c`.
+
+Q14: Where is the HT16K33 LED matrix driver implemented?
+A14: `Assignment2-AY2526S1/Core/Src/ht16k33.c`.
+
+Q15: Which header exposes the Grove 5-way switch API?
+A15: `Assignment2-AY2526S1/Core/Inc/grove_5way.h`.
+
+Q16: Where can you review the buzzer note definitions?
+A16: `Assignment2-AY2526S1/Core/Inc/buzzer_scale.h`.
+
+Q17: Which file defines the system clock setup for STM32L4S5?
+A17: `Assignment2-AY2526S1/Core/Src/system_stm32l4xx.c`.
+
+Q18: Where are the startup assembly instructions kept?
+A18: `Assignment2-AY2526S1/Core/Startup/startup_stm32l4s5vitx.s`.
+
+Q19: Which folder stores the build artifacts for the Debug configuration?
+A19: `Assignment2-AY2526S1/Debug/`.
+
+Q20: Which folder stores the build artifacts for the Release configuration?
+A20: `Assignment2-AY2526S1/Release/`.
+
+Q21: Where is the linker script for flash configuration located?
+A21: `Assignment2-AY2526S1/STM32L4S5VITX_FLASH.ld`.
+
+Q22: Which header defines application-wide macros and prototypes?
+A22: `Assignment2-AY2526S1/Core/Inc/main.h`.
+
+Q23: Where would you look for bitmap assets used on the OLED?
+A23: `Assignment2-AY2526S1/Core/Inc/bitmap.h` and related images in `Core/Src`.
+
+Q24: Which file collects the horse animation frames?
+A24: `Assignment2-AY2526S1/Core/Src/horse_anim.h`.
+
+Q25: Where is the NFCTAG BSP driver implemented?
+A25: `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`.
+
+Q26: Which file provides magnetometer driver functions?
+A26: `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.c`.
+
+Q27: Where is the humidity sensor BSP code stored?
+A27: `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.c`.
+
+Q28: Which document would you consult for NFC field behavior?
+A28: `stm32l4s5i_iot01_nfctag.c` and its header in the BSP driver folder.
+
+Q29: Where are the HAL MSP initialization hooks written?
+A29: `Assignment2-AY2526S1/Core/Src/stm32l4xx_hal_msp.c`.
+
+Q30: Which module implements the menu state machine?
+A30: `Assignment2-AY2526S1/Core/Src/menu_system.c`.
+
+Q31: Where are the board LED and button pins defined?
+A31: `Assignment2-AY2526S1/Core/Inc/main.h` and the generated CubeMX configuration.
+
+Q32: Which file defines custom fonts for the OLED?
+A32: `Assignment2-AY2526S1/Core/Src/fonts.c` with declarations in `Core/Inc/fonts.h`.
+
+Q33: Where can you inspect the accelerometer BSP implementation?
+A33: `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.c`.
+
+Q34: Which header declares the pressure sensor API?
+A34: `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.h`.
+
+Q35: Where does the gyro BSP driver reside?
+A35: `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.c`.
+
+Q36: Which file bundles the task menu configuration data?
+A36: `Assignment2-AY2526S1/Core/Src/menu_system.c`.
+
+Q37: Where is the multi-switch abstraction implemented?
+A37: `Assignment2-AY2526S1/Core/Src/multi_switch.c`.
+
+Q38: Which document would you read for microcontroller pin descriptions?
+A38: `STM32L4Sxxx Data-sheet.pdf`.
+
+Q39: Where is the watchdog or fault handling interrupt defined?
+A39: `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`.
+
+Q40: Which header exposes the HT16K33 control API?
+A40: `Assignment2-AY2526S1/Core/Inc/ht16k33.h`.
+
+Q41: Where can you find the buzzer control API declarations?
+A41: `Assignment2-AY2526S1/Core/Inc/buzzer.h`.
+
+Q42: Which file initializes the system heap and stack for newlib?
+A42: `Assignment2-AY2526S1/Core/Src/sysmem.c`.
+
+Q43: Where are the low-level syscall stubs implemented?
+A43: `Assignment2-AY2526S1/Core/Src/syscalls.c`.
+
+Q44: Which BSP driver handles temperature readings?
+A44: `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.c`.
+
+Q45: Which repository file explains how to build and flash the assignment?
+A45: `instruction.txt`.
+
+Q46: Where are the project launch configurations stored?
+A46: `Assignment2-AY2526S1/Assignment2-AY2526S1 Debug.launch` and related `.cfg` files.
+
+Q47: Which directory contains the HAL driver sources?
+A47: `Assignment2-AY2526S1/Drivers/STM32L4xx_HAL_Driver/Src`.
+
+Q48: Where is the CMSIS device header for STM32L4 included?
+A48: `Assignment2-AY2526S1/Drivers/CMSIS/Device/ST/STM32L4xx/Include`.
+
+Q49: Which folder holds the generated linker scripts?
+A49: Project root (`STM32L4S5VITX_FLASH.ld` and `STM32L4S5VITX_RAM.ld`).
+
+Q50: Where is the project-level makefile for Debug builds kept?
+A50: `Assignment2-AY2526S1/Debug/makefile`.
+
+Q51: Which file lists the compiled object files for the Release build?
+A51: `Assignment2-AY2526S1/Release/objects.list`.
+
+Q52: Where is the generated ELF binary for Debug stored?
+A52: `Assignment2-AY2526S1/Debug/Assignment2-AY2526S1.elf`.
+
+Q53: Which directory contains the OLED bitmap images referenced by `images.h`?
+A53: `Assignment2-AY2526S1/Core/Src/` alongside `images.h`.
+
+Q54: What file defines the buzzer tune sequences used by the games?
+A54: `Assignment2-AY2526S1/Core/Src/buzzer.c`.
+
+Q55: What is the return type of `Buzzer_Init` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A55: It returns `void`.
+
+Q56: How many parameters does `Buzzer_Init` accept?
+A56: It takes no parameters.
+
+Q57: List the parameters for `Buzzer_Init`.
+A57: None; the parameter list is empty.
+
+Q58: Where in the project is `Buzzer_Init` implemented?
+A58: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 43.
+
+Q59: Is `Buzzer_Init` declared `static`?
+A59: No, it is globally visible.
+
+Q60: What is the return type of `FONTS_GetStringSize` defined in `Assignment2-AY2526S1/Core/Src/fonts.c`?
+A60: It returns `char*`.
+
+Q61: How many parameters does `FONTS_GetStringSize` accept?
+A61: It takes 3 parameters.
+
+Q62: List the parameters for `FONTS_GetStringSize`.
+A62: char* str, FONTS_SIZE_t* SizeStruct, FontDef_t* Font
+
+Q63: Where in the project is `FONTS_GetStringSize` implemented?
+A63: In `Assignment2-AY2526S1/Core/Src/fonts.c` near line 334.
+
+Q64: Is `FONTS_GetStringSize` declared `static`?
+A64: No, it is globally visible.
+
+Q65: What is the return type of `Grove5Way_Init` defined in `Assignment2-AY2526S1/Core/Src/grove_5way.c`?
+A65: It returns `bool`.
+
+Q66: How many parameters does `Grove5Way_Init` accept?
+A66: It takes 3 parameters.
+
+Q67: List the parameters for `Grove5Way_Init`.
+A67: Grove5Way_Handle *handle, I2C_HandleTypeDef *hi2c, uint8_t address
+
+Q68: Where in the project is `Grove5Way_Init` implemented?
+A68: In `Assignment2-AY2526S1/Core/Src/grove_5way.c` near line 29.
+
+Q69: Is `Grove5Way_Init` declared `static`?
+A69: No, it is globally visible.
+
+Q70: What is the return type of `ht16k33_write_cmd` defined in `Assignment2-AY2526S1/Core/Src/ht16k33.c`?
+A70: It returns `HAL_StatusTypeDef`.
+
+Q71: How many parameters does `ht16k33_write_cmd` accept?
+A71: It takes 2 parameters.
+
+Q72: List the parameters for `ht16k33_write_cmd`.
+A72: const HT16K33_HandleTypeDef *h, uint8_t cmd
+
+Q73: Where in the project is `ht16k33_write_cmd` implemented?
+A73: In `Assignment2-AY2526S1/Core/Src/ht16k33.c` near line 7.
+
+Q74: Is `ht16k33_write_cmd` declared `static`?
+A74: Yes, it is declared `static`.
+
+Q75: What is the return type of `printu` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A75: It returns `void`.
+
+Q76: How many parameters does `printu` accept?
+A76: It takes 2 parameters.
+
+Q77: List the parameters for `printu`.
+A77: const char *fmt, ...
+
+Q78: Where in the project is `printu` implemented?
+A78: In `Assignment2-AY2526S1/Core/Src/main.c` near line 42.
+
+Q79: Is `printu` declared `static`?
+A79: No, it is globally visible.
+
+Q80: What is the return type of `get_mag_value` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A80: It returns `float`.
+
+Q81: How many parameters does `get_mag_value` accept?
+A81: It takes 1 parameter.
+
+Q82: List the parameters for `get_mag_value`.
+A82: int index
+
+Q83: Where in the project is `get_mag_value` implemented?
+A83: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 47.
+
+Q84: Is `get_mag_value` declared `static`?
+A84: Yes, it is declared `static`.
+
+Q85: What is the return type of `readDev` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A85: It returns `int`.
+
+Q86: How many parameters does `readDev` accept?
+A86: It takes 3 parameters.
+
+Q87: List the parameters for `readDev`.
+A87: GroveMultiSwitch_t *handle, uint8_t *data, int len
+
+Q88: Where in the project is `readDev` implemented?
+A88: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 20.
+
+Q89: Is `readDev` declared `static`?
+A89: Yes, it is declared `static`.
+
+Q90: What is the return type of `SSD1306_Init` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A90: It returns `uint8_t`.
+
+Q91: How many parameters does `SSD1306_Init` accept?
+A91: It takes no parameters.
+
+Q92: List the parameters for `SSD1306_Init`.
+A92: None; the parameter list is empty.
+
+Q93: Where in the project is `SSD1306_Init` implemented?
+A93: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 26.
+
+Q94: Is `SSD1306_Init` declared `static`?
+A94: No, it is globally visible.
+
+Q95: What is the return type of `HAL_MspInit` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_hal_msp.c`?
+A95: It returns `void`.
+
+Q96: How many parameters does `HAL_MspInit` accept?
+A96: It takes no parameters.
+
+Q97: List the parameters for `HAL_MspInit`.
+A97: None; the parameter list is empty.
+
+Q98: Where in the project is `HAL_MspInit` implemented?
+A98: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_hal_msp.c` near line 63.
+
+Q99: Is `HAL_MspInit` declared `static`?
+A99: No, it is globally visible.
+
+Q100: What is the return type of `NMI_Handler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A100: It returns `void`.
+
+Q101: How many parameters does `NMI_Handler` accept?
+A101: It takes no parameters.
+
+Q102: List the parameters for `NMI_Handler`.
+A102: None; the parameter list is empty.
+
+Q103: Where in the project is `NMI_Handler` implemented?
+A103: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 69.
+
+Q104: Is `NMI_Handler` declared `static`?
+A104: No, it is globally visible.
+
+Q105: What is the return type of `initialise_monitor_handles` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A105: It returns `void`.
+
+Q106: How many parameters does `initialise_monitor_handles` accept?
+A106: It takes no parameters.
+
+Q107: List the parameters for `initialise_monitor_handles`.
+A107: None; the parameter list is empty.
+
+Q108: Where in the project is `initialise_monitor_handles` implemented?
+A108: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 44.
+
+Q109: Is `initialise_monitor_handles` declared `static`?
+A109: No, it is globally visible.
+
+Q110: What is the return type of `SystemInit` defined in `Assignment2-AY2526S1/Core/Src/system_stm32l4xx.c`?
+A110: It returns `void`.
+
+Q111: How many parameters does `SystemInit` accept?
+A111: It takes no parameters.
+
+Q112: List the parameters for `SystemInit`.
+A112: None; the parameter list is empty.
+
+Q113: Where in the project is `SystemInit` implemented?
+A113: In `Assignment2-AY2526S1/Core/Src/system_stm32l4xx.c` near line 197.
+
+Q114: Is `SystemInit` declared `static`?
+A114: No, it is globally visible.
+
+Q115: What is the return type of `BSP_GetVersion` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A115: It returns `uint32_t`.
+
+Q116: How many parameters does `BSP_GetVersion` accept?
+A116: It takes no parameters.
+
+Q117: List the parameters for `BSP_GetVersion`.
+A117: None; the parameter list is empty.
+
+Q118: Where in the project is `BSP_GetVersion` implemented?
+A118: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 129.
+
+Q119: Is `BSP_GetVersion` declared `static`?
+A119: No, it is globally visible.
+
+Q120: What is the return type of `BSP_ACCELERO_Init` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.c`?
+A120: It returns `ACCELERO_StatusTypeDef`.
+
+Q121: How many parameters does `BSP_ACCELERO_Init` accept?
+A121: It takes no parameters.
+
+Q122: List the parameters for `BSP_ACCELERO_Init`.
+A122: None; the parameter list is empty.
+
+Q123: Where in the project is `BSP_ACCELERO_Init` implemented?
+A123: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.c` near line 48.
+
+Q124: Is `BSP_ACCELERO_Init` declared `static`?
+A124: No, it is globally visible.
+
+Q125: What is the return type of `BSP_GYRO_Init` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.c`?
+A125: It returns `uint8_t`.
+
+Q126: How many parameters does `BSP_GYRO_Init` accept?
+A126: It takes no parameters.
+
+Q127: List the parameters for `BSP_GYRO_Init`.
+A127: None; the parameter list is empty.
+
+Q128: Where in the project is `BSP_GYRO_Init` implemented?
+A128: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.c` near line 51.
+
+Q129: Is `BSP_GYRO_Init` declared `static`?
+A129: No, it is globally visible.
+
+Q130: What is the return type of `BSP_HSENSOR_Init` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.c`?
+A130: It returns `uint32_t`.
+
+Q131: How many parameters does `BSP_HSENSOR_Init` accept?
+A131: It takes no parameters.
+
+Q132: List the parameters for `BSP_HSENSOR_Init`.
+A132: None; the parameter list is empty.
+
+Q133: Where in the project is `BSP_HSENSOR_Init` implemented?
+A133: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.c` near line 50.
+
+Q134: Is `BSP_HSENSOR_Init` declared `static`?
+A134: No, it is globally visible.
+
+Q135: What is the return type of `BSP_MAGNETO_Init` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.c`?
+A135: It returns `MAGNETO_StatusTypeDef`.
+
+Q136: How many parameters does `BSP_MAGNETO_Init` accept?
+A136: It takes no parameters.
+
+Q137: List the parameters for `BSP_MAGNETO_Init`.
+A137: None; the parameter list is empty.
+
+Q138: Where in the project is `BSP_MAGNETO_Init` implemented?
+A138: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.c` near line 51.
+
+Q139: Is `BSP_MAGNETO_Init` declared `static`?
+A139: No, it is globally visible.
+
+Q140: What is the return type of `BSP_NFCTAG_Init` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A140: It returns `int32_t`.
+
+Q141: How many parameters does `BSP_NFCTAG_Init` accept?
+A141: It takes 1 parameter.
+
+Q142: List the parameters for `BSP_NFCTAG_Init`.
+A142: uint32_t Instance
+
+Q143: Where in the project is `BSP_NFCTAG_Init` implemented?
+A143: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 65.
+
+Q144: Is `BSP_NFCTAG_Init` declared `static`?
+A144: No, it is globally visible.
+
+Q145: What is the return type of `BSP_PSENSOR_Init` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.c`?
+A145: It returns `uint32_t`.
+
+Q146: How many parameters does `BSP_PSENSOR_Init` accept?
+A146: It takes no parameters.
+
+Q147: List the parameters for `BSP_PSENSOR_Init`.
+A147: None; the parameter list is empty.
+
+Q148: Where in the project is `BSP_PSENSOR_Init` implemented?
+A148: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.c` near line 50.
+
+Q149: Is `BSP_PSENSOR_Init` declared `static`?
+A149: No, it is globally visible.
+
+Q150: What is the return type of `BSP_TSENSOR_Init` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.c`?
+A150: It returns `uint32_t`.
+
+Q151: How many parameters does `BSP_TSENSOR_Init` accept?
+A151: It takes no parameters.
+
+Q152: List the parameters for `BSP_TSENSOR_Init`.
+A152: None; the parameter list is empty.
+
+Q153: Where in the project is `BSP_TSENSOR_Init` implemented?
+A153: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.c` near line 50.
+
+Q154: Is `BSP_TSENSOR_Init` declared `static`?
+A154: No, it is globally visible.
+
+Q155: What is the return type of `Buzzer_PlayToneAsync` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A155: It returns `void`.
+
+Q156: How many parameters does `Buzzer_PlayToneAsync` accept?
+A156: It takes 2 parameters.
+
+Q157: List the parameters for `Buzzer_PlayToneAsync`.
+A157: float frequency_hz, uint32_t duration_ms
+
+Q158: Where in the project is `Buzzer_PlayToneAsync` implemented?
+A158: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 66.
+
+Q159: Is `Buzzer_PlayToneAsync` declared `static`?
+A159: No, it is globally visible.
+
+Q160: What is the return type of `Grove5Way_Poll` defined in `Assignment2-AY2526S1/Core/Src/grove_5way.c`?
+A160: It returns `bool`.
+
+Q161: How many parameters does `Grove5Way_Poll` accept?
+A161: It takes 2 parameters.
+
+Q162: List the parameters for `Grove5Way_Poll`.
+A162: Grove5Way_Handle *handle, Grove5Way_Event *event
+
+Q163: Where in the project is `Grove5Way_Poll` implemented?
+A163: In `Assignment2-AY2526S1/Core/Src/grove_5way.c` near line 60.
+
+Q164: Is `Grove5Way_Poll` declared `static`?
+A164: No, it is globally visible.
+
+Q165: What is the return type of `ht16k33_reverse_byte` defined in `Assignment2-AY2526S1/Core/Src/ht16k33.c`?
+A165: It returns `uint8_t`.
+
+Q166: How many parameters does `ht16k33_reverse_byte` accept?
+A166: It takes 1 parameter.
+
+Q167: List the parameters for `ht16k33_reverse_byte`.
+A167: uint8_t value
+
+Q168: Where in the project is `ht16k33_reverse_byte` implemented?
+A168: In `Assignment2-AY2526S1/Core/Src/ht16k33.c` near line 12.
+
+Q169: Is `ht16k33_reverse_byte` declared `static`?
+A169: Yes, it is declared `static`.
+
+Q170: What is the return type of `led_set_blink` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A170: It returns `void`.
+
+Q171: How many parameters does `led_set_blink` accept?
+A171: It takes 4 parameters.
+
+Q172: List the parameters for `led_set_blink`.
+A172: int level) /* -1 off, 0 slow, 1 med, 2 fast */
+{
+    if (level < 0
+
+Q173: Where in the project is `led_set_blink` implemented?
+A173: In `Assignment2-AY2526S1/Core/Src/main.c` near line 170.
+
+Q174: Is `led_set_blink` declared `static`?
+A174: Yes, it is declared `static`.
+
+Q175: What is the return type of `set_mag_value` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A175: It returns `void`.
+
+Q176: How many parameters does `set_mag_value` accept?
+A176: It takes 2 parameters.
+
+Q177: List the parameters for `set_mag_value`.
+A177: int index, float value
+
+Q178: Where in the project is `set_mag_value` implemented?
+A178: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 53.
+
+Q179: Is `set_mag_value` declared `static`?
+A179: Yes, it is declared `static`.
+
+Q180: What is the return type of `writeDev` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A180: It returns `int`.
+
+Q181: How many parameters does `writeDev` accept?
+A181: It takes 3 parameters.
+
+Q182: List the parameters for `writeDev`.
+A182: GroveMultiSwitch_t *handle, const uint8_t *data, int len
+
+Q183: Where in the project is `writeDev` implemented?
+A183: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 43.
+
+Q184: Is `writeDev` declared `static`?
+A184: Yes, it is declared `static`.
+
+Q185: What is the return type of `SSD1306_UpdateScreen` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A185: It returns `void`.
+
+Q186: How many parameters does `SSD1306_UpdateScreen` accept?
+A186: It takes no parameters.
+
+Q187: List the parameters for `SSD1306_UpdateScreen`.
+A187: None; the parameter list is empty.
+
+Q188: Where in the project is `SSD1306_UpdateScreen` implemented?
+A188: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 91.
+
+Q189: Is `SSD1306_UpdateScreen` declared `static`?
+A189: No, it is globally visible.
+
+Q190: What is the return type of `HAL_I2C_MspInit` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_hal_msp.c`?
+A190: It returns `void`.
+
+Q191: How many parameters does `HAL_I2C_MspInit` accept?
+A191: It takes 1 parameter.
+
+Q192: List the parameters for `HAL_I2C_MspInit`.
+A192: I2C_HandleTypeDef* hi2c
+
+Q193: Where in the project is `HAL_I2C_MspInit` implemented?
+A193: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_hal_msp.c` near line 81.
+
+Q194: Is `HAL_I2C_MspInit` declared `static`?
+A194: No, it is globally visible.
+
+Q195: What is the return type of `HardFault_Handler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A195: It returns `void`.
+
+Q196: How many parameters does `HardFault_Handler` accept?
+A196: It takes no parameters.
+
+Q197: List the parameters for `HardFault_Handler`.
+A197: None; the parameter list is empty.
+
+Q198: Where in the project is `HardFault_Handler` implemented?
+A198: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 84.
+
+Q199: Is `HardFault_Handler` declared `static`?
+A199: No, it is globally visible.
+
+Q200: What is the return type of `_getpid` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A200: It returns `int`.
+
+Q201: How many parameters does `_getpid` accept?
+A201: It takes no parameters.
+
+Q202: List the parameters for `_getpid`.
+A202: None; the parameter list is empty.
+
+Q203: Where in the project is `_getpid` implemented?
+A203: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 48.
+
+Q204: Is `_getpid` declared `static`?
+A204: No, it is globally visible.
+
+Q205: What is the return type of `SystemCoreClockUpdate` defined in `Assignment2-AY2526S1/Core/Src/system_stm32l4xx.c`?
+A205: It returns `void`.
+
+Q206: How many parameters does `SystemCoreClockUpdate` accept?
+A206: It takes no parameters.
+
+Q207: List the parameters for `SystemCoreClockUpdate`.
+A207: None; the parameter list is empty.
+
+Q208: Where in the project is `SystemCoreClockUpdate` implemented?
+A208: In `Assignment2-AY2526S1/Core/Src/system_stm32l4xx.c` near line 251.
+
+Q209: Is `SystemCoreClockUpdate` declared `static`?
+A209: No, it is globally visible.
+
+Q210: What is the return type of `BSP_LED_Init` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A210: It returns `void`.
+
+Q211: How many parameters does `BSP_LED_Init` accept?
+A211: It takes 1 parameter.
+
+Q212: List the parameters for `BSP_LED_Init`.
+A212: Led_TypeDef Led
+
+Q213: Where in the project is `BSP_LED_Init` implemented?
+A213: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 140.
+
+Q214: Is `BSP_LED_Init` declared `static`?
+A214: No, it is globally visible.
+
+Q215: What is the return type of `BSP_ACCELERO_DeInit` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.c`?
+A215: It returns `void`.
+
+Q216: How many parameters does `BSP_ACCELERO_DeInit` accept?
+A216: It takes no parameters.
+
+Q217: List the parameters for `BSP_ACCELERO_DeInit`.
+A217: None; the parameter list is empty.
+
+Q218: Where in the project is `BSP_ACCELERO_DeInit` implemented?
+A218: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.c` near line 89.
+
+Q219: Is `BSP_ACCELERO_DeInit` declared `static`?
+A219: No, it is globally visible.
+
+Q220: What is the return type of `BSP_GYRO_DeInit` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.c`?
+A220: It returns `void`.
+
+Q221: How many parameters does `BSP_GYRO_DeInit` accept?
+A221: It takes no parameters.
+
+Q222: List the parameters for `BSP_GYRO_DeInit`.
+A222: None; the parameter list is empty.
+
+Q223: Where in the project is `BSP_GYRO_DeInit` implemented?
+A223: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.c` near line 94.
+
+Q224: Is `BSP_GYRO_DeInit` declared `static`?
+A224: No, it is globally visible.
+
+Q225: What is the return type of `BSP_HSENSOR_ReadID` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.c`?
+A225: It returns `uint8_t`.
+
+Q226: How many parameters does `BSP_HSENSOR_ReadID` accept?
+A226: It takes no parameters.
+
+Q227: List the parameters for `BSP_HSENSOR_ReadID`.
+A227: None; the parameter list is empty.
+
+Q228: Where in the project is `BSP_HSENSOR_ReadID` implemented?
+A228: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.c` near line 73.
+
+Q229: Is `BSP_HSENSOR_ReadID` declared `static`?
+A229: No, it is globally visible.
+
+Q230: What is the return type of `BSP_MAGNETO_DeInit` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.c`?
+A230: It returns `void`.
+
+Q231: How many parameters does `BSP_MAGNETO_DeInit` accept?
+A231: It takes no parameters.
+
+Q232: List the parameters for `BSP_MAGNETO_DeInit`.
+A232: None; the parameter list is empty.
+
+Q233: Where in the project is `BSP_MAGNETO_DeInit` implemented?
+A233: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.c` near line 82.
+
+Q234: Is `BSP_MAGNETO_DeInit` declared `static`?
+A234: No, it is globally visible.
+
+Q235: What is the return type of `BSP_NFCTAG_DeInit` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A235: It returns `void`.
+
+Q236: How many parameters does `BSP_NFCTAG_DeInit` accept?
+A236: It takes 1 parameter.
+
+Q237: List the parameters for `BSP_NFCTAG_DeInit`.
+A237: uint32_t Instance
+
+Q238: Where in the project is `BSP_NFCTAG_DeInit` implemented?
+A238: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 105.
+
+Q239: Is `BSP_NFCTAG_DeInit` declared `static`?
+A239: No, it is globally visible.
+
+Q240: What is the return type of `BSP_PSENSOR_ReadID` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.c`?
+A240: It returns `uint8_t`.
+
+Q241: How many parameters does `BSP_PSENSOR_ReadID` accept?
+A241: It takes no parameters.
+
+Q242: List the parameters for `BSP_PSENSOR_ReadID`.
+A242: None; the parameter list is empty.
+
+Q243: Where in the project is `BSP_PSENSOR_ReadID` implemented?
+A243: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.c` near line 74.
+
+Q244: Is `BSP_PSENSOR_ReadID` declared `static`?
+A244: No, it is globally visible.
+
+Q245: What is the return type of `BSP_TSENSOR_ReadTemp` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.c`?
+A245: It returns `float`.
+
+Q246: How many parameters does `BSP_TSENSOR_ReadTemp` accept?
+A246: It takes no parameters.
+
+Q247: List the parameters for `BSP_TSENSOR_ReadTemp`.
+A247: None; the parameter list is empty.
+
+Q248: Where in the project is `BSP_TSENSOR_ReadTemp` implemented?
+A248: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_tsensor.c` near line 75.
+
+Q249: Is `BSP_TSENSOR_ReadTemp` declared `static`?
+A249: No, it is globally visible.
+
+Q250: What is the return type of `Buzzer_PlayNoteAsync` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A250: It returns `void`.
+
+Q251: How many parameters does `Buzzer_PlayNoteAsync` accept?
+A251: It takes 2 parameters.
+
+Q252: List the parameters for `Buzzer_PlayNoteAsync`.
+A252: buzzer_note_t note, uint32_t duration_ms
+
+Q253: Where in the project is `Buzzer_PlayNoteAsync` implemented?
+A253: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 73.
+
+Q254: Is `Buzzer_PlayNoteAsync` declared `static`?
+A254: No, it is globally visible.
+
+Q255: What is the return type of `grove5way_write_cmd` defined in `Assignment2-AY2526S1/Core/Src/grove_5way.c`?
+A255: It returns `bool`.
+
+Q256: How many parameters does `grove5way_write_cmd` accept?
+A256: It takes 2 parameters.
+
+Q257: List the parameters for `grove5way_write_cmd`.
+A257: Grove5Way_Handle *handle, uint8_t cmd
+
+Q258: Where in the project is `grove5way_write_cmd` implemented?
+A258: In `Assignment2-AY2526S1/Core/Src/grove_5way.c` near line 90.
+
+Q259: Is `grove5way_write_cmd` declared `static`?
+A259: Yes, it is declared `static`.
+
+Q260: What is the return type of `HT16K33_Init` defined in `Assignment2-AY2526S1/Core/Src/ht16k33.c`?
+A260: It returns `HAL_StatusTypeDef`.
+
+Q261: How many parameters does `HT16K33_Init` accept?
+A261: It takes 3 parameters.
+
+Q262: List the parameters for `HT16K33_Init`.
+A262: HT16K33_HandleTypeDef *h, I2C_HandleTypeDef *hi2c, uint8_t addr7bit
+
+Q263: Where in the project is `HT16K33_Init` implemented?
+A263: In `Assignment2-AY2526S1/Core/Src/ht16k33.c` near line 20.
+
+Q264: Is `HT16K33_Init` declared `static`?
+A264: No, it is globally visible.
+
+Q265: What is the return type of `led_blink_process` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A265: It returns `void`.
+
+Q266: How many parameters does `led_blink_process` accept?
+A266: It takes 1 parameter.
+
+Q267: List the parameters for `led_blink_process`.
+A267: uint32_t now
+
+Q268: Where in the project is `led_blink_process` implemented?
+A268: In `Assignment2-AY2526S1/Core/Src/main.c` near line 190.
+
+Q269: Is `led_blink_process` declared `static`?
+A269: Yes, it is declared `static`.
+
+Q270: What is the return type of `get_arrow_count` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A270: It returns `float`.
+
+Q271: How many parameters does `get_arrow_count` accept?
+A271: It takes no parameters.
+
+Q272: List the parameters for `get_arrow_count`.
+A272: None; the parameter list is empty.
+
+Q273: Where in the project is `get_arrow_count` implemented?
+A273: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 58.
+
+Q274: Is `get_arrow_count` declared `static`?
+A274: Yes, it is declared `static`.
+
+Q275: What is the return type of `readReg` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A275: It returns `int`.
+
+Q276: How many parameters does `readReg` accept?
+A276: It takes 4 parameters.
+
+Q277: List the parameters for `readReg`.
+A277: GroveMultiSwitch_t *handle, uint8_t reg, uint8_t *data, int len
+
+Q278: Where in the project is `readReg` implemented?
+A278: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 66.
+
+Q279: Is `readReg` declared `static`?
+A279: Yes, it is declared `static`.
+
+Q280: What is the return type of `SSD1306_ToggleInvert` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A280: It returns `void`.
+
+Q281: How many parameters does `SSD1306_ToggleInvert` accept?
+A281: It takes no parameters.
+
+Q282: List the parameters for `SSD1306_ToggleInvert`.
+A282: None; the parameter list is empty.
+
+Q283: Where in the project is `SSD1306_ToggleInvert` implemented?
+A283: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 100.
+
+Q284: Is `SSD1306_ToggleInvert` declared `static`?
+A284: No, it is globally visible.
+
+Q285: What is the return type of `HAL_I2C_MspDeInit` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_hal_msp.c`?
+A285: It returns `void`.
+
+Q286: How many parameters does `HAL_I2C_MspDeInit` accept?
+A286: It takes 1 parameter.
+
+Q287: List the parameters for `HAL_I2C_MspDeInit`.
+A287: I2C_HandleTypeDef* hi2c
+
+Q288: Where in the project is `HAL_I2C_MspDeInit` implemented?
+A288: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_hal_msp.c` near line 99.
+
+Q289: Is `HAL_I2C_MspDeInit` declared `static`?
+A289: No, it is globally visible.
+
+Q290: What is the return type of `MemManage_Handler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A290: It returns `void`.
+
+Q291: How many parameters does `MemManage_Handler` accept?
+A291: It takes no parameters.
+
+Q292: List the parameters for `MemManage_Handler`.
+A292: None; the parameter list is empty.
+
+Q293: Where in the project is `MemManage_Handler` implemented?
+A293: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 99.
+
+Q294: Is `MemManage_Handler` declared `static`?
+A294: No, it is globally visible.
+
+Q295: What is the return type of `_kill` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A295: It returns `int`.
+
+Q296: How many parameters does `_kill` accept?
+A296: It takes 2 parameters.
+
+Q297: List the parameters for `_kill`.
+A297: int pid, int sig
+
+Q298: Where in the project is `_kill` implemented?
+A298: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 53.
+
+Q299: Is `_kill` declared `static`?
+A299: No, it is globally visible.
+
+Q300: What is the return type of `BSP_LED_DeInit` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A300: It returns `void`.
+
+Q301: How many parameters does `BSP_LED_DeInit` accept?
+A301: It takes 1 parameter.
+
+Q302: List the parameters for `BSP_LED_DeInit`.
+A302: Led_TypeDef Led
+
+Q303: Where in the project is `BSP_LED_DeInit` implemented?
+A303: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 160.
+
+Q304: Is `BSP_LED_DeInit` declared `static`?
+A304: No, it is globally visible.
+
+Q305: What is the return type of `BSP_ACCELERO_LowPower` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.c`?
+A305: It returns `void`.
+
+Q306: How many parameters does `BSP_ACCELERO_LowPower` accept?
+A306: It takes 1 parameter.
+
+Q307: List the parameters for `BSP_ACCELERO_LowPower`.
+A307: uint16_t status
+
+Q308: Where in the project is `BSP_ACCELERO_LowPower` implemented?
+A308: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.c` near line 106.
+
+Q309: Is `BSP_ACCELERO_LowPower` declared `static`?
+A309: No, it is globally visible.
+
+Q310: What is the return type of `BSP_GYRO_LowPower` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.c`?
+A310: It returns `void`.
+
+Q311: How many parameters does `BSP_GYRO_LowPower` accept?
+A311: It takes 1 parameter.
+
+Q312: List the parameters for `BSP_GYRO_LowPower`.
+A312: uint16_t status
+
+Q313: Where in the project is `BSP_GYRO_LowPower` implemented?
+A313: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.c` near line 111.
+
+Q314: Is `BSP_GYRO_LowPower` declared `static`?
+A314: No, it is globally visible.
+
+Q315: What is the return type of `BSP_HSENSOR_ReadHumidity` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.c`?
+A315: It returns `float`.
+
+Q316: How many parameters does `BSP_HSENSOR_ReadHumidity` accept?
+A316: It takes no parameters.
+
+Q317: List the parameters for `BSP_HSENSOR_ReadHumidity`.
+A317: None; the parameter list is empty.
+
+Q318: Where in the project is `BSP_HSENSOR_ReadHumidity` implemented?
+A318: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_hsensor.c` near line 82.
+
+Q319: Is `BSP_HSENSOR_ReadHumidity` declared `static`?
+A319: No, it is globally visible.
+
+Q320: What is the return type of `BSP_MAGNETO_LowPower` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.c`?
+A320: It returns `void`.
+
+Q321: How many parameters does `BSP_MAGNETO_LowPower` accept?
+A321: It takes 1 parameter.
+
+Q322: List the parameters for `BSP_MAGNETO_LowPower`.
+A322: uint16_t status
+
+Q323: Where in the project is `BSP_MAGNETO_LowPower` implemented?
+A323: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.c` near line 97.
+
+Q324: Is `BSP_MAGNETO_LowPower` declared `static`?
+A324: No, it is globally visible.
+
+Q325: What is the return type of `BSP_NFCTAG_isInitialized` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A325: It returns `uint8_t`.
+
+Q326: How many parameters does `BSP_NFCTAG_isInitialized` accept?
+A326: It takes 1 parameter.
+
+Q327: List the parameters for `BSP_NFCTAG_isInitialized`.
+A327: uint32_t Instance
+
+Q328: Where in the project is `BSP_NFCTAG_isInitialized` implemented?
+A328: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 121.
+
+Q329: Is `BSP_NFCTAG_isInitialized` declared `static`?
+A329: No, it is globally visible.
+
+Q330: What is the return type of `BSP_PSENSOR_ReadPressure` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.c`?
+A330: It returns `float`.
+
+Q331: How many parameters does `BSP_PSENSOR_ReadPressure` accept?
+A331: It takes no parameters.
+
+Q332: List the parameters for `BSP_PSENSOR_ReadPressure`.
+A332: None; the parameter list is empty.
+
+Q333: Where in the project is `BSP_PSENSOR_ReadPressure` implemented?
+A333: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_psensor.c` near line 83.
+
+Q334: Is `BSP_PSENSOR_ReadPressure` declared `static`?
+A334: No, it is globally visible.
+
+Q335: What is the return type of `Buzzer_Service` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A335: It returns `void`.
+
+Q336: How many parameters does `Buzzer_Service` accept?
+A336: It takes 1 parameter.
+
+Q337: List the parameters for `Buzzer_Service`.
+A337: uint32_t now_ms
+
+Q338: Where in the project is `Buzzer_Service` implemented?
+A338: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 81.
+
+Q339: Is `Buzzer_Service` declared `static`?
+A339: No, it is globally visible.
+
+Q340: What is the return type of `grove5way_read_event` defined in `Assignment2-AY2526S1/Core/Src/grove_5way.c`?
+A340: It returns `bool`.
+
+Q341: How many parameters does `grove5way_read_event` accept?
+A341: It takes 2 parameters.
+
+Q342: List the parameters for `grove5way_read_event`.
+A342: Grove5Way_Handle *handle, uint8_t *button_bytes
+
+Q343: Where in the project is `grove5way_read_event` implemented?
+A343: In `Assignment2-AY2526S1/Core/Src/grove_5way.c` near line 103.
+
+Q344: Is `grove5way_read_event` declared `static`?
+A344: Yes, it is declared `static`.
+
+Q345: What is the return type of `HT16K33_SetBrightness` defined in `Assignment2-AY2526S1/Core/Src/ht16k33.c`?
+A345: It returns `HAL_StatusTypeDef`.
+
+Q346: How many parameters does `HT16K33_SetBrightness` accept?
+A346: It takes 2 parameters.
+
+Q347: List the parameters for `HT16K33_SetBrightness`.
+A347: HT16K33_HandleTypeDef *h, uint8_t level
+
+Q348: Where in the project is `HT16K33_SetBrightness` implemented?
+A348: In `Assignment2-AY2526S1/Core/Src/ht16k33.c` near line 40.
+
+Q349: Is `HT16K33_SetBrightness` declared `static`?
+A349: No, it is globally visible.
+
+Q350: What is the return type of `HAL_GPIO_EXTI_Callback` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A350: It returns `void`.
+
+Q351: How many parameters does `HAL_GPIO_EXTI_Callback` accept?
+A351: It takes 1 parameter.
+
+Q352: List the parameters for `HAL_GPIO_EXTI_Callback`.
+A352: uint16_t GPIO_Pin
+
+Q353: Where in the project is `HAL_GPIO_EXTI_Callback` implemented?
+A353: In `Assignment2-AY2526S1/Core/Src/main.c` near line 206.
+
+Q354: Is `HAL_GPIO_EXTI_Callback` declared `static`?
+A354: No, it is globally visible.
+
+Q355: What is the return type of `set_arrow_count` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A355: It returns `void`.
+
+Q356: How many parameters does `set_arrow_count` accept?
+A356: It takes 1 parameter.
+
+Q357: List the parameters for `set_arrow_count`.
+A357: float value
+
+Q358: Where in the project is `set_arrow_count` implemented?
+A358: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 63.
+
+Q359: Is `set_arrow_count` declared `static`?
+A359: Yes, it is declared `static`.
+
+Q360: What is the return type of `GroveMultiSwitch_Init` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A360: It returns `bool`.
+
+Q361: How many parameters does `GroveMultiSwitch_Init` accept?
+A361: It takes 3 parameters.
+
+Q362: List the parameters for `GroveMultiSwitch_Init`.
+A362: GroveMultiSwitch_t *handle, I2C_HandleTypeDef *hi2c, uint8_t addr
+
+Q363: Where in the project is `GroveMultiSwitch_Init` implemented?
+A363: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 87.
+
+Q364: Is `GroveMultiSwitch_Init` declared `static`?
+A364: No, it is globally visible.
+
+Q365: What is the return type of `SSD1306_Fill` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A365: It returns `void`.
+
+Q366: How many parameters does `SSD1306_Fill` accept?
+A366: It takes 1 parameter.
+
+Q367: List the parameters for `SSD1306_Fill`.
+A367: SSD1306_COLOR_t color
+
+Q368: Where in the project is `SSD1306_Fill` implemented?
+A368: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 107.
+
+Q369: Is `SSD1306_Fill` declared `static`?
+A369: No, it is globally visible.
+
+Q370: What is the return type of `HAL_TIM_Base_MspInit` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_hal_msp.c`?
+A370: It returns `void`.
+
+Q371: How many parameters does `HAL_TIM_Base_MspInit` accept?
+A371: It takes 1 parameter.
+
+Q372: List the parameters for `HAL_TIM_Base_MspInit`.
+A372: TIM_HandleTypeDef* htim_base
+
+Q373: Where in the project is `HAL_TIM_Base_MspInit` implemented?
+A373: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_hal_msp.c` near line 108.
+
+Q374: Is `HAL_TIM_Base_MspInit` declared `static`?
+A374: No, it is globally visible.
+
+Q375: What is the return type of `BusFault_Handler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A375: It returns `void`.
+
+Q376: How many parameters does `BusFault_Handler` accept?
+A376: It takes no parameters.
+
+Q377: List the parameters for `BusFault_Handler`.
+A377: None; the parameter list is empty.
+
+Q378: Where in the project is `BusFault_Handler` implemented?
+A378: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 114.
+
+Q379: Is `BusFault_Handler` declared `static`?
+A379: No, it is globally visible.
+
+Q380: What is the return type of `_exit` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A380: It returns `void`.
+
+Q381: How many parameters does `_exit` accept?
+A381: It takes 1 parameter.
+
+Q382: List the parameters for `_exit`.
+A382: int status
+
+Q383: Where in the project is `_exit` implemented?
+A383: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 59.
+
+Q384: Is `_exit` declared `static`?
+A384: No, it is globally visible.
+
+Q385: What is the return type of `BSP_LED_On` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A385: It returns `void`.
+
+Q386: How many parameters does `BSP_LED_On` accept?
+A386: It takes 1 parameter.
+
+Q387: List the parameters for `BSP_LED_On`.
+A387: Led_TypeDef Led
+
+Q388: Where in the project is `BSP_LED_On` implemented?
+A388: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 178.
+
+Q389: Is `BSP_LED_On` declared `static`?
+A389: No, it is globally visible.
+
+Q390: What is the return type of `BSP_ACCELERO_AccGetXYZ` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.c`?
+A390: It returns `void`.
+
+Q391: How many parameters does `BSP_ACCELERO_AccGetXYZ` accept?
+A391: It takes 1 parameter.
+
+Q392: List the parameters for `BSP_ACCELERO_AccGetXYZ`.
+A392: int16_t *pDataXYZ
+
+Q393: Where in the project is `BSP_ACCELERO_AccGetXYZ` implemented?
+A393: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_accelero.c` near line 124.
+
+Q394: Is `BSP_ACCELERO_AccGetXYZ` declared `static`?
+A394: No, it is globally visible.
+
+Q395: What is the return type of `BSP_GYRO_GetXYZ` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.c`?
+A395: It returns `void`.
+
+Q396: How many parameters does `BSP_GYRO_GetXYZ` accept?
+A396: It takes 1 parameter.
+
+Q397: List the parameters for `BSP_GYRO_GetXYZ`.
+A397: float* pfData
+
+Q398: Where in the project is `BSP_GYRO_GetXYZ` implemented?
+A398: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_gyro.c` near line 127.
+
+Q399: Is `BSP_GYRO_GetXYZ` declared `static`?
+A399: No, it is globally visible.
+
+Q400: What is the return type of `BSP_MAGNETO_GetXYZ` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.c`?
+A400: It returns `void`.
+
+Q401: How many parameters does `BSP_MAGNETO_GetXYZ` accept?
+A401: It takes 1 parameter.
+
+Q402: List the parameters for `BSP_MAGNETO_GetXYZ`.
+A402: int16_t *pDataXYZ
+
+Q403: Where in the project is `BSP_MAGNETO_GetXYZ` implemented?
+A403: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_magneto.c` near line 114.
+
+Q404: Is `BSP_MAGNETO_GetXYZ` declared `static`?
+A404: No, it is globally visible.
+
+Q405: What is the return type of `BSP_NFCTAG_ReadID` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A405: It returns `int32_t`.
+
+Q406: How many parameters does `BSP_NFCTAG_ReadID` accept?
+A406: It takes 2 parameters.
+
+Q407: List the parameters for `BSP_NFCTAG_ReadID`.
+A407: uint32_t Instance, uint8_t * const wai_id
+
+Q408: Where in the project is `BSP_NFCTAG_ReadID` implemented?
+A408: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 132.
+
+Q409: Is `BSP_NFCTAG_ReadID` declared `static`?
+A409: No, it is globally visible.
+
+Q410: What is the return type of `Buzzer_TestPattern` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A410: It returns `void`.
+
+Q411: How many parameters does `Buzzer_TestPattern` accept?
+A411: It takes no parameters.
+
+Q412: List the parameters for `Buzzer_TestPattern`.
+A412: None; the parameter list is empty.
+
+Q413: Where in the project is `Buzzer_TestPattern` implemented?
+A413: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 104.
+
+Q414: Is `Buzzer_TestPattern` declared `static`?
+A414: No, it is globally visible.
+
+Q415: What is the return type of `HT16K33_SetBlinkRate` defined in `Assignment2-AY2526S1/Core/Src/ht16k33.c`?
+A415: It returns `HAL_StatusTypeDef`.
+
+Q416: How many parameters does `HT16K33_SetBlinkRate` accept?
+A416: It takes 2 parameters.
+
+Q417: List the parameters for `HT16K33_SetBlinkRate`.
+A417: HT16K33_HandleTypeDef *h, uint8_t rate
+
+Q418: Where in the project is `HT16K33_SetBlinkRate` implemented?
+A418: In `Assignment2-AY2526S1/Core/Src/ht16k33.c` near line 47.
+
+Q419: Is `HT16K33_SetBlinkRate` declared `static`?
+A419: No, it is globally visible.
+
+Q420: What is the return type of `process_clicks` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A420: It returns `void`.
+
+Q421: How many parameters does `process_clicks` accept?
+A421: It takes 1 parameter.
+
+Q422: List the parameters for `process_clicks`.
+A422: uint32_t now
+
+Q423: Where in the project is `process_clicks` implemented?
+A423: In `Assignment2-AY2526S1/Core/Src/main.c` near line 214.
+
+Q424: Is `process_clicks` declared `static`?
+A424: Yes, it is declared `static`.
+
+Q425: What is the return type of `get_sequence_time` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A425: It returns `float`.
+
+Q426: How many parameters does `get_sequence_time` accept?
+A426: It takes no parameters.
+
+Q427: List the parameters for `get_sequence_time`.
+A427: None; the parameter list is empty.
+
+Q428: Where in the project is `get_sequence_time` implemented?
+A428: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 72.
+
+Q429: Is `get_sequence_time` declared `static`?
+A429: Yes, it is declared `static`.
+
+Q430: What is the return type of `GroveMultiSwitch_ProbeDevID` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A430: It returns `uint32_t`.
+
+Q431: How many parameters does `GroveMultiSwitch_ProbeDevID` accept?
+A431: It takes 1 parameter.
+
+Q432: List the parameters for `GroveMultiSwitch_ProbeDevID`.
+A432: GroveMultiSwitch_t *handle
+
+Q433: Where in the project is `GroveMultiSwitch_ProbeDevID` implemented?
+A433: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 120.
+
+Q434: Is `GroveMultiSwitch_ProbeDevID` declared `static`?
+A434: No, it is globally visible.
+
+Q435: What is the return type of `SSD1306_DrawPixel` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A435: It returns `void`.
+
+Q436: How many parameters does `SSD1306_DrawPixel` accept?
+A436: It takes 3 parameters.
+
+Q437: List the parameters for `SSD1306_DrawPixel`.
+A437: uint16_t x, uint16_t y, SSD1306_COLOR_t color
+
+Q438: Where in the project is `SSD1306_DrawPixel` implemented?
+A438: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 111.
+
+Q439: Is `SSD1306_DrawPixel` declared `static`?
+A439: No, it is globally visible.
+
+Q440: What is the return type of `HAL_TIM_Base_MspDeInit` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_hal_msp.c`?
+A440: It returns `void`.
+
+Q441: How many parameters does `HAL_TIM_Base_MspDeInit` accept?
+A441: It takes 1 parameter.
+
+Q442: List the parameters for `HAL_TIM_Base_MspDeInit`.
+A442: TIM_HandleTypeDef* htim_base
+
+Q443: Where in the project is `HAL_TIM_Base_MspDeInit` implemented?
+A443: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_hal_msp.c` near line 118.
+
+Q444: Is `HAL_TIM_Base_MspDeInit` declared `static`?
+A444: No, it is globally visible.
+
+Q445: What is the return type of `UsageFault_Handler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A445: It returns `void`.
+
+Q446: How many parameters does `UsageFault_Handler` accept?
+A446: It takes no parameters.
+
+Q447: List the parameters for `UsageFault_Handler`.
+A447: None; the parameter list is empty.
+
+Q448: Where in the project is `UsageFault_Handler` implemented?
+A448: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 129.
+
+Q449: Is `UsageFault_Handler` declared `static`?
+A449: No, it is globally visible.
+
+Q450: What is the return type of `_close` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A450: It returns `int`.
+
+Q451: How many parameters does `_close` accept?
+A451: It takes 1 parameter.
+
+Q452: List the parameters for `_close`.
+A452: int file
+
+Q453: Where in the project is `_close` implemented?
+A453: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 88.
+
+Q454: Is `_close` declared `static`?
+A454: No, it is globally visible.
+
+Q455: What is the return type of `BSP_LED_Off` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A455: It returns `void`.
+
+Q456: How many parameters does `BSP_LED_Off` accept?
+A456: It takes 1 parameter.
+
+Q457: List the parameters for `BSP_LED_Off`.
+A457: Led_TypeDef Led
+
+Q458: Where in the project is `BSP_LED_Off` implemented?
+A458: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 189.
+
+Q459: Is `BSP_LED_Off` declared `static`?
+A459: No, it is globally visible.
+
+Q460: What is the return type of `BSP_NFCTAG_IsDeviceReady` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A460: It returns `int32_t`.
+
+Q461: How many parameters does `BSP_NFCTAG_IsDeviceReady` accept?
+A461: It takes 2 parameters.
+
+Q462: List the parameters for `BSP_NFCTAG_IsDeviceReady`.
+A462: uint32_t Instance, const uint32_t Trials
+
+Q463: Where in the project is `BSP_NFCTAG_IsDeviceReady` implemented?
+A463: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 148.
+
+Q464: Is `BSP_NFCTAG_IsDeviceReady` declared `static`?
+A464: No, it is globally visible.
+
+Q465: What is the return type of `Buzzer_IRQHandler` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A465: It returns `void`.
+
+Q466: How many parameters does `Buzzer_IRQHandler` accept?
+A466: It takes no parameters.
+
+Q467: List the parameters for `Buzzer_IRQHandler`.
+A467: None; the parameter list is empty.
+
+Q468: Where in the project is `Buzzer_IRQHandler` implemented?
+A468: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 137.
+
+Q469: Is `Buzzer_IRQHandler` declared `static`?
+A469: No, it is globally visible.
+
+Q470: What is the return type of `HT16K33_Update` defined in `Assignment2-AY2526S1/Core/Src/ht16k33.c`?
+A470: It returns `HAL_StatusTypeDef`.
+
+Q471: How many parameters does `HT16K33_Update` accept?
+A471: It takes 1 parameter.
+
+Q472: List the parameters for `HT16K33_Update`.
+A472: const HT16K33_HandleTypeDef *h
+
+Q473: Where in the project is `HT16K33_Update` implemented?
+A473: In `Assignment2-AY2526S1/Core/Src/ht16k33.c` near line 55.
+
+Q474: Is `HT16K33_Update` declared `static`?
+A474: No, it is globally visible.
+
+Q475: What is the return type of `GameOver_Trigger` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A475: It returns `void`.
+
+Q476: How many parameters does `GameOver_Trigger` accept?
+A476: It takes 2 parameters.
+
+Q477: List the parameters for `GameOver_Trigger`.
+A477: game_t game, const char *message
+
+Q478: Where in the project is `GameOver_Trigger` implemented?
+A478: In `Assignment2-AY2526S1/Core/Src/main.c` near line 298.
+
+Q479: Is `GameOver_Trigger` declared `static`?
+A479: Yes, it is declared `static`.
+
+Q480: What is the return type of `set_sequence_time` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A480: It returns `void`.
+
+Q481: How many parameters does `set_sequence_time` accept?
+A481: It takes 1 parameter.
+
+Q482: List the parameters for `set_sequence_time`.
+A482: float value
+
+Q483: Where in the project is `set_sequence_time` implemented?
+A483: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 78.
+
+Q484: Is `set_sequence_time` declared `static`?
+A484: Yes, it is declared `static`.
+
+Q485: What is the return type of `GroveMultiSwitch_GetDevID` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A485: It returns `uint32_t`.
+
+Q486: How many parameters does `GroveMultiSwitch_GetDevID` accept?
+A486: It takes 1 parameter.
+
+Q487: List the parameters for `GroveMultiSwitch_GetDevID`.
+A487: GroveMultiSwitch_t *handle
+
+Q488: Where in the project is `GroveMultiSwitch_GetDevID` implemented?
+A488: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 152.
+
+Q489: Is `GroveMultiSwitch_GetDevID` declared `static`?
+A489: No, it is globally visible.
+
+Q490: What is the return type of `SSD1306_GotoXY` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A490: It returns `void`.
+
+Q491: How many parameters does `SSD1306_GotoXY` accept?
+A491: It takes 2 parameters.
+
+Q492: List the parameters for `SSD1306_GotoXY`.
+A492: uint16_t x, uint16_t y
+
+Q493: Where in the project is `SSD1306_GotoXY` implemented?
+A493: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 125.
+
+Q494: Is `SSD1306_GotoXY` declared `static`?
+A494: No, it is globally visible.
+
+Q495: What is the return type of `SVC_Handler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A495: It returns `void`.
+
+Q496: How many parameters does `SVC_Handler` accept?
+A496: It takes no parameters.
+
+Q497: List the parameters for `SVC_Handler`.
+A497: None; the parameter list is empty.
+
+Q498: Where in the project is `SVC_Handler` implemented?
+A498: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 144.
+
+Q499: Is `SVC_Handler` declared `static`?
+A499: No, it is globally visible.
+
+Q500: What is the return type of `_fstat` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A500: It returns `int`.
+
+Q501: How many parameters does `_fstat` accept?
+A501: It takes 2 parameters.
+
+Q502: List the parameters for `_fstat`.
+A502: int file, struct stat *st
+
+Q503: Where in the project is `_fstat` implemented?
+A503: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 94.
+
+Q504: Is `_fstat` declared `static`?
+A504: No, it is globally visible.
+
+Q505: What is the return type of `BSP_LED_Toggle` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A505: It returns `void`.
+
+Q506: How many parameters does `BSP_LED_Toggle` accept?
+A506: It takes 1 parameter.
+
+Q507: List the parameters for `BSP_LED_Toggle`.
+A507: Led_TypeDef Led
+
+Q508: Where in the project is `BSP_LED_Toggle` implemented?
+A508: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 200.
+
+Q509: Is `BSP_LED_Toggle` declared `static`?
+A509: No, it is globally visible.
+
+Q510: What is the return type of `BSP_NFCTAG_ConfigIT` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A510: It returns `int32_t`.
+
+Q511: How many parameters does `BSP_NFCTAG_ConfigIT` accept?
+A511: It takes 2 parameters.
+
+Q512: List the parameters for `BSP_NFCTAG_ConfigIT`.
+A512: uint32_t Instance, const uint16_t ITConfig
+
+Q513: Where in the project is `BSP_NFCTAG_ConfigIT` implemented?
+A513: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 166.
+
+Q514: Is `BSP_NFCTAG_ConfigIT` declared `static`?
+A514: No, it is globally visible.
+
+Q515: What is the return type of `HAL_TIM_PeriodElapsedCallback` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A515: It returns `void`.
+
+Q516: How many parameters does `HAL_TIM_PeriodElapsedCallback` accept?
+A516: It takes 1 parameter.
+
+Q517: List the parameters for `HAL_TIM_PeriodElapsedCallback`.
+A517: TIM_HandleTypeDef *htim
+
+Q518: Where in the project is `HAL_TIM_PeriodElapsedCallback` implemented?
+A518: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 142.
+
+Q519: Is `HAL_TIM_PeriodElapsedCallback` declared `static`?
+A519: No, it is globally visible.
+
+Q520: What is the return type of `HT16K33_Clear` defined in `Assignment2-AY2526S1/Core/Src/ht16k33.c`?
+A520: It returns `void`.
+
+Q521: How many parameters does `HT16K33_Clear` accept?
+A521: It takes 1 parameter.
+
+Q522: List the parameters for `HT16K33_Clear`.
+A522: HT16K33_HandleTypeDef *h
+
+Q523: Where in the project is `HT16K33_Clear` implemented?
+A523: In `Assignment2-AY2526S1/Core/Src/ht16k33.c` near line 66.
+
+Q524: Is `HT16K33_Clear` declared `static`?
+A524: No, it is globally visible.
+
+Q525: What is the return type of `GameReset_Attempt` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A525: It returns `uint8_t`.
+
+Q526: How many parameters does `GameReset_Attempt` accept?
+A526: It takes 3 parameters.
+
+Q527: List the parameters for `GameReset_Attempt`.
+A527: game_t game, uint32_t now, int catch_level
+
+Q528: Where in the project is `GameReset_Attempt` implemented?
+A528: In `Assignment2-AY2526S1/Core/Src/main.c` near line 364.
+
+Q529: Is `GameReset_Attempt` declared `static`?
+A529: Yes, it is declared `static`.
+
+Q530: What is the return type of `Menu_Init` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A530: It returns `void`.
+
+Q531: How many parameters does `Menu_Init` accept?
+A531: It takes 3 parameters.
+
+Q532: List the parameters for `Menu_Init`.
+A532: menu_handle_t *menu, Grove5Way_Handle *switch_handle, uint8_t game_id
+
+Q533: Where in the project is `Menu_Init` implemented?
+A533: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 87.
+
+Q534: Is `Menu_Init` declared `static`?
+A534: No, it is globally visible.
+
+Q535: What is the return type of `GroveMultiSwitch_GetDevVer` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A535: It returns `const char*`.
+
+Q536: How many parameters does `GroveMultiSwitch_GetDevVer` accept?
+A536: It takes 1 parameter.
+
+Q537: List the parameters for `GroveMultiSwitch_GetDevVer`.
+A537: GroveMultiSwitch_t *handle
+
+Q538: Where in the project is `GroveMultiSwitch_GetDevVer` implemented?
+A538: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 162.
+
+Q539: Is `GroveMultiSwitch_GetDevVer` declared `static`?
+A539: No, it is globally visible.
+
+Q540: What is the return type of `SSD1306_Putc` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A540: It returns `char`.
+
+Q541: How many parameters does `SSD1306_Putc` accept?
+A541: It takes 3 parameters.
+
+Q542: List the parameters for `SSD1306_Putc`.
+A542: char ch, FontDef_t* Font, SSD1306_COLOR_t color
+
+Q543: Where in the project is `SSD1306_Putc` implemented?
+A543: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 130.
+
+Q544: Is `SSD1306_Putc` declared `static`?
+A544: No, it is globally visible.
+
+Q545: What is the return type of `DebugMon_Handler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A545: It returns `void`.
+
+Q546: How many parameters does `DebugMon_Handler` accept?
+A546: It takes no parameters.
+
+Q547: List the parameters for `DebugMon_Handler`.
+A547: None; the parameter list is empty.
+
+Q548: Where in the project is `DebugMon_Handler` implemented?
+A548: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 157.
+
+Q549: Is `DebugMon_Handler` declared `static`?
+A549: No, it is globally visible.
+
+Q550: What is the return type of `_isatty` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A550: It returns `int`.
+
+Q551: How many parameters does `_isatty` accept?
+A551: It takes 1 parameter.
+
+Q552: List the parameters for `_isatty`.
+A552: int file
+
+Q553: Where in the project is `_isatty` implemented?
+A553: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 100.
+
+Q554: Is `_isatty` declared `static`?
+A554: No, it is globally visible.
+
+Q555: What is the return type of `BSP_PB_Init` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A555: It returns `void`.
+
+Q556: How many parameters does `BSP_PB_Init` accept?
+A556: It takes 2 parameters.
+
+Q557: List the parameters for `BSP_PB_Init`.
+A557: Button_TypeDef Button, ButtonMode_TypeDef ButtonMode
+
+Q558: Where in the project is `BSP_PB_Init` implemented?
+A558: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 216.
+
+Q559: Is `BSP_PB_Init` declared `static`?
+A559: No, it is globally visible.
+
+Q560: What is the return type of `BSP_NFCTAG_GetITStatus` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A560: It returns `int32_t`.
+
+Q561: How many parameters does `BSP_NFCTAG_GetITStatus` accept?
+A561: It takes 2 parameters.
+
+Q562: List the parameters for `BSP_NFCTAG_GetITStatus`.
+A562: uint32_t Instance, uint16_t * const ITConfig
+
+Q563: Where in the project is `BSP_NFCTAG_GetITStatus` implemented?
+A563: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 183.
+
+Q564: Is `BSP_NFCTAG_GetITStatus` declared `static`?
+A564: No, it is globally visible.
+
+Q565: What is the return type of `Buzzer_TIM_Init` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A565: It returns `void`.
+
+Q566: How many parameters does `Buzzer_TIM_Init` accept?
+A566: It takes no parameters.
+
+Q567: List the parameters for `Buzzer_TIM_Init`.
+A567: None; the parameter list is empty.
+
+Q568: Where in the project is `Buzzer_TIM_Init` implemented?
+A568: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 151.
+
+Q569: Is `Buzzer_TIM_Init` declared `static`?
+A569: Yes, it is declared `static`.
+
+Q570: What is the return type of `HT16K33_SetRow` defined in `Assignment2-AY2526S1/Core/Src/ht16k33.c`?
+A570: It returns `void`.
+
+Q571: How many parameters does `HT16K33_SetRow` accept?
+A571: It takes 3 parameters.
+
+Q572: List the parameters for `HT16K33_SetRow`.
+A572: HT16K33_HandleTypeDef *h, uint8_t row, uint8_t pattern
+
+Q573: Where in the project is `HT16K33_SetRow` implemented?
+A573: In `Assignment2-AY2526S1/Core/Src/ht16k33.c` near line 74.
+
+Q574: Is `HT16K33_SetRow` declared `static`?
+A574: No, it is globally visible.
+
+Q575: What is the return type of `CalibrateGyroscope` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A575: It returns `void`.
+
+Q576: How many parameters does `CalibrateGyroscope` accept?
+A576: It takes no parameters.
+
+Q577: List the parameters for `CalibrateGyroscope`.
+A577: None; the parameter list is empty.
+
+Q578: Where in the project is `CalibrateGyroscope` implemented?
+A578: In `Assignment2-AY2526S1/Core/Src/main.c` near line 405.
+
+Q579: Is `CalibrateGyroscope` declared `static`?
+A579: No, it is globally visible.
+
+Q580: What is the return type of `Menu_SetGame` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A580: It returns `void`.
+
+Q581: How many parameters does `Menu_SetGame` accept?
+A581: It takes 2 parameters.
+
+Q582: List the parameters for `Menu_SetGame`.
+A582: menu_handle_t *menu, uint8_t game_id
+
+Q583: Where in the project is `Menu_SetGame` implemented?
+A583: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 98.
+
+Q584: Is `Menu_SetGame` declared `static`?
+A584: No, it is globally visible.
+
+Q585: What is the return type of `GroveMultiSwitch_SetDevAddr` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A585: It returns `void`.
+
+Q586: How many parameters does `GroveMultiSwitch_SetDevAddr` accept?
+A586: It takes 2 parameters.
+
+Q587: List the parameters for `GroveMultiSwitch_SetDevAddr`.
+A587: GroveMultiSwitch_t *handle, uint8_t addr
+
+Q588: Where in the project is `GroveMultiSwitch_SetDevAddr` implemented?
+A588: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 186.
+
+Q589: Is `GroveMultiSwitch_SetDevAddr` declared `static`?
+A589: No, it is globally visible.
+
+Q590: What is the return type of `SSD1306_Puts` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A590: It returns `char`.
+
+Q591: How many parameters does `SSD1306_Puts` accept?
+A591: It takes 3 parameters.
+
+Q592: List the parameters for `SSD1306_Puts`.
+A592: char* str, FontDef_t* Font, SSD1306_COLOR_t color
+
+Q593: Where in the project is `SSD1306_Puts` implemented?
+A593: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 151.
+
+Q594: Is `SSD1306_Puts` declared `static`?
+A594: No, it is globally visible.
+
+Q595: What is the return type of `PendSV_Handler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A595: It returns `void`.
+
+Q596: How many parameters does `PendSV_Handler` accept?
+A596: It takes no parameters.
+
+Q597: List the parameters for `PendSV_Handler`.
+A597: None; the parameter list is empty.
+
+Q598: Where in the project is `PendSV_Handler` implemented?
+A598: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 170.
+
+Q599: Is `PendSV_Handler` declared `static`?
+A599: No, it is globally visible.
+
+Q600: What is the return type of `_lseek` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A600: It returns `int`.
+
+Q601: How many parameters does `_lseek` accept?
+A601: It takes 3 parameters.
+
+Q602: List the parameters for `_lseek`.
+A602: int file, int ptr, int dir
+
+Q603: Where in the project is `_lseek` implemented?
+A603: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 105.
+
+Q604: Is `_lseek` declared `static`?
+A604: No, it is globally visible.
+
+Q605: What is the return type of `BSP_PB_DeInit` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A605: It returns `void`.
+
+Q606: How many parameters does `BSP_PB_DeInit` accept?
+A606: It takes 1 parameter.
+
+Q607: List the parameters for `BSP_PB_DeInit`.
+A607: Button_TypeDef Button
+
+Q608: Where in the project is `BSP_PB_DeInit` implemented?
+A608: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 257.
+
+Q609: Is `BSP_PB_DeInit` declared `static`?
+A609: No, it is globally visible.
+
+Q610: What is the return type of `BSP_NFCTAG_ReadData` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A610: It returns `int32_t`.
+
+Q611: How many parameters does `BSP_NFCTAG_ReadData` accept?
+A611: It takes 4 parameters.
+
+Q612: List the parameters for `BSP_NFCTAG_ReadData`.
+A612: uint32_t Instance, uint8_t * const pData, const uint16_t TarAddr, const uint16_t Size
+
+Q613: Where in the project is `BSP_NFCTAG_ReadData` implemented?
+A613: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 201.
+
+Q614: Is `BSP_NFCTAG_ReadData` declared `static`?
+A614: No, it is globally visible.
+
+Q615: What is the return type of `Buzzer_Set` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A615: It returns `void`.
+
+Q616: How many parameters does `Buzzer_Set` accept?
+A616: It takes 1 parameter.
+
+Q617: List the parameters for `Buzzer_Set`.
+A617: uint8_t on
+
+Q618: Where in the project is `Buzzer_Set` implemented?
+A618: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 178.
+
+Q619: Is `Buzzer_Set` declared `static`?
+A619: Yes, it is declared `static`.
+
+Q620: What is the return type of `HT16K33_DrawBitmap64` defined in `Assignment2-AY2526S1/Core/Src/ht16k33.c`?
+A620: It returns `void`.
+
+Q621: How many parameters does `HT16K33_DrawBitmap64` accept?
+A621: It takes 2 parameters.
+
+Q622: List the parameters for `HT16K33_DrawBitmap64`.
+A622: HT16K33_HandleTypeDef *h, uint64_t bitmap
+
+Q623: Where in the project is `HT16K33_DrawBitmap64` implemented?
+A623: In `Assignment2-AY2526S1/Core/Src/ht16k33.c` near line 82.
+
+Q624: Is `HT16K33_DrawBitmap64` declared `static`?
+A624: No, it is globally visible.
+
+Q625: What is the return type of `MX_I2C1_Init` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A625: It returns `void`.
+
+Q626: How many parameters does `MX_I2C1_Init` accept?
+A626: It takes no parameters.
+
+Q627: List the parameters for `MX_I2C1_Init`.
+A627: None; the parameter list is empty.
+
+Q628: Where in the project is `MX_I2C1_Init` implemented?
+A628: In `Assignment2-AY2526S1/Core/Src/main.c` near line 436.
+
+Q629: Is `MX_I2C1_Init` declared `static`?
+A629: No, it is globally visible.
+
+Q630: What is the return type of `get_param_value` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A630: It returns `float`.
+
+Q631: How many parameters does `get_param_value` accept?
+A631: It takes 1 parameter.
+
+Q632: List the parameters for `get_param_value`.
+A632: param_id_t param_id
+
+Q633: Where in the project is `get_param_value` implemented?
+A633: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 113.
+
+Q634: Is `get_param_value` declared `static`?
+A634: Yes, it is declared `static`.
+
+Q635: What is the return type of `GroveMultiSwitch_GetSwitchCount` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A635: It returns `int`.
+
+Q636: How many parameters does `GroveMultiSwitch_GetSwitchCount` accept?
+A636: It takes 1 parameter.
+
+Q637: List the parameters for `GroveMultiSwitch_GetSwitchCount`.
+A637: GroveMultiSwitch_t *handle
+
+Q638: Where in the project is `GroveMultiSwitch_GetSwitchCount` implemented?
+A638: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 204.
+
+Q639: Is `GroveMultiSwitch_GetSwitchCount` declared `static`?
+A639: No, it is globally visible.
+
+Q640: What is the return type of `SSD1306_DrawLine` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A640: It returns `void`.
+
+Q641: How many parameters does `SSD1306_DrawLine` accept?
+A641: It takes 5 parameters.
+
+Q642: List the parameters for `SSD1306_DrawLine`.
+A642: uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, SSD1306_COLOR_t c
+
+Q643: Where in the project is `SSD1306_DrawLine` implemented?
+A643: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 161.
+
+Q644: Is `SSD1306_DrawLine` declared `static`?
+A644: No, it is globally visible.
+
+Q645: What is the return type of `SysTick_Handler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A645: It returns `void`.
+
+Q646: How many parameters does `SysTick_Handler` accept?
+A646: It takes no parameters.
+
+Q647: List the parameters for `SysTick_Handler`.
+A647: None; the parameter list is empty.
+
+Q648: Where in the project is `SysTick_Handler` implemented?
+A648: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 183.
+
+Q649: Is `SysTick_Handler` declared `static`?
+A649: No, it is globally visible.
+
+Q650: What is the return type of `_open` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A650: It returns `int`.
+
+Q651: How many parameters does `_open` accept?
+A651: It takes 3 parameters.
+
+Q652: List the parameters for `_open`.
+A652: char *path, int flags, ...
+
+Q653: Where in the project is `_open` implemented?
+A653: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 110.
+
+Q654: Is `_open` declared `static`?
+A654: No, it is globally visible.
+
+Q655: What is the return type of `BSP_PB_GetState` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A655: It returns `uint32_t`.
+
+Q656: How many parameters does `BSP_PB_GetState` accept?
+A656: It takes 1 parameter.
+
+Q657: List the parameters for `BSP_PB_GetState`.
+A657: Button_TypeDef Button
+
+Q658: Where in the project is `BSP_PB_GetState` implemented?
+A658: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 274.
+
+Q659: Is `BSP_PB_GetState` declared `static`?
+A659: No, it is globally visible.
+
+Q660: What is the return type of `BSP_NFCTAG_WriteData` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A660: It returns `int32_t`.
+
+Q661: How many parameters does `BSP_NFCTAG_WriteData` accept?
+A661: It takes 4 parameters.
+
+Q662: List the parameters for `BSP_NFCTAG_WriteData`.
+A662: uint32_t Instance, const uint8_t * const pData, const uint16_t TarAddr, const uint16_t Size
+
+Q663: Where in the project is `BSP_NFCTAG_WriteData` implemented?
+A663: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 219.
+
+Q664: Is `BSP_NFCTAG_WriteData` declared `static`?
+A664: No, it is globally visible.
+
+Q665: What is the return type of `Buzzer_Stop` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A665: It returns `void`.
+
+Q666: How many parameters does `Buzzer_Stop` accept?
+A666: It takes no parameters.
+
+Q667: List the parameters for `Buzzer_Stop`.
+A667: None; the parameter list is empty.
+
+Q668: Where in the project is `Buzzer_Stop` implemented?
+A668: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 184.
+
+Q669: Is `Buzzer_Stop` declared `static`?
+A669: Yes, it is declared `static`.
+
+Q670: What is the return type of `HT16K33_DisplayBitmap64` defined in `Assignment2-AY2526S1/Core/Src/ht16k33.c`?
+A670: It returns `HAL_StatusTypeDef`.
+
+Q671: How many parameters does `HT16K33_DisplayBitmap64` accept?
+A671: It takes 2 parameters.
+
+Q672: List the parameters for `HT16K33_DisplayBitmap64`.
+A672: HT16K33_HandleTypeDef *h, uint64_t bitmap
+
+Q673: Where in the project is `HT16K33_DisplayBitmap64` implemented?
+A673: In `Assignment2-AY2526S1/Core/Src/ht16k33.c` near line 92.
+
+Q674: Is `HT16K33_DisplayBitmap64` declared `static`?
+A674: No, it is globally visible.
+
+Q675: What is the return type of `I2C_Scan` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A675: It returns `void`.
+
+Q676: How many parameters does `I2C_Scan` accept?
+A676: It takes 1 parameter.
+
+Q677: List the parameters for `I2C_Scan`.
+A677: I2C_HandleTypeDef *hi2c
+
+Q678: Where in the project is `I2C_Scan` implemented?
+A678: In `Assignment2-AY2526S1/Core/Src/main.c` near line 452.
+
+Q679: Is `I2C_Scan` declared `static`?
+A679: Yes, it is declared `static`.
+
+Q680: What is the return type of `set_param_value` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A680: It returns `void`.
+
+Q681: How many parameters does `set_param_value` accept?
+A681: It takes 2 parameters.
+
+Q682: List the parameters for `set_param_value`.
+A682: param_id_t param_id, float value
+
+Q683: Where in the project is `set_param_value` implemented?
+A683: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 134.
+
+Q684: Is `set_param_value` declared `static`?
+A684: Yes, it is declared `static`.
+
+Q685: What is the return type of `GroveMultiSwitch_GetEvent` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A685: It returns `ButtonEvent_t*`.
+
+Q686: How many parameters does `GroveMultiSwitch_GetEvent` accept?
+A686: It takes 1 parameter.
+
+Q687: List the parameters for `GroveMultiSwitch_GetEvent`.
+A687: GroveMultiSwitch_t *handle
+
+Q688: Where in the project is `GroveMultiSwitch_GetEvent` implemented?
+A688: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 225.
+
+Q689: Is `GroveMultiSwitch_GetEvent` declared `static`?
+A689: No, it is globally visible.
+
+Q690: What is the return type of `SSD1306_DrawRectangle` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A690: It returns `void`.
+
+Q691: How many parameters does `SSD1306_DrawRectangle` accept?
+A691: It takes 5 parameters.
+
+Q692: List the parameters for `SSD1306_DrawRectangle`.
+A692: uint16_t x, uint16_t y, uint16_t w, uint16_t h, SSD1306_COLOR_t c
+
+Q693: Where in the project is `SSD1306_DrawRectangle` implemented?
+A693: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 177.
+
+Q694: Is `SSD1306_DrawRectangle` declared `static`?
+A694: No, it is globally visible.
+
+Q695: What is the return type of `EXTI9_5_IRQHandler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A695: It returns `void`.
+
+Q696: How many parameters does `EXTI9_5_IRQHandler` accept?
+A696: It takes no parameters.
+
+Q697: List the parameters for `EXTI9_5_IRQHandler`.
+A697: None; the parameter list is empty.
+
+Q698: Where in the project is `EXTI9_5_IRQHandler` implemented?
+A698: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 204.
+
+Q699: Is `EXTI9_5_IRQHandler` declared `static`?
+A699: No, it is globally visible.
+
+Q700: What is the return type of `_wait` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A700: It returns `int`.
+
+Q701: How many parameters does `_wait` accept?
+A701: It takes 1 parameter.
+
+Q702: List the parameters for `_wait`.
+A702: int *status
+
+Q703: Where in the project is `_wait` implemented?
+A703: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 116.
+
+Q704: Is `_wait` declared `static`?
+A704: No, it is globally visible.
+
+Q705: What is the return type of `BSP_COM_Init` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A705: It returns `void`.
+
+Q706: How many parameters does `BSP_COM_Init` accept?
+A706: It takes 2 parameters.
+
+Q707: List the parameters for `BSP_COM_Init`.
+A707: COM_TypeDef COM, UART_HandleTypeDef *huart
+
+Q708: Where in the project is `BSP_COM_Init` implemented?
+A708: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 287.
+
+Q709: Is `BSP_COM_Init` declared `static`?
+A709: No, it is globally visible.
+
+Q710: What is the return type of `BSP_NFCTAG_ReadRegister` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A710: It returns `int32_t`.
+
+Q711: How many parameters does `BSP_NFCTAG_ReadRegister` accept?
+A711: It takes 4 parameters.
+
+Q712: List the parameters for `BSP_NFCTAG_ReadRegister`.
+A712: uint32_t Instance, uint8_t * const pData, const uint16_t TarAddr, const uint16_t Size
+
+Q713: Where in the project is `BSP_NFCTAG_ReadRegister` implemented?
+A713: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 237.
+
+Q714: Is `BSP_NFCTAG_ReadRegister` declared `static`?
+A714: No, it is globally visible.
+
+Q715: What is the return type of `Buzzer_PlayToneInternal` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A715: It returns `void`.
+
+Q716: How many parameters does `Buzzer_PlayToneInternal` accept?
+A716: It takes 3 parameters.
+
+Q717: List the parameters for `Buzzer_PlayToneInternal`.
+A717: float frequency_hz, uint32_t duration_ms, uint32_t gap_ms_after
+
+Q718: Where in the project is `Buzzer_PlayToneInternal` implemented?
+A718: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 194.
+
+Q719: Is `Buzzer_PlayToneInternal` declared `static`?
+A719: Yes, it is declared `static`.
+
+Q720: What is the return type of `HT16K33_PlayFrames` defined in `Assignment2-AY2526S1/Core/Src/ht16k33.c`?
+A720: It returns `HAL_StatusTypeDef`.
+
+Q721: How many parameters does `HT16K33_PlayFrames` accept?
+A721: It takes 5 parameters.
+
+Q722: List the parameters for `HT16K33_PlayFrames`.
+A722: HT16K33_HandleTypeDef *h, const uint64_t *frames, size_t frame_count, uint32_t frame_duration_ms, uint32_t repeat
+
+Q723: Where in the project is `HT16K33_PlayFrames` implemented?
+A723: In `Assignment2-AY2526S1/Core/Src/ht16k33.c` near line 99.
+
+Q724: Is `HT16K33_PlayFrames` declared `static`?
+A724: No, it is globally visible.
+
+Q725: What is the return type of `MX_GPIO_Init` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A725: It returns `void`.
+
+Q726: How many parameters does `MX_GPIO_Init` accept?
+A726: It takes no parameters.
+
+Q727: List the parameters for `MX_GPIO_Init`.
+A727: None; the parameter list is empty.
+
+Q728: Where in the project is `MX_GPIO_Init` implemented?
+A728: In `Assignment2-AY2526S1/Core/Src/main.c` near line 464.
+
+Q729: Is `MX_GPIO_Init` declared `static`?
+A729: Yes, it is declared `static`.
+
+Q730: What is the return type of `get_next_param` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A730: It returns `param_id_t`.
+
+Q731: How many parameters does `get_next_param` accept?
+A731: It takes 2 parameters.
+
+Q732: List the parameters for `get_next_param`.
+A732: menu_handle_t *menu, int8_t direction
+
+Q733: Where in the project is `get_next_param` implemented?
+A733: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 172.
+
+Q734: Is `get_next_param` declared `static`?
+A734: Yes, it is declared `static`.
+
+Q735: What is the return type of `GroveMultiSwitch_SetEventMode` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A735: It returns `bool`.
+
+Q736: How many parameters does `GroveMultiSwitch_SetEventMode` accept?
+A736: It takes 2 parameters.
+
+Q737: List the parameters for `GroveMultiSwitch_SetEventMode`.
+A737: GroveMultiSwitch_t *handle, bool enable
+
+Q738: Where in the project is `GroveMultiSwitch_SetEventMode` implemented?
+A738: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 267.
+
+Q739: Is `GroveMultiSwitch_SetEventMode` declared `static`?
+A739: No, it is globally visible.
+
+Q740: What is the return type of `SSD1306_DrawFilledRectangle` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A740: It returns `void`.
+
+Q741: How many parameters does `SSD1306_DrawFilledRectangle` accept?
+A741: It takes 5 parameters.
+
+Q742: List the parameters for `SSD1306_DrawFilledRectangle`.
+A742: uint16_t x, uint16_t y, uint16_t w, uint16_t h, SSD1306_COLOR_t c
+
+Q743: Where in the project is `SSD1306_DrawFilledRectangle` implemented?
+A743: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 184.
+
+Q744: Is `SSD1306_DrawFilledRectangle` declared `static`?
+A744: No, it is globally visible.
+
+Q745: What is the return type of `EXTI15_10_IRQHandler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A745: It returns `void`.
+
+Q746: How many parameters does `EXTI15_10_IRQHandler` accept?
+A746: It takes no parameters.
+
+Q747: List the parameters for `EXTI15_10_IRQHandler`.
+A747: None; the parameter list is empty.
+
+Q748: Where in the project is `EXTI15_10_IRQHandler` implemented?
+A748: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 221.
+
+Q749: Is `EXTI15_10_IRQHandler` declared `static`?
+A749: No, it is globally visible.
+
+Q750: What is the return type of `_unlink` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A750: It returns `int`.
+
+Q751: How many parameters does `_unlink` accept?
+A751: It takes 1 parameter.
+
+Q752: List the parameters for `_unlink`.
+A752: char *name
+
+Q753: Where in the project is `_unlink` implemented?
+A753: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 122.
+
+Q754: Is `_unlink` declared `static`?
+A754: No, it is globally visible.
+
+Q755: What is the return type of `BSP_COM_DeInit` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A755: It returns `void`.
+
+Q756: How many parameters does `BSP_COM_DeInit` accept?
+A756: It takes 2 parameters.
+
+Q757: List the parameters for `BSP_COM_DeInit`.
+A757: COM_TypeDef COM, UART_HandleTypeDef *huart
+
+Q758: Where in the project is `BSP_COM_DeInit` implemented?
+A758: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 325.
+
+Q759: Is `BSP_COM_DeInit` declared `static`?
+A759: No, it is globally visible.
+
+Q760: What is the return type of `BSP_NFCTAG_WriteRegister` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A760: It returns `int32_t`.
+
+Q761: How many parameters does `BSP_NFCTAG_WriteRegister` accept?
+A761: It takes 4 parameters.
+
+Q762: List the parameters for `BSP_NFCTAG_WriteRegister`.
+A762: uint32_t Instance, const uint8_t * const pData, const uint16_t TarAddr, const uint16_t Size
+
+Q763: Where in the project is `BSP_NFCTAG_WriteRegister` implemented?
+A763: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 251.
+
+Q764: Is `BSP_NFCTAG_WriteRegister` declared `static`?
+A764: No, it is globally visible.
+
+Q765: What is the return type of `Buzzer_SequenceAdvance` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A765: It returns `void`.
+
+Q766: How many parameters does `Buzzer_SequenceAdvance` accept?
+A766: It takes 1 parameter.
+
+Q767: List the parameters for `Buzzer_SequenceAdvance`.
+A767: uint32_t now_ms
+
+Q768: Where in the project is `Buzzer_SequenceAdvance` implemented?
+A768: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 227.
+
+Q769: Is `Buzzer_SequenceAdvance` declared `static`?
+A769: Yes, it is declared `static`.
+
+Q770: What is the return type of `UART1_Init` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A770: It returns `void`.
+
+Q771: How many parameters does `UART1_Init` accept?
+A771: It takes no parameters.
+
+Q772: List the parameters for `UART1_Init`.
+A772: None; the parameter list is empty.
+
+Q773: Where in the project is `UART1_Init` implemented?
+A773: In `Assignment2-AY2526S1/Core/Src/main.c` near line 478.
+
+Q774: Is `UART1_Init` declared `static`?
+A774: Yes, it is declared `static`.
+
+Q775: What is the return type of `menu_render_selected` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A775: It returns `void`.
+
+Q776: How many parameters does `menu_render_selected` accept?
+A776: It takes 1 parameter.
+
+Q777: List the parameters for `menu_render_selected`.
+A777: menu_handle_t *menu
+
+Q778: Where in the project is `menu_render_selected` implemented?
+A778: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 188.
+
+Q779: Is `menu_render_selected` declared `static`?
+A779: Yes, it is declared `static`.
+
+Q780: What is the return type of `GroveMultiSwitch_SetAutoSleep` defined in `Assignment2-AY2526S1/Core/Src/multi_switch.c`?
+A780: It returns `bool`.
+
+Q781: How many parameters does `GroveMultiSwitch_SetAutoSleep` accept?
+A781: It takes 2 parameters.
+
+Q782: List the parameters for `GroveMultiSwitch_SetAutoSleep`.
+A782: GroveMultiSwitch_t *handle, bool enable
+
+Q783: Where in the project is `GroveMultiSwitch_SetAutoSleep` implemented?
+A783: In `Assignment2-AY2526S1/Core/Src/multi_switch.c` near line 285.
+
+Q784: Is `GroveMultiSwitch_SetAutoSleep` declared `static`?
+A784: No, it is globally visible.
+
+Q785: What is the return type of `SSD1306_DrawTriangle` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A785: It returns `void`.
+
+Q786: How many parameters does `SSD1306_DrawTriangle` accept?
+A786: It takes 7 parameters.
+
+Q787: List the parameters for `SSD1306_DrawTriangle`.
+A787: uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, SSD1306_COLOR_t color
+
+Q788: Where in the project is `SSD1306_DrawTriangle` implemented?
+A788: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 190.
+
+Q789: Is `SSD1306_DrawTriangle` declared `static`?
+A789: No, it is globally visible.
+
+Q790: What is the return type of `TIM2_IRQHandler` defined in `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c`?
+A790: It returns `void`.
+
+Q791: How many parameters does `TIM2_IRQHandler` accept?
+A791: It takes no parameters.
+
+Q792: List the parameters for `TIM2_IRQHandler`.
+A792: None; the parameter list is empty.
+
+Q793: Where in the project is `TIM2_IRQHandler` implemented?
+A793: In `Assignment2-AY2526S1/Core/Src/stm32l4xx_it.c` near line 240.
+
+Q794: Is `TIM2_IRQHandler` declared `static`?
+A794: No, it is globally visible.
+
+Q795: What is the return type of `_times` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A795: It returns `int`.
+
+Q796: How many parameters does `_times` accept?
+A796: It takes 1 parameter.
+
+Q797: List the parameters for `_times`.
+A797: struct tms *buf
+
+Q798: Where in the project is `_times` implemented?
+A798: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 128.
+
+Q799: Is `_times` declared `static`?
+A799: No, it is globally visible.
+
+Q800: What is the return type of `I2Cx_MspInit` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A800: It returns `void`.
+
+Q801: How many parameters does `I2Cx_MspInit` accept?
+A801: It takes 1 parameter.
+
+Q802: List the parameters for `I2Cx_MspInit`.
+A802: I2C_HandleTypeDef *i2c_handler
+
+Q803: Where in the project is `I2Cx_MspInit` implemented?
+A803: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 352.
+
+Q804: Is `I2Cx_MspInit` declared `static`?
+A804: Yes, it is declared `static`.
+
+Q805: What is the return type of `BSP_NFCTAG_GetByteSize` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A805: It returns `uint32_t`.
+
+Q806: How many parameters does `BSP_NFCTAG_GetByteSize` accept?
+A806: It takes 1 parameter.
+
+Q807: List the parameters for `BSP_NFCTAG_GetByteSize`.
+A807: uint32_t Instance
+
+Q808: Where in the project is `BSP_NFCTAG_GetByteSize` implemented?
+A808: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 270.
+
+Q809: Is `BSP_NFCTAG_GetByteSize` declared `static`?
+A809: No, it is globally visible.
+
+Q810: What is the return type of `Buzzer_SequenceStart` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A810: It returns `void`.
+
+Q811: How many parameters does `Buzzer_SequenceStart` accept?
+A811: It takes 2 parameters.
+
+Q812: List the parameters for `Buzzer_SequenceStart`.
+A812: const buzzer_step_t *steps, uint8_t count
+
+Q813: Where in the project is `Buzzer_SequenceStart` implemented?
+A813: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 245.
+
+Q814: Is `Buzzer_SequenceStart` declared `static`?
+A814: Yes, it is declared `static`.
+
+Q815: What is the return type of `NFC_Init` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A815: It returns `void`.
+
+Q816: How many parameters does `NFC_Init` accept?
+A816: It takes no parameters.
+
+Q817: List the parameters for `NFC_Init`.
+A817: None; the parameter list is empty.
+
+Q818: Where in the project is `NFC_Init` implemented?
+A818: In `Assignment2-AY2526S1/Core/Src/main.c` near line 503.
+
+Q819: Is `NFC_Init` declared `static`?
+A819: No, it is globally visible.
+
+Q820: What is the return type of `menu_render_adjust` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A820: It returns `void`.
+
+Q821: How many parameters does `menu_render_adjust` accept?
+A821: It takes 2 parameters.
+
+Q822: List the parameters for `menu_render_adjust`.
+A822: menu_handle_t *menu, const char *header
+
+Q823: Where in the project is `menu_render_adjust` implemented?
+A823: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 212.
+
+Q824: Is `menu_render_adjust` declared `static`?
+A824: Yes, it is declared `static`.
+
+Q825: What is the return type of `SSD1306_DrawCircle` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A825: It returns `void`.
+
+Q826: How many parameters does `SSD1306_DrawCircle` accept?
+A826: It takes 4 parameters.
+
+Q827: List the parameters for `SSD1306_DrawCircle`.
+A827: int16_t x0, int16_t y0, int16_t r, SSD1306_COLOR_t c
+
+Q828: Where in the project is `SSD1306_DrawCircle` implemented?
+A828: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 197.
+
+Q829: Is `SSD1306_DrawCircle` declared `static`?
+A829: No, it is globally visible.
+
+Q830: What is the return type of `_stat` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A830: It returns `int`.
+
+Q831: How many parameters does `_stat` accept?
+A831: It takes 2 parameters.
+
+Q832: List the parameters for `_stat`.
+A832: char *file, struct stat *st
+
+Q833: Where in the project is `_stat` implemented?
+A833: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 133.
+
+Q834: Is `_stat` declared `static`?
+A834: No, it is globally visible.
+
+Q835: What is the return type of `I2Cx_MspDeInit` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A835: It returns `void`.
+
+Q836: How many parameters does `I2Cx_MspDeInit` accept?
+A836: It takes 1 parameter.
+
+Q837: List the parameters for `I2Cx_MspDeInit`.
+A837: I2C_HandleTypeDef *i2c_handler
+
+Q838: Where in the project is `I2Cx_MspDeInit` implemented?
+A838: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 394.
+
+Q839: Is `I2Cx_MspDeInit` declared `static`?
+A839: Yes, it is declared `static`.
+
+Q840: What is the return type of `BSP_NFCTAG_ReadICRev` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A840: It returns `int32_t`.
+
+Q841: How many parameters does `BSP_NFCTAG_ReadICRev` accept?
+A841: It takes 2 parameters.
+
+Q842: List the parameters for `BSP_NFCTAG_ReadICRev`.
+A842: uint32_t Instance, uint8_t * const pICRev
+
+Q843: Where in the project is `BSP_NFCTAG_ReadICRev` implemented?
+A843: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 284.
+
+Q844: Is `BSP_NFCTAG_ReadICRev` declared `static`?
+A844: No, it is globally visible.
+
+Q845: What is the return type of `Buzzer_PlayFailureTune` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A845: It returns `void`.
+
+Q846: How many parameters does `Buzzer_PlayFailureTune` accept?
+A846: It takes no parameters.
+
+Q847: List the parameters for `Buzzer_PlayFailureTune`.
+A847: None; the parameter list is empty.
+
+Q848: Where in the project is `Buzzer_PlayFailureTune` implemented?
+A848: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 264.
+
+Q849: Is `Buzzer_PlayFailureTune` declared `static`?
+A849: No, it is globally visible.
+
+Q850: What is the return type of `NFC_BlinkIfCard` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A850: It returns `void`.
+
+Q851: How many parameters does `NFC_BlinkIfCard` accept?
+A851: It takes no parameters.
+
+Q852: List the parameters for `NFC_BlinkIfCard`.
+A852: None; the parameter list is empty.
+
+Q853: Where in the project is `NFC_BlinkIfCard` implemented?
+A853: In `Assignment2-AY2526S1/Core/Src/main.c` near line 510.
+
+Q854: Is `NFC_BlinkIfCard` declared `static`?
+A854: No, it is globally visible.
+
+Q855: What is the return type of `Menu_Process` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A855: It returns `bool`.
+
+Q856: How many parameters does `Menu_Process` accept?
+A856: It takes 1 parameter.
+
+Q857: List the parameters for `Menu_Process`.
+A857: menu_handle_t *menu
+
+Q858: Where in the project is `Menu_Process` implemented?
+A858: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 243.
+
+Q859: Is `Menu_Process` declared `static`?
+A859: No, it is globally visible.
+
+Q860: What is the return type of `SSD1306_DrawFilledCircle` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A860: It returns `void`.
+
+Q861: How many parameters does `SSD1306_DrawFilledCircle` accept?
+A861: It takes 4 parameters.
+
+Q862: List the parameters for `SSD1306_DrawFilledCircle`.
+A862: int16_t x0, int16_t y0, int16_t r, SSD1306_COLOR_t c
+
+Q863: Where in the project is `SSD1306_DrawFilledCircle` implemented?
+A863: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 230.
+
+Q864: Is `SSD1306_DrawFilledCircle` declared `static`?
+A864: No, it is globally visible.
+
+Q865: What is the return type of `_link` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A865: It returns `int`.
+
+Q866: How many parameters does `_link` accept?
+A866: It takes 2 parameters.
+
+Q867: List the parameters for `_link`.
+A867: char *old, char *new
+
+Q868: Where in the project is `_link` implemented?
+A868: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 139.
+
+Q869: Is `_link` declared `static`?
+A869: No, it is globally visible.
+
+Q870: What is the return type of `I2Cx_Init` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A870: It returns `void`.
+
+Q871: How many parameters does `I2Cx_Init` accept?
+A871: It takes 1 parameter.
+
+Q872: List the parameters for `I2Cx_Init`.
+A872: I2C_HandleTypeDef *i2c_handler
+
+Q873: Where in the project is `I2Cx_Init` implemented?
+A873: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 413.
+
+Q874: Is `I2Cx_Init` declared `static`?
+A874: Yes, it is declared `static`.
+
+Q875: What is the return type of `BSP_NFCTAG_ReadITPulse` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A875: It returns `int32_t`.
+
+Q876: How many parameters does `BSP_NFCTAG_ReadITPulse` accept?
+A876: It takes 2 parameters.
+
+Q877: List the parameters for `BSP_NFCTAG_ReadITPulse`.
+A877: uint32_t Instance, ST25DV_PULSE_DURATION * const pITtime
+
+Q878: Where in the project is `BSP_NFCTAG_ReadITPulse` implemented?
+A878: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 296.
+
+Q879: Is `BSP_NFCTAG_ReadITPulse` declared `static`?
+A879: No, it is globally visible.
+
+Q880: What is the return type of `Buzzer_PlaySuccessTune` defined in `Assignment2-AY2526S1/Core/Src/buzzer.c`?
+A880: It returns `void`.
+
+Q881: How many parameters does `Buzzer_PlaySuccessTune` accept?
+A881: It takes no parameters.
+
+Q882: List the parameters for `Buzzer_PlaySuccessTune`.
+A882: None; the parameter list is empty.
+
+Q883: Where in the project is `Buzzer_PlaySuccessTune` implemented?
+A883: In `Assignment2-AY2526S1/Core/Src/buzzer.c` near line 283.
+
+Q884: Is `Buzzer_PlaySuccessTune` declared `static`?
+A884: No, it is globally visible.
+
+Q885: What is the return type of `main` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A885: It returns `int`.
+
+Q886: How many parameters does `main` accept?
+A886: It takes no parameters.
+
+Q887: List the parameters for `main`.
+A887: None; the parameter list is empty.
+
+Q888: Where in the project is `main` implemented?
+A888: In `Assignment2-AY2526S1/Core/Src/main.c` near line 526.
+
+Q889: Is `main` declared `static`?
+A889: No, it is globally visible.
+
+Q890: What is the return type of `Menu_GetState` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A890: It returns `menu_state_t`.
+
+Q891: How many parameters does `Menu_GetState` accept?
+A891: It takes 1 parameter.
+
+Q892: List the parameters for `Menu_GetState`.
+A892: menu_handle_t *menu
+
+Q893: Where in the project is `Menu_GetState` implemented?
+A893: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 362.
+
+Q894: Is `Menu_GetState` declared `static`?
+A894: No, it is globally visible.
+
+Q895: What is the return type of `ssd1306_I2C_Init` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A895: It returns `void`.
+
+Q896: How many parameters does `ssd1306_I2C_Init` accept?
+A896: It takes no parameters.
+
+Q897: List the parameters for `ssd1306_I2C_Init`.
+A897: None; the parameter list is empty.
+
+Q898: Where in the project is `ssd1306_I2C_Init` implemented?
+A898: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 260.
+
+Q899: Is `ssd1306_I2C_Init` declared `static`?
+A899: No, it is globally visible.
+
+Q900: What is the return type of `_fork` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A900: It returns `int`.
+
+Q901: How many parameters does `_fork` accept?
+A901: It takes no parameters.
+
+Q902: List the parameters for `_fork`.
+A902: None; the parameter list is empty.
+
+Q903: Where in the project is `_fork` implemented?
+A903: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 145.
+
+Q904: Is `_fork` declared `static`?
+A904: No, it is globally visible.
+
+Q905: What is the return type of `I2Cx_DeInit` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A905: It returns `void`.
+
+Q906: How many parameters does `I2Cx_DeInit` accept?
+A906: It takes 1 parameter.
+
+Q907: List the parameters for `I2Cx_DeInit`.
+A907: I2C_HandleTypeDef *i2c_handler
+
+Q908: Where in the project is `I2Cx_DeInit` implemented?
+A908: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 438.
+
+Q909: Is `I2Cx_DeInit` declared `static`?
+A909: Yes, it is declared `static`.
+
+Q910: What is the return type of `BSP_NFCTAG_WriteITPulse` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A910: It returns `int32_t`.
+
+Q911: How many parameters does `BSP_NFCTAG_WriteITPulse` accept?
+A911: It takes 2 parameters.
+
+Q912: List the parameters for `BSP_NFCTAG_WriteITPulse`.
+A912: uint32_t Instance, const ST25DV_PULSE_DURATION ITtime
+
+Q913: Where in the project is `BSP_NFCTAG_WriteITPulse` implemented?
+A913: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 308.
+
+Q914: Is `BSP_NFCTAG_WriteITPulse` declared `static`?
+A914: No, it is globally visible.
+
+Q915: What is the return type of `Arrow_InitDigits` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A915: It returns `void`.
+
+Q916: How many parameters does `Arrow_InitDigits` accept?
+A916: It takes no parameters.
+
+Q917: List the parameters for `Arrow_InitDigits`.
+A917: None; the parameter list is empty.
+
+Q918: Where in the project is `Arrow_InitDigits` implemented?
+A918: In `Assignment2-AY2526S1/Core/Src/main.c` near line 856.
+
+Q919: Is `Arrow_InitDigits` declared `static`?
+A919: Yes, it is declared `static`.
+
+Q920: What is the return type of `Menu_Open` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A920: It returns `void`.
+
+Q921: How many parameters does `Menu_Open` accept?
+A921: It takes 1 parameter.
+
+Q922: List the parameters for `Menu_Open`.
+A922: menu_handle_t *menu
+
+Q923: Where in the project is `Menu_Open` implemented?
+A923: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 367.
+
+Q924: Is `Menu_Open` declared `static`?
+A924: No, it is globally visible.
+
+Q925: What is the return type of `ssd1306_I2C_Write` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A925: It returns `void`.
+
+Q926: How many parameters does `ssd1306_I2C_Write` accept?
+A926: It takes 3 parameters.
+
+Q927: List the parameters for `ssd1306_I2C_Write`.
+A927: uint8_t address, uint8_t reg, uint8_t data
+
+Q928: Where in the project is `ssd1306_I2C_Write` implemented?
+A928: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 264.
+
+Q929: Is `ssd1306_I2C_Write` declared `static`?
+A929: No, it is globally visible.
+
+Q930: What is the return type of `_execve` defined in `Assignment2-AY2526S1/Core/Src/syscalls.c`?
+A930: It returns `int`.
+
+Q931: How many parameters does `_execve` accept?
+A931: It takes 3 parameters.
+
+Q932: List the parameters for `_execve`.
+A932: char *name, char **argv, char **env
+
+Q933: Where in the project is `_execve` implemented?
+A933: In `Assignment2-AY2526S1/Core/Src/syscalls.c` near line 151.
+
+Q934: Is `_execve` declared `static`?
+A934: No, it is globally visible.
+
+Q935: What is the return type of `I2Cx_ReadMultiple` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A935: It returns `HAL_StatusTypeDef`.
+
+Q936: How many parameters does `I2Cx_ReadMultiple` accept?
+A936: It takes 6 parameters.
+
+Q937: List the parameters for `I2Cx_ReadMultiple`.
+A937: I2C_HandleTypeDef *i2c_handler, uint8_t Addr, uint16_t Reg, uint16_t MemAddress, uint8_t *Buffer, uint16_t Length
+
+Q938: Where in the project is `I2Cx_ReadMultiple` implemented?
+A938: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 454.
+
+Q939: Is `I2Cx_ReadMultiple` declared `static`?
+A939: Yes, it is declared `static`.
+
+Q940: What is the return type of `BSP_NFCTAG_ReadUID` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A940: It returns `int32_t`.
+
+Q941: How many parameters does `BSP_NFCTAG_ReadUID` accept?
+A941: It takes 2 parameters.
+
+Q942: List the parameters for `BSP_NFCTAG_ReadUID`.
+A942: uint32_t Instance, ST25DV_UID * const pUid
+
+Q943: Where in the project is `BSP_NFCTAG_ReadUID` implemented?
+A943: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 319.
+
+Q944: Is `BSP_NFCTAG_ReadUID` declared `static`?
+A944: No, it is globally visible.
+
+Q945: What is the return type of `Arrow_ShowDigit` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A945: It returns `void`.
+
+Q946: How many parameters does `Arrow_ShowDigit` accept?
+A946: It takes 1 parameter.
+
+Q947: List the parameters for `Arrow_ShowDigit`.
+A947: uint8_t digit
+
+Q948: Where in the project is `Arrow_ShowDigit` implemented?
+A948: In `Assignment2-AY2526S1/Core/Src/main.c` near line 880.
+
+Q949: Is `Arrow_ShowDigit` declared `static`?
+A949: Yes, it is declared `static`.
+
+Q950: What is the return type of `Menu_Close` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A950: It returns `void`.
+
+Q951: How many parameters does `Menu_Close` accept?
+A951: It takes 1 parameter.
+
+Q952: List the parameters for `Menu_Close`.
+A952: menu_handle_t *menu
+
+Q953: Where in the project is `Menu_Close` implemented?
+A953: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 383.
+
+Q954: Is `Menu_Close` declared `static`?
+A954: No, it is globally visible.
+
+Q955: What is the return type of `ssd1306_I2C_WriteMulti` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A955: It returns `void`.
+
+Q956: How many parameters does `ssd1306_I2C_WriteMulti` accept?
+A956: It takes 4 parameters.
+
+Q957: List the parameters for `ssd1306_I2C_WriteMulti`.
+A957: uint8_t address, uint8_t reg, uint8_t *data, uint16_t count
+
+Q958: Where in the project is `ssd1306_I2C_WriteMulti` implemented?
+A958: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 271.
+
+Q959: Is `ssd1306_I2C_WriteMulti` declared `static`?
+A959: No, it is globally visible.
+
+Q960: What is the return type of `I2Cx_WriteMultiple` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A960: It returns `HAL_StatusTypeDef`.
+
+Q961: How many parameters does `I2Cx_WriteMultiple` accept?
+A961: It takes 6 parameters.
+
+Q962: List the parameters for `I2Cx_WriteMultiple`.
+A962: I2C_HandleTypeDef *i2c_handler, uint8_t Addr, uint16_t Reg, uint16_t MemAddress, uint8_t *Buffer, uint16_t Length
+
+Q963: Where in the project is `I2Cx_WriteMultiple` implemented?
+A963: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 480.
+
+Q964: Is `I2Cx_WriteMultiple` declared `static`?
+A964: Yes, it is declared `static`.
+
+Q965: What is the return type of `BSP_NFCTAG_ReadDSFID` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A965: It returns `int32_t`.
+
+Q966: How many parameters does `BSP_NFCTAG_ReadDSFID` accept?
+A966: It takes 2 parameters.
+
+Q967: List the parameters for `BSP_NFCTAG_ReadDSFID`.
+A967: uint32_t Instance, uint8_t * const pDsfid
+
+Q968: Where in the project is `BSP_NFCTAG_ReadDSFID` implemented?
+A968: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 330.
+
+Q969: Is `BSP_NFCTAG_ReadDSFID` declared `static`?
+A969: No, it is globally visible.
+
+Q970: What is the return type of `Arrow_Stop` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A970: It returns `void`.
+
+Q971: How many parameters does `Arrow_Stop` accept?
+A971: It takes no parameters.
+
+Q972: List the parameters for `Arrow_Stop`.
+A972: None; the parameter list is empty.
+
+Q973: Where in the project is `Arrow_Stop` implemented?
+A973: In `Assignment2-AY2526S1/Core/Src/main.c` near line 897.
+
+Q974: Is `Arrow_Stop` declared `static`?
+A974: Yes, it is declared `static`.
+
+Q975: What is the return type of `Menu_GetDisplayString` defined in `Assignment2-AY2526S1/Core/Src/menu_system.c`?
+A975: It returns `void`.
+
+Q976: How many parameters does `Menu_GetDisplayString` accept?
+A976: It takes 3 parameters.
+
+Q977: List the parameters for `Menu_GetDisplayString`.
+A977: menu_handle_t *menu, char *buffer, size_t buffer_size
+
+Q978: Where in the project is `Menu_GetDisplayString` implemented?
+A978: In `Assignment2-AY2526S1/Core/Src/menu_system.c` near line 399.
+
+Q979: Is `Menu_GetDisplayString` declared `static`?
+A979: No, it is globally visible.
+
+Q980: What is the return type of `SSD1306_DrawBitmap` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A980: It returns `void`.
+
+Q981: How many parameters does `SSD1306_DrawBitmap` accept?
+A981: It takes 6 parameters.
+
+Q982: List the parameters for `SSD1306_DrawBitmap`.
+A982: int16_t x, int16_t y, const unsigned char* bitmap, int16_t w, int16_t h, uint16_t color
+
+Q983: Where in the project is `SSD1306_DrawBitmap` implemented?
+A983: In `Assignment2-AY2526S1/Core/Src/ssd1306.c` near line 280.
+
+Q984: Is `SSD1306_DrawBitmap` declared `static`?
+A984: No, it is globally visible.
+
+Q985: What is the return type of `I2Cx_IsDeviceReady` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c`?
+A985: It returns `HAL_StatusTypeDef`.
+
+Q986: How many parameters does `I2Cx_IsDeviceReady` accept?
+A986: It takes 3 parameters.
+
+Q987: List the parameters for `I2Cx_IsDeviceReady`.
+A987: I2C_HandleTypeDef *i2c_handler, uint16_t DevAddress, uint32_t Trials
+
+Q988: Where in the project is `I2Cx_IsDeviceReady` implemented?
+A988: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01.c` near line 503.
+
+Q989: Is `I2Cx_IsDeviceReady` declared `static`?
+A989: Yes, it is declared `static`.
+
+Q990: What is the return type of `BSP_NFCTAG_ReadDsfidRFProtection` defined in `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c`?
+A990: It returns `int32_t`.
+
+Q991: How many parameters does `BSP_NFCTAG_ReadDsfidRFProtection` accept?
+A991: It takes 2 parameters.
+
+Q992: List the parameters for `BSP_NFCTAG_ReadDsfidRFProtection`.
+A992: uint32_t Instance, ST25DV_LOCK_STATUS * const pLockDsfid
+
+Q993: Where in the project is `BSP_NFCTAG_ReadDsfidRFProtection` implemented?
+A993: In `Assignment2-AY2526S1/Drivers/BSP/B-L4S5I-IOT01/stm32l4s5i_iot01_nfctag.c` near line 341.
+
+Q994: Is `BSP_NFCTAG_ReadDsfidRFProtection` declared `static`?
+A994: No, it is globally visible.
+
+Q995: What is the return type of `Arrow_RenderSequence` defined in `Assignment2-AY2526S1/Core/Src/main.c`?
+A995: It returns `void`.
+
+Q996: How many parameters does `Arrow_RenderSequence` accept?
+A996: It takes no parameters.
+
+Q997: List the parameters for `Arrow_RenderSequence`.
+A997: None; the parameter list is empty.
+
+Q998: Where in the project is `Arrow_RenderSequence` implemented?
+A998: In `Assignment2-AY2526S1/Core/Src/main.c` near line 911.
+
+Q999: Is `Arrow_RenderSequence` declared `static`?
+A999: Yes, it is declared `static`.
+
+Q1000: What is the return type of `SSD1306_ScrollRight` defined in `Assignment2-AY2526S1/Core/Src/ssd1306.c`?
+A1000: It returns `void`.
